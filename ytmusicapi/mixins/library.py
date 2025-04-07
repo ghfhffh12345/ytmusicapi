@@ -39,9 +39,10 @@ class LibraryMixin(MixinProtocol):
             request_func = lambda additionalParams: self._send_request(endpoint, body, additionalParams)
             parse_func = lambda contents: parse_content_list(contents, parse_playlist)
             remaining_limit = None if limit is None else (limit - len(playlists))
-            playlists.extend(
-                get_continuations(results, "gridContinuation", remaining_limit, request_func, parse_func)
+            _, gc_result = get_continuations(
+                results, "gridContinuation", remaining_limit, request_func, parse_func
             )
+            playlists.extend(gc_result)
 
         return playlists
 
@@ -104,15 +105,14 @@ class LibraryMixin(MixinProtocol):
                 )
             else:
                 remaining_limit = None if limit is None else (limit - len(songs))
-                songs.extend(
-                    get_continuations(
-                        results,
-                        "musicShelfContinuation",
-                        remaining_limit,
-                        request_continuations_func,
-                        parse_continuations_func,
-                    )
+                _, gc_result = get_continuations(
+                    results,
+                    "musicShelfContinuation",
+                    remaining_limit,
+                    request_continuations_func,
+                    parse_continuations_func,
                 )
+                songs.extend(gc_result)
 
         return songs
 

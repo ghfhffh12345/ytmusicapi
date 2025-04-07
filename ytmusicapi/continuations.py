@@ -25,7 +25,7 @@ def get_continuations_2025(results, limit, request_func, parse_func):
         items.extend(contents)
         continuation_token = get_continuation_token(continuation_items)
 
-    return items
+    return continuation_token, items
 
 
 def get_continuations(
@@ -48,7 +48,7 @@ def get_continuations(
             break
         items.extend(contents)
 
-    return items
+    return results, items
 
 
 def get_validated_continuations(

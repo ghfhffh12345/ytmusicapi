@@ -41,9 +41,10 @@ def parse_library_albums(response, request_func, limit):
     if "continuations" in results:
         parse_func = lambda contents: parse_albums(contents)
         remaining_limit = None if limit is None else (limit - len(albums))
-        albums.extend(
-            get_continuations(results, "gridContinuation", remaining_limit, request_func, parse_func)
+        _, gc_result = get_continuations(
+            results, "gridContinuation", remaining_limit, request_func, parse_func
         )
+        albums.extend(gc_result)
 
     return albums
 
@@ -74,9 +75,10 @@ def parse_library_podcasts(response, request_func, limit):
 
     if "continuations" in results:
         remaining_limit = None if limit is None else (limit - len(podcasts))
-        podcasts.extend(
-            get_continuations(results, "gridContinuation", remaining_limit, request_func, parse_func)
+        _, gc_result = get_continuations(
+            results, "gridContinuation", remaining_limit, request_func, parse_func
         )
+        podcasts.extend(gc_result)
 
     return podcasts
 
@@ -90,9 +92,10 @@ def parse_library_artists(response, request_func, limit):
     if "continuations" in results:
         parse_func = lambda contents: parse_artists(contents)
         remaining_limit = None if limit is None else (limit - len(artists))
-        artists.extend(
-            get_continuations(results, "musicShelfContinuation", remaining_limit, request_func, parse_func)
+        _, gc_result = get_continuations(
+            results, "musicShelfContinuation", remaining_limit, request_func, parse_func
         )
+        artists.extend(gc_result)
 
     return artists
 

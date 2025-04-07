@@ -89,7 +89,9 @@ def parse_audio_playlist(response: dict, limit: Optional[int], request_func) -> 
         playlist["tracks"] = parse_playlist_items(content_data["contents"])
 
         parse_func = lambda contents: parse_playlist_items(contents)
-        playlist["tracks"].extend(get_continuations_2025(content_data, limit, request_func, parse_func))
+        continuation_token, tracks = get_continuations_2025(content_data, limit, request_func, parse_func)
+        playlist["tracks"].extend(tracks)
+        playlist["continuation"] = continuation_token
 
     playlist["title"] = playlist["tracks"][0]["album"]["name"]
 

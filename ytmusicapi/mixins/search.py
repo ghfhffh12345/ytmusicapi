@@ -247,15 +247,15 @@ class SearchMixin(MixinProtocol):
                 def parse_func(contents):
                     return parse_search_results(contents, api_search_result_types, result_type, category)
 
-                search_results.extend(
-                    get_continuations(
-                        res["musicShelfRenderer"],
-                        "musicShelfContinuation",
-                        limit - len(search_results),
-                        request_func,
-                        parse_func,
-                    )
+                _, gc_result = get_continuations(
+                    res["musicShelfRenderer"],
+                    "musicShelfContinuation",
+                    limit - len(search_results),
+                    request_func,
+                    parse_func,
                 )
+
+                search_results.extend(gc_result)
 
         return search_results
 

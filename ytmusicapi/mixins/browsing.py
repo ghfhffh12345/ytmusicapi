@@ -124,11 +124,11 @@ class BrowsingMixin(MixinProtocol):
 
             parse_func = lambda contents: parse_mixed_content(contents)
 
-            home.extend(
-                get_continuations(
-                    section_list, "sectionListContinuation", limit - len(home), request_func, parse_func
-                )
+            _, gc_result = get_continuations(
+                section_list, "sectionListContinuation", limit - len(home), request_func, parse_func
             )
+
+            home.extend(gc_result)
 
         return home
 
@@ -352,9 +352,10 @@ class BrowsingMixin(MixinProtocol):
         results = nav(results, GRID, True)
         if "continuations" in results:
             remaining_limit = None if limit is None else (limit - len(albums))
-            albums.extend(
-                get_continuations(results, "gridContinuation", remaining_limit, request_func, parse_func)
+            _, gc_result = get_continuations(
+                results, "gridContinuation", remaining_limit, request_func, parse_func
             )
+            albums.extend(gc_result)
 
         return albums
 

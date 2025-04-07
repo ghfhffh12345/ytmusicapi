@@ -147,11 +147,10 @@ class PodcastsMixin(MixinProtocol):
         if "continuations" in results:
             request_func = lambda additionalParams: self._send_request(endpoint, body, additionalParams)
             remaining_limit = None if limit is None else (limit - len(episodes))
-            episodes.extend(
-                get_continuations(
-                    results, "musicShelfContinuation", remaining_limit, request_func, parse_func
-                )
+            _, gc_result = get_continuations(
+                results, "musicShelfContinuation", remaining_limit, request_func, parse_func
             )
+            episodes.extend(gc_result)
 
         podcast["episodes"] = episodes
 

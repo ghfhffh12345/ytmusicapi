@@ -171,15 +171,39 @@ class WatchMixin(MixinProtocol):
         if "continuations" in results:
             request_func = lambda additionalParams: self._send_request(endpoint, body, additionalParams)
             parse_func = lambda contents: parse_watch_playlist(contents)
-            tracks.extend(
-                get_continuations(
-                    results,
-                    "playlistPanelContinuation",
-                    limit - len(tracks),
-                    request_func,
-                    parse_func,
-                    "" if is_playlist else "Radio",
-                )
+            playlistPanelContinuation, gc_result = get_continuations(
+                results,
+                "playlistPanelContinuation",
+                limit - len(tracks),
+                request_func,
+                parse_func,
+                "" if is_playlist else "Radio",
             )
+            tracks.extend(gc_result)
 
-        return dict(tracks=tracks, playlistId=playlist, lyrics=lyrics_browse_id, related=related_browse_id)
+        return dict(
+            tracks=tracks,
+            playlistId=playlist,
+            lyrics=lyrics_browse_id,
+            related=related_browse_id,
+            playlistPanelContinuation=playlistPanelContinuation,
+        )
+
+    def continue_watch_playlist(self, playlistPanelContinuation, limit=25):
+        body = {
+            "enablePersistentPlaylistPanel": True,
+            "isAudioOnly": True,
+            "tunerSettingValue": "AUTOMIX_SETTING_NORMAL",
+        }
+
+        request_func = lambda additionalParams: self._send_request("next", body, additionalParams)
+        parse_func = lambda contents: parse_watch_playlist(contents)
+
+        return get_continuations(
+            playlistPanelContinuation,
+            "playlistPanelContinuation",
+            limit,
+            request_func,
+            parse_func,
+            "Radio",
+        )

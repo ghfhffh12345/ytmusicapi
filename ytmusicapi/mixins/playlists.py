@@ -157,16 +157,15 @@ class PlaylistsMixin(MixinProtocol):
                 playlist["suggestions"] = get_continuation_contents(suggestions_shelf, parse_func)
 
                 parse_func = lambda results: parse_playlist_items(results)
-                playlist["suggestions"].extend(
-                    get_continuations(
-                        suggestions_shelf,
-                        "musicShelfContinuation",
-                        suggestions_limit - len(playlist["suggestions"]),
-                        request_func,
-                        parse_func,
-                        reloadable=True,
-                    )
+                _, gc_result = get_continuations(
+                    suggestions_shelf,
+                    "musicShelfContinuation",
+                    suggestions_limit - len(playlist["suggestions"]),
+                    request_func,
+                    parse_func,
+                    reloadable=True,
                 )
+                playlist["suggestions"].extend(gc_result)
 
             if related:
                 response = request_func(additionalParams)
@@ -183,12 +182,19 @@ class PlaylistsMixin(MixinProtocol):
             playlist["tracks"] = parse_playlist_items(content_data["contents"])
 
             parse_func = lambda contents: parse_playlist_items(contents)
-            playlist["tracks"].extend(
-                get_continuations_2025(content_data, limit, request_func_continuations, parse_func)
+            continuation_token, tracks = get_continuations_2025(
+                content_data, limit, request_func_continuations, parse_func
             )
+            playlist["tracks"].extend(tracks)
+            playlist["continuation"] = continuation_token
 
         playlist["duration_seconds"] = sum_total_duration(playlist)
         return playlist
+
+    def continue_playlist(self, continuation: str, limit: Optional[int] = 100):
+        request_func_continuations = lambda body: self._send_request("browse", body)
+        parse_func = lambda contents: parse_playlist_items(contents)
+        return get_continuations_2025(continuation, limit, request_func_continuations, parse_func)
 
     def get_liked_songs(self, limit: int = 100) -> dict:
         """
