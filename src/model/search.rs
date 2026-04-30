@@ -45,10 +45,12 @@ impl SearchResultType {
 pub enum SearchResult {
     Song(SongResult),
     Video(VideoResult),
+    Episode(VideoResult),
     Album(AlbumResult),
     Artist(ArtistResult),
     Profile(ProfileResult),
     Playlist(PlaylistResult),
+    Podcast(PlaylistResult),
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize)]

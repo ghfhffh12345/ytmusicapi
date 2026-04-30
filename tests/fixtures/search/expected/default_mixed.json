@@ -163,7 +163,6 @@
     "author": "misterepicpants",
     "browseId": "VLPLdXJrX9OsbOVq2TKvUc3xGUp2Rm8nTUVh",
     "category": null,
-    "itemCount": "misterepicpants",
     "resultType": "playlist",
     "thumbnails": [
       {
@@ -228,7 +227,6 @@
     "author": "Brandon G",
     "browseId": "VLPL5A-FXHBxgj3Gfluaje-MuhXC5iBsZF5w",
     "category": null,
-    "itemCount": "Brandon",
     "resultType": "playlist",
     "thumbnails": [
       {
@@ -253,7 +251,6 @@
     "author": "Dafterlisto",
     "browseId": "VLPLWChTSolz3cQqS34W3G_NrEUVKPb82MgD",
     "category": null,
-    "itemCount": "Dafterlisto",
     "resultType": "playlist",
     "thumbnails": [
       {
@@ -383,7 +380,7 @@
     "author": "YouTube Music",
     "browseId": "VLRDCLAK5uy_n20FRYQXNt1p1wS55Nj2r14IouO5weaYU",
     "category": null,
-    "itemCount": "YouTube",
+    "itemCount": "35",
     "resultType": "playlist",
     "thumbnails": [
       {
@@ -430,10 +427,11 @@
     "videoType": "MUSIC_VIDEO_TYPE_PODCAST_EPISODE"
   },
   {
-    "artist": "daft punk",
     "browseId": "UCqYzmWVTHBszT8J3VGC1zIw",
     "category": null,
-    "resultType": "artist",
+    "handle": "@daftpunk7519",
+    "name": "daft punk",
+    "resultType": "profile",
     "thumbnails": [
       {
         "height": 60,
@@ -448,10 +446,11 @@
     ]
   },
   {
-    "artist": "Daft punk discovery1234",
     "browseId": "UCMAe-IuKNTtLPlZyaqv4fXQ",
     "category": null,
-    "resultType": "artist",
+    "handle": "@Djismaill902",
+    "name": "Daft punk discovery1234",
+    "resultType": "profile",
     "thumbnails": [
       {
         "height": 60,
@@ -466,10 +465,11 @@
     ]
   },
   {
-    "artist": "DAFT PUNK ME",
     "browseId": "UCQh3zCs8lE-WWQemrUMrlsg",
     "category": null,
-    "resultType": "artist",
+    "handle": "@claudiachuraaruquipa",
+    "name": "DAFT PUNK ME",
+    "resultType": "profile",
     "thumbnails": [
       {
         "height": 60,
@@ -487,7 +487,7 @@
     "author": "YouTube Music",
     "browseId": "VLRDCLAK5uy_l607eBFIYRZ_itkDW19eigUzFefu5bJ6Y",
     "category": null,
-    "itemCount": "YouTube",
+    "itemCount": "98",
     "resultType": "playlist",
     "thumbnails": [
       {
@@ -517,7 +517,7 @@
     "author": "YouTube Music",
     "browseId": "VLRDCLAK5uy_lfTOUBaGMSEoO2The1XiaG75RghLtrVtM",
     "category": null,
-    "itemCount": "YouTube",
+    "itemCount": "113",
     "resultType": "playlist",
     "thumbnails": [
       {

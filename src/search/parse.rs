@@ -253,7 +253,7 @@ fn parse_episode_result(
         .get(2)
         .ok_or_else(|| Error::Parse("search response missing episode podcast".to_owned()))?;
 
-    Ok(SearchResult::Video(VideoResult {
+    Ok(SearchResult::Episode(VideoResult {
         category,
         result_type: SearchResultType::Episode,
         title,
@@ -280,7 +280,7 @@ fn parse_podcast_result(
     category: Option<String>,
     title: String,
 ) -> Result<SearchResult, Error> {
-    Ok(SearchResult::Playlist(PlaylistResult {
+    Ok(SearchResult::Podcast(PlaylistResult {
         category,
         result_type: SearchResultType::Podcast,
         browse_id: required_text(renderer, "/navigationEndpoint/browseEndpoint/browseId")?,
@@ -373,4 +373,93 @@ fn required_value_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a Value, E
     value
         .pointer(pointer)
         .ok_or_else(|| Error::Parse(format!("search response missing {pointer}")))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::parse_search_response;
+    use crate::{Error, SearchFilter, SearchResult};
+    use serde_json::Value;
+
+    fn parse_default_mixed() -> Vec<SearchResult> {
+        let response: Value = serde_json::from_str(include_str!(
+            "../../tests/fixtures/search/raw/default_mixed.json"
+        ))
+        .unwrap();
+
+        parse_search_response(&response, None).unwrap()
+    }
+
+    fn expected_default_mixed() -> Value {
+        serde_json::from_str(include_str!(
+            "../../tests/fixtures/search/expected/default_mixed.json"
+        ))
+        .unwrap()
+    }
+
+    #[test]
+    fn default_mixed_fixture_matches_expected_snapshot() {
+        let parsed = parse_default_mixed();
+
+        assert_eq!(
+            serde_json::to_value(parsed).unwrap(),
+            expected_default_mixed()
+        );
+    }
+
+    #[test]
+    fn default_mixed_fixture_preserves_critical_invariants() {
+        let parsed = parse_default_mixed();
+
+        assert!(matches!(
+            &parsed[5],
+            SearchResult::Playlist(result)
+                if result.title == "Best Of Daft Punk"
+                    && result.author.as_deref() == Some("misterepicpants")
+                    && result.item_count.is_none()
+        ));
+        assert!(matches!(
+            &parsed[14],
+            SearchResult::Playlist(result)
+                if result.title == "Presenting Daft Punk"
+                    && result.author.as_deref() == Some("YouTube Music")
+                    && result.item_count.as_deref() == Some("35")
+        ));
+        assert!(matches!(
+            &parsed[16],
+            SearchResult::Profile(result)
+                if result.name == "daft punk"
+                    && result.handle == "@daftpunk7519"
+                    && result.browse_id == "UCqYzmWVTHBszT8J3VGC1zIw"
+        ));
+        assert!(matches!(
+            &parsed[10],
+            SearchResult::Episode(result)
+                if result
+                    .podcast
+                    .as_ref()
+                    .map(|podcast| podcast.name.as_str())
+                    == Some("🌟 Funkzone Sound – Future Funk Podcast 🌟")
+        ));
+        assert!(matches!(
+            &parsed[21],
+            SearchResult::Podcast(result) if result.title == "off Track Podcast Season 2"
+        ));
+    }
+
+    #[test]
+    fn parse_search_response_rejects_filtered_queries() {
+        let response: Value = serde_json::from_str(include_str!(
+            "../../tests/fixtures/search/raw/default_mixed.json"
+        ))
+        .unwrap();
+
+        let error = parse_search_response(&response, Some(SearchFilter::Songs)).unwrap_err();
+
+        assert!(matches!(
+            error,
+            Error::UnsupportedFeature(message)
+                if message == "search parser currently supports only default mixed responses"
+        ));
+    }
 }
