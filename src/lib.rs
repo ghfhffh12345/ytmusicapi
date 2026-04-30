@@ -5,4 +5,4 @@ pub(crate) mod search;
 
 pub use crate::client::{YtMusic, YtMusicBuilder};
 pub use crate::error::Error;
-pub use crate::model::search::{SearchFilter, SearchQuery};
+pub use crate::model::search::{SearchFilter, SearchQuery, SearchResult};

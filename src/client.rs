@@ -4,9 +4,8 @@ use reqwest::{Client, header};
 use tokio::sync::OnceCell;
 
 use crate::{
-    Error, SearchQuery,
+    Error, SearchQuery, SearchResult,
     search::{
-        SearchResult,
         request::{USER_AGENT, bootstrap_visitor_id, build_search_body},
     },
 };

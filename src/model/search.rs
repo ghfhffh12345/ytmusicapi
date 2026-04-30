@@ -9,6 +9,11 @@ pub enum SearchFilter {
     Playlists,
 }
 
+#[derive(Clone, Debug, PartialEq)]
+pub struct SearchResult {
+    pub(crate) raw: serde_json::Value,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SearchQuery {
     pub query: String,
