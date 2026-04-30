@@ -3,7 +3,6 @@ use reqwest::Client;
 use crate::Error;
 
 #[derive(Clone, Debug)]
-#[allow(dead_code)]
 pub struct YtMusic {
     pub(crate) http_client: Client,
     pub(crate) base_url: String,
@@ -24,6 +23,18 @@ impl YtMusic {
 
     pub fn builder() -> YtMusicBuilder {
         YtMusicBuilder::default()
+    }
+
+    pub fn http_client(&self) -> &Client {
+        &self.http_client
+    }
+
+    pub fn base_url(&self) -> &str {
+        &self.base_url
+    }
+
+    pub fn homepage_url(&self) -> &str {
+        &self.homepage_url
     }
 }
 
