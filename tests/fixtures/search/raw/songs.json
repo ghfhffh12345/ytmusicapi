@@ -1,0 +1,113 @@
+{
+  "contents": {
+    "tabbedSearchResultsRenderer": {
+      "tabs": [
+        {
+          "tabRenderer": {
+            "content": {
+              "sectionListRenderer": {
+                "contents": [
+                  {
+                    "itemSectionRenderer": {
+                      "contents": [
+                        {
+                          "messageRenderer": {
+                            "icon": {
+                              "iconType": "SEARCH"
+                            },
+                            "subtext": {
+                              "messageSubtextRenderer": {
+                                "text": {
+                                  "runs": [
+                                    {
+                                      "text": "Try different keywords"
+                                    }
+                                  ]
+                                }
+                              }
+                            },
+                            "text": {
+                              "runs": [
+                                {
+                                  "text": "No results for "
+                                },
+                                {
+                                  "bold": true,
+                                  "text": "hip hop playlist"
+                                },
+                                {
+                                  "text": "."
+                                }
+                              ]
+                            },
+                            "trackingParams": "CAQQ-pUBGAAiEwi3naaH85WUAxXkvlYBHUeYEVg="
+                          }
+                        }
+                      ],
+                      "trackingParams": "CAMQuy8YACITCLedpofzlZQDFeS-VgEdR5gRWA=="
+                    }
+                  }
+                ],
+                "trackingParams": "CAIQui8iEwi3naaH85WUAxXkvlYBHUeYEVg="
+              }
+            },
+            "selected": true,
+            "tabIdentifier": "music_search_catalog",
+            "title": "YT Music",
+            "trackingParams": "CAEQ8JMBGAAiEwi3naaH85WUAxXkvlYBHUeYEVg="
+          }
+        }
+      ]
+    }
+  },
+  "responseContext": {
+    "maxAgeSeconds": 120,
+    "responseId": "IhMIt52mh_OVlAMV5L5WAR1HmBFY",
+    "serviceTrackingParams": [
+      {
+        "params": [
+          {
+            "key": "c",
+            "value": "WEB_REMIX"
+          },
+          {
+            "key": "cver",
+            "value": "1.20260430.01.00"
+          },
+          {
+            "key": "yt_li",
+            "value": "0"
+          },
+          {
+            "key": "GetSearch_rid",
+            "value": "0xc00659694a4d716c"
+          }
+        ],
+        "service": "CSI"
+      },
+      {
+        "params": [
+          {
+            "key": "logged_in",
+            "value": "0"
+          }
+        ],
+        "service": "GFEEDBACK"
+      },
+      {
+        "params": [
+          {
+            "key": "client.version",
+            "value": "1.20000101"
+          },
+          {
+            "key": "client.name",
+            "value": "WEB_REMIX"
+          }
+        ],
+        "service": "ECATCHER"
+      }
+    ]
+  },
+  "trackingParams": "CAAQvGkiEwi3naaH85WUAxXkvlYBHUeYEVjKAQSKXiF5"
+}

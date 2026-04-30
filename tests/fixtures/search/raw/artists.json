@@ -1,0 +1,147 @@
+{
+  "contents": {
+    "tabbedSearchResultsRenderer": {
+      "tabs": [
+        {
+          "tabRenderer": {
+            "content": {
+              "sectionListRenderer": {
+                "contents": [
+                  {
+                    "itemSectionRenderer": {
+                      "contents": [
+                        {
+                          "didYouMeanRenderer": {
+                            "correctedQuery": {
+                              "runs": [
+                                {
+                                  "italics": true,
+                                  "text": "armin"
+                                },
+                                {
+                                  "text": " van "
+                                },
+                                {
+                                  "italics": true,
+                                  "text": "buuren"
+                                }
+                              ]
+                            },
+                            "correctedQueryEndpoint": {
+                              "clickTrackingParams": "CAUQ7jAYACITCIi5kojzlZQDFZmsVgEdyHQlTsoBBIpeIXk=",
+                              "searchEndpoint": {
+                                "params": "EgWKAQIgAWoMEA4QChADEAQQCRAF",
+                                "query": "armin van buuren"
+                              }
+                            },
+                            "didYouMean": {
+                              "runs": [
+                                {
+                                  "text": "Did you mean:"
+                                }
+                              ]
+                            },
+                            "trackingParams": "CAUQ7jAYACITCIi5kojzlZQDFZmsVgEdyHQlTg=="
+                          }
+                        },
+                        {
+                          "messageRenderer": {
+                            "icon": {
+                              "iconType": "SEARCH"
+                            },
+                            "subtext": {
+                              "messageSubtextRenderer": {
+                                "text": {
+                                  "runs": [
+                                    {
+                                      "text": "Try different keywords"
+                                    }
+                                  ]
+                                }
+                              }
+                            },
+                            "text": {
+                              "runs": [
+                                {
+                                  "text": "No results for "
+                                },
+                                {
+                                  "bold": true,
+                                  "text": "armen van buren"
+                                },
+                                {
+                                  "text": "."
+                                }
+                              ]
+                            },
+                            "trackingParams": "CAQQ-pUBGAEiEwiIuZKI85WUAxWZrFYBHch0JU4="
+                          }
+                        }
+                      ],
+                      "trackingParams": "CAMQuy8YACITCIi5kojzlZQDFZmsVgEdyHQlTg=="
+                    }
+                  }
+                ],
+                "trackingParams": "CAIQui8iEwiIuZKI85WUAxWZrFYBHch0JU4="
+              }
+            },
+            "selected": true,
+            "tabIdentifier": "music_search_catalog",
+            "title": "YT Music",
+            "trackingParams": "CAEQ8JMBGAAiEwiIuZKI85WUAxWZrFYBHch0JU4="
+          }
+        }
+      ]
+    }
+  },
+  "responseContext": {
+    "maxAgeSeconds": 120,
+    "responseId": "IhMIiLmSiPOVlAMVmaxWAR3IdCVO",
+    "serviceTrackingParams": [
+      {
+        "params": [
+          {
+            "key": "c",
+            "value": "WEB_REMIX"
+          },
+          {
+            "key": "cver",
+            "value": "1.20260430.01.00"
+          },
+          {
+            "key": "yt_li",
+            "value": "0"
+          },
+          {
+            "key": "GetSearch_rid",
+            "value": "0x5f72387da1ef2e5e"
+          }
+        ],
+        "service": "CSI"
+      },
+      {
+        "params": [
+          {
+            "key": "logged_in",
+            "value": "0"
+          }
+        ],
+        "service": "GFEEDBACK"
+      },
+      {
+        "params": [
+          {
+            "key": "client.version",
+            "value": "1.20000101"
+          },
+          {
+            "key": "client.name",
+            "value": "WEB_REMIX"
+          }
+        ],
+        "service": "ECATCHER"
+      }
+    ]
+  },
+  "trackingParams": "CAAQvGkiEwiIuZKI85WUAxWZrFYBHch0JU7KAQSKXiF5"
+}
