@@ -50,12 +50,11 @@ pub fn build_search_body(query: &SearchQuery) -> Value {
 fn parse_visitor_id(body: &str) -> Option<String> {
     for (start, _) in body.match_indices(YTCFG_SET_MARKER) {
         let remainder = body.get(start..)?;
-        if let Some(json) = extract_ytcfg_json(remainder) {
-            if let Ok(config) = serde_json::from_str::<Value>(json) {
-                if let Some(visitor_id) = config.get("VISITOR_DATA").and_then(Value::as_str) {
-                    return Some(visitor_id.to_owned());
-                }
-            }
+        if let Some(json) = extract_ytcfg_json(remainder)
+            && let Ok(config) = serde_json::from_str::<Value>(json)
+            && let Some(visitor_id) = config.get("VISITOR_DATA").and_then(Value::as_str)
+        {
+            return Some(visitor_id.to_owned());
         }
     }
 

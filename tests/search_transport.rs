@@ -163,6 +163,43 @@ async fn invalid_json_response_is_reported() {
 }
 
 #[tokio::test]
+async fn structurally_invalid_json_response_is_parse_error() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123" });"#),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(query_param("alt", "json"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "contents": {}
+        })))
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let error = client.search(SearchQuery::new("abba")).await.unwrap_err();
+    match error {
+        Error::Parse(message) => {
+            assert!(message.contains("tabbedSearchResultsRenderer"));
+        }
+        other => panic!("expected Parse error, got {other:?}"),
+    }
+}
+
+#[tokio::test]
 async fn server_status_is_mapped_to_status_error() {
     let server = MockServer::start().await;
 

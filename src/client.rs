@@ -77,8 +77,9 @@ impl YtMusic {
             return Err(Error::HttpStatus { status, message });
         }
 
-        let _: serde_json::Value =
+        let response_json: serde_json::Value =
             serde_json::from_str(&response_body).map_err(Error::JsonDecode)?;
+        validate_search_response_structure(&response_json)?;
 
         Ok(Vec::new())
     }
@@ -130,4 +131,16 @@ fn extract_status_message(response_body: &str) -> String {
                 .map(str::to_owned)
         })
         .unwrap_or_else(|| response_body.to_owned())
+}
+
+fn validate_search_response_structure(response_json: &serde_json::Value) -> Result<(), Error> {
+    match response_json
+        .pointer("/contents/tabbedSearchResultsRenderer")
+        .and_then(serde_json::Value::as_object)
+    {
+        Some(_) => Ok(()),
+        None => Err(Error::Parse(
+            "search response missing contents.tabbedSearchResultsRenderer".to_owned(),
+        )),
+    }
 }
