@@ -1,12 +1,22 @@
-use reqwest::Client;
+use std::sync::Arc;
 
-use crate::Error;
+use reqwest::{Client, header};
+use tokio::sync::OnceCell;
+
+use crate::{
+    Error, SearchQuery,
+    search::{
+        SearchResult,
+        request::{USER_AGENT, bootstrap_visitor_id, build_search_body},
+    },
+};
 
 #[derive(Clone, Debug)]
 pub struct YtMusic {
     pub(crate) http_client: Client,
     pub(crate) base_url: String,
     pub(crate) homepage_url: String,
+    pub(crate) visitor_id: Arc<OnceCell<String>>,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -35,6 +45,43 @@ impl YtMusic {
 
     pub fn homepage_url(&self) -> &str {
         &self.homepage_url
+    }
+
+    pub async fn search(&self, query: SearchQuery) -> Result<Vec<SearchResult>, Error> {
+        query.validate()?;
+
+        let visitor_id = self
+            .visitor_id
+            .get_or_try_init(|| async {
+                bootstrap_visitor_id(&self.http_client, &self.homepage_url).await
+            })
+            .await?;
+
+        let url = format!("{}/search?alt=json", self.base_url.trim_end_matches('/'));
+        let body = build_search_body(&query).to_string();
+        let response = self
+            .http_client
+            .post(url)
+            .header(header::CONTENT_TYPE, "application/json")
+            .header(header::USER_AGENT, USER_AGENT)
+            .header("x-goog-visitor-id", visitor_id)
+            .body(body)
+            .send()
+            .await
+            .map_err(Error::HttpTransport)?;
+
+        let status = response.status();
+        let response_body = response.text().await.map_err(Error::HttpTransport)?;
+
+        if !status.is_success() {
+            let message = extract_status_message(&response_body);
+            return Err(Error::HttpStatus { status, message });
+        }
+
+        let _: serde_json::Value =
+            serde_json::from_str(&response_body).map_err(Error::JsonDecode)?;
+
+        Ok(Vec::new())
     }
 }
 
@@ -68,6 +115,20 @@ impl YtMusicBuilder {
             homepage_url: self
                 .homepage_url
                 .unwrap_or_else(|| "https://music.youtube.com".to_owned()),
+            visitor_id: Arc::new(OnceCell::new()),
         })
     }
+}
+
+fn extract_status_message(response_body: &str) -> String {
+    serde_json::from_str::<serde_json::Value>(response_body)
+        .ok()
+        .and_then(|value| {
+            value
+                .get("error")
+                .and_then(|error| error.get("message"))
+                .and_then(serde_json::Value::as_str)
+                .map(str::to_owned)
+        })
+        .unwrap_or_else(|| response_body.to_owned())
 }
