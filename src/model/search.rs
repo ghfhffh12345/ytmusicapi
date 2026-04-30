@@ -1,5 +1,6 @@
 use crate::{Error, search::params::encode_search_params};
 
+#[non_exhaustive]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum SearchFilter {
     Songs,

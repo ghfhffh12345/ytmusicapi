@@ -1,6 +1,6 @@
 mod client;
 mod error;
-pub mod model;
+mod model;
 pub(crate) mod search;
 
 pub use crate::client::{YtMusic, YtMusicBuilder};
