@@ -630,6 +630,45 @@
         "name": "Eminem"
       }
     ],
+    "browseId": "MPREb_4pL8gzRtw1p",
+    "category": "Albums",
+    "duration": null,
+    "isExplicit": true,
+    "playlistId": "OLAK5uy_nMr9h2VlS-2PULNz3M3XVXQj_P3C2bqaY",
+    "resultType": "album",
+    "thumbnails": [
+      {
+        "height": 60,
+        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w60-h60-l90-rj",
+        "width": 60
+      },
+      {
+        "height": 120,
+        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w120-h120-l90-rj",
+        "width": 120
+      },
+      {
+        "height": 226,
+        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w226-h226-l90-rj",
+        "width": 226
+      },
+      {
+        "height": 544,
+        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w544-h544-l90-rj",
+        "width": 544
+      }
+    ],
+    "title": "Revival",
+    "type": "Album",
+    "year": "2017"
+  },
+  {
+    "artists": [
+      {
+        "id": "UCedvOgsKFzcK3hA5taf3KoQ",
+        "name": "Eminem"
+      }
+    ],
     "browseId": "MPREb_2kf42kzdMwc",
     "category": "Albums",
     "duration": null,
@@ -700,45 +739,6 @@
     "title": "The Relapse 2",
     "type": "Album",
     "year": "2022"
-  },
-  {
-    "artists": [
-      {
-        "id": "UCedvOgsKFzcK3hA5taf3KoQ",
-        "name": "Eminem"
-      }
-    ],
-    "browseId": "MPREb_4pL8gzRtw1p",
-    "category": "Albums",
-    "duration": null,
-    "isExplicit": true,
-    "playlistId": "OLAK5uy_nMr9h2VlS-2PULNz3M3XVXQj_P3C2bqaY",
-    "resultType": "album",
-    "thumbnails": [
-      {
-        "height": 60,
-        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w60-h60-l90-rj",
-        "width": 60
-      },
-      {
-        "height": 120,
-        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w120-h120-l90-rj",
-        "width": 120
-      },
-      {
-        "height": 226,
-        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w226-h226-l90-rj",
-        "width": 226
-      },
-      {
-        "height": 544,
-        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w544-h544-l90-rj",
-        "width": 544
-      }
-    ],
-    "title": "Revival",
-    "type": "Album",
-    "year": "2017"
   },
   {
     "artists": [

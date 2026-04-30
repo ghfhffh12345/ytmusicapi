@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 from ytmusicapi import YTMusic
 
@@ -14,14 +13,15 @@ class FixtureCase:
     query: str
     filter_name: str | None = None
     ignore_spelling: bool = False
-    mode: str = "search"
 
 
 FIXTURE_CASES = [
     FixtureCase("default_mixed", "daft punk"),
-    # Anonymous YT Music `filter='songs'` results are currently empty in this environment,
-    # so capture stable song-shaped fixtures from a known-good album query instead.
-    FixtureCase("songs", "abba gold", mode="album_tracks"),
+    # Reference-only anonymous search capture: upstream filtered song search is unstable
+    # in this environment, so the parsed result may legitimately remain empty.
+    FixtureCase("songs", "ABBA", "songs"),
+    # Reference-only anonymous search capture: upstream filtered video search is also
+    # unstable here, but this must stay tied to a real anonymous `search()` response.
     FixtureCase("videos", "butter bts topic", "videos"),
     FixtureCase("albums", "eminem relapse", "albums"),
     FixtureCase("artists", "armin van buuren", "artists"),
@@ -40,17 +40,7 @@ class RecordingYTMusic(YTMusic):
         return response
 
 
-def duration_to_seconds(duration: str | None) -> int | None:
-    if not duration:
-        return None
-
-    total = 0
-    for part in duration.split(":"):
-        total = (total * 60) + int(part)
-    return total
-
-
-def capture_search_case(client: RecordingYTMusic, case: FixtureCase) -> tuple[Any, Any]:
+def capture_search_case(client: RecordingYTMusic, case: FixtureCase) -> tuple[object, object]:
     kwargs = {}
     if case.filter_name is not None:
         kwargs["filter"] = case.filter_name
@@ -58,35 +48,6 @@ def capture_search_case(client: RecordingYTMusic, case: FixtureCase) -> tuple[An
         kwargs["ignore_spelling"] = True
 
     parsed = client.search(case.query, **kwargs)
-    return client.last_response, parsed
-
-
-def capture_album_tracks_case(client: RecordingYTMusic, case: FixtureCase) -> tuple[Any, Any]:
-    albums = client.search(case.query, filter="albums", limit=1)
-    if not albums:
-        raise RuntimeError(f"no album results found for songs fixture query {case.query!r}")
-
-    browse_id = albums[0]["browseId"]
-    album = client.get_album(browse_id)
-
-    parsed = []
-    for track in album.get("tracks", []):
-        item = {
-            "album": {"id": browse_id, "name": album["title"]},
-            "artists": track.get("artists", []),
-            "category": "Songs",
-            "duration": track.get("duration"),
-            "duration_seconds": duration_to_seconds(track.get("duration")),
-            "isExplicit": track.get("isExplicit", False),
-            "resultType": "song",
-            "title": track["title"],
-        }
-        if track.get("thumbnails"):
-            item["thumbnails"] = track["thumbnails"]
-        if track.get("videoId"):
-            item["videoId"] = track["videoId"]
-        parsed.append(item)
-
     return client.last_response, parsed
 
 
@@ -100,10 +61,7 @@ def main() -> None:
     client = RecordingYTMusic()
 
     for case in FIXTURE_CASES:
-        if case.mode == "album_tracks":
-            raw, parsed = capture_album_tracks_case(client, case)
-        else:
-            raw, parsed = capture_search_case(client, case)
+        raw, parsed = capture_search_case(client, case)
 
         (raw_dir / f"{case.name}.json").write_text(json.dumps(raw, indent=2, sort_keys=True) + "\n")
         (expected_dir / f"{case.name}.json").write_text(
