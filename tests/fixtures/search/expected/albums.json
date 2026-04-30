@@ -201,45 +201,6 @@
         "name": "Eminem"
       }
     ],
-    "browseId": "MPREb_xFN2XG22AXC",
-    "category": "Albums",
-    "duration": null,
-    "isExplicit": true,
-    "playlistId": "OLAK5uy_nQY-UERFpsL1d5UTPVMjX7mtnVlKg7D4w",
-    "resultType": "album",
-    "thumbnails": [
-      {
-        "height": 60,
-        "url": "https://yt3.googleusercontent.com/oWyLklmIlgBVjLy63kmFrXfgmzK8EIwpzyXneeLu3Ly6eqB_Usf7zZhZzo-LlwbxMx4WugYNW1Lp-ec=w60-h60-l90-rj",
-        "width": 60
-      },
-      {
-        "height": 120,
-        "url": "https://yt3.googleusercontent.com/oWyLklmIlgBVjLy63kmFrXfgmzK8EIwpzyXneeLu3Ly6eqB_Usf7zZhZzo-LlwbxMx4WugYNW1Lp-ec=w120-h120-l90-rj",
-        "width": 120
-      },
-      {
-        "height": 226,
-        "url": "https://yt3.googleusercontent.com/oWyLklmIlgBVjLy63kmFrXfgmzK8EIwpzyXneeLu3Ly6eqB_Usf7zZhZzo-LlwbxMx4WugYNW1Lp-ec=w226-h226-l90-rj",
-        "width": 226
-      },
-      {
-        "height": 544,
-        "url": "https://yt3.googleusercontent.com/oWyLklmIlgBVjLy63kmFrXfgmzK8EIwpzyXneeLu3Ly6eqB_Usf7zZhZzo-LlwbxMx4WugYNW1Lp-ec=w544-h544-l90-rj",
-        "width": 544
-      }
-    ],
-    "title": "Encore",
-    "type": "Album",
-    "year": "2004"
-  },
-  {
-    "artists": [
-      {
-        "id": "UCedvOgsKFzcK3hA5taf3KoQ",
-        "name": "Eminem"
-      }
-    ],
     "browseId": "MPREb_A9oTNsEPVX4",
     "category": "Albums",
     "duration": null,
@@ -279,37 +240,76 @@
         "name": "Eminem"
       }
     ],
-    "browseId": "MPREb_LQCAymzbaKJ",
+    "browseId": "MPREb_xFN2XG22AXC",
     "category": "Albums",
     "duration": null,
     "isExplicit": true,
-    "playlistId": "OLAK5uy_lL6bP3tsOcU9Tu3zCG61my265UG4wH5wU",
+    "playlistId": "OLAK5uy_nQY-UERFpsL1d5UTPVMjX7mtnVlKg7D4w",
     "resultType": "album",
     "thumbnails": [
       {
         "height": 60,
-        "url": "https://yt3.googleusercontent.com/M3bE7uvxto_SLeAM0dVltklsikCiUxdh1-6oGlHd0x_6kuxd7pUgvjqjBJCdSc-7tSPuGo-7FGHaIOG_=w60-h60-l90-rj",
+        "url": "https://yt3.googleusercontent.com/oWyLklmIlgBVjLy63kmFrXfgmzK8EIwpzyXneeLu3Ly6eqB_Usf7zZhZzo-LlwbxMx4WugYNW1Lp-ec=w60-h60-l90-rj",
         "width": 60
       },
       {
         "height": 120,
-        "url": "https://yt3.googleusercontent.com/M3bE7uvxto_SLeAM0dVltklsikCiUxdh1-6oGlHd0x_6kuxd7pUgvjqjBJCdSc-7tSPuGo-7FGHaIOG_=w120-h120-l90-rj",
+        "url": "https://yt3.googleusercontent.com/oWyLklmIlgBVjLy63kmFrXfgmzK8EIwpzyXneeLu3Ly6eqB_Usf7zZhZzo-LlwbxMx4WugYNW1Lp-ec=w120-h120-l90-rj",
         "width": 120
       },
       {
         "height": 226,
-        "url": "https://yt3.googleusercontent.com/M3bE7uvxto_SLeAM0dVltklsikCiUxdh1-6oGlHd0x_6kuxd7pUgvjqjBJCdSc-7tSPuGo-7FGHaIOG_=w226-h226-l90-rj",
+        "url": "https://yt3.googleusercontent.com/oWyLklmIlgBVjLy63kmFrXfgmzK8EIwpzyXneeLu3Ly6eqB_Usf7zZhZzo-LlwbxMx4WugYNW1Lp-ec=w226-h226-l90-rj",
         "width": 226
       },
       {
         "height": 544,
-        "url": "https://yt3.googleusercontent.com/M3bE7uvxto_SLeAM0dVltklsikCiUxdh1-6oGlHd0x_6kuxd7pUgvjqjBJCdSc-7tSPuGo-7FGHaIOG_=w544-h544-l90-rj",
+        "url": "https://yt3.googleusercontent.com/oWyLklmIlgBVjLy63kmFrXfgmzK8EIwpzyXneeLu3Ly6eqB_Usf7zZhZzo-LlwbxMx4WugYNW1Lp-ec=w544-h544-l90-rj",
         "width": 544
       }
     ],
-    "title": "Curtain Call: The Hits",
+    "title": "Encore",
     "type": "Album",
-    "year": "2005"
+    "year": "2004"
+  },
+  {
+    "artists": [
+      {
+        "id": "UCedvOgsKFzcK3hA5taf3KoQ",
+        "name": "Eminem"
+      }
+    ],
+    "browseId": "MPREb_UeKuRTAGddf",
+    "category": "Albums",
+    "duration": null,
+    "isExplicit": true,
+    "playlistId": "OLAK5uy_lR3mlgGuxHFQbtHNDNIqP53xhU1GckBNs",
+    "resultType": "album",
+    "thumbnails": [
+      {
+        "height": 60,
+        "url": "https://yt3.googleusercontent.com/567tP7HQCfh3Aip6wsFdu89mHVYBO8DRAD1_ubtqo-p97Pwt4hJbDEeUmlmNeXwbxdSv0aPtaUIgFyIO9w=w60-h60-l90-rj",
+        "width": 60
+      },
+      {
+        "height": 120,
+        "url": "https://yt3.googleusercontent.com/567tP7HQCfh3Aip6wsFdu89mHVYBO8DRAD1_ubtqo-p97Pwt4hJbDEeUmlmNeXwbxdSv0aPtaUIgFyIO9w=w120-h120-l90-rj",
+        "width": 120
+      },
+      {
+        "height": 226,
+        "url": "https://yt3.googleusercontent.com/567tP7HQCfh3Aip6wsFdu89mHVYBO8DRAD1_ubtqo-p97Pwt4hJbDEeUmlmNeXwbxdSv0aPtaUIgFyIO9w=w226-h226-l90-rj",
+        "width": 226
+      },
+      {
+        "height": 544,
+        "url": "https://yt3.googleusercontent.com/567tP7HQCfh3Aip6wsFdu89mHVYBO8DRAD1_ubtqo-p97Pwt4hJbDEeUmlmNeXwbxdSv0aPtaUIgFyIO9w=w544-h544-l90-rj",
+        "width": 544
+      }
+    ],
+    "title": "The Marshall Mathers LP2 (Expanded Edition)",
+    "type": "Album",
+    "year": "2023"
   },
   {
     "artists": [
@@ -357,37 +357,37 @@
         "name": "Eminem"
       }
     ],
-    "browseId": "MPREb_UeKuRTAGddf",
+    "browseId": "MPREb_LQCAymzbaKJ",
     "category": "Albums",
     "duration": null,
     "isExplicit": true,
-    "playlistId": "OLAK5uy_lR3mlgGuxHFQbtHNDNIqP53xhU1GckBNs",
+    "playlistId": "OLAK5uy_lL6bP3tsOcU9Tu3zCG61my265UG4wH5wU",
     "resultType": "album",
     "thumbnails": [
       {
         "height": 60,
-        "url": "https://yt3.googleusercontent.com/567tP7HQCfh3Aip6wsFdu89mHVYBO8DRAD1_ubtqo-p97Pwt4hJbDEeUmlmNeXwbxdSv0aPtaUIgFyIO9w=w60-h60-l90-rj",
+        "url": "https://yt3.googleusercontent.com/M3bE7uvxto_SLeAM0dVltklsikCiUxdh1-6oGlHd0x_6kuxd7pUgvjqjBJCdSc-7tSPuGo-7FGHaIOG_=w60-h60-l90-rj",
         "width": 60
       },
       {
         "height": 120,
-        "url": "https://yt3.googleusercontent.com/567tP7HQCfh3Aip6wsFdu89mHVYBO8DRAD1_ubtqo-p97Pwt4hJbDEeUmlmNeXwbxdSv0aPtaUIgFyIO9w=w120-h120-l90-rj",
+        "url": "https://yt3.googleusercontent.com/M3bE7uvxto_SLeAM0dVltklsikCiUxdh1-6oGlHd0x_6kuxd7pUgvjqjBJCdSc-7tSPuGo-7FGHaIOG_=w120-h120-l90-rj",
         "width": 120
       },
       {
         "height": 226,
-        "url": "https://yt3.googleusercontent.com/567tP7HQCfh3Aip6wsFdu89mHVYBO8DRAD1_ubtqo-p97Pwt4hJbDEeUmlmNeXwbxdSv0aPtaUIgFyIO9w=w226-h226-l90-rj",
+        "url": "https://yt3.googleusercontent.com/M3bE7uvxto_SLeAM0dVltklsikCiUxdh1-6oGlHd0x_6kuxd7pUgvjqjBJCdSc-7tSPuGo-7FGHaIOG_=w226-h226-l90-rj",
         "width": 226
       },
       {
         "height": 544,
-        "url": "https://yt3.googleusercontent.com/567tP7HQCfh3Aip6wsFdu89mHVYBO8DRAD1_ubtqo-p97Pwt4hJbDEeUmlmNeXwbxdSv0aPtaUIgFyIO9w=w544-h544-l90-rj",
+        "url": "https://yt3.googleusercontent.com/M3bE7uvxto_SLeAM0dVltklsikCiUxdh1-6oGlHd0x_6kuxd7pUgvjqjBJCdSc-7tSPuGo-7FGHaIOG_=w544-h544-l90-rj",
         "width": 544
       }
     ],
-    "title": "The Marshall Mathers LP2 (Expanded Edition)",
+    "title": "Curtain Call: The Hits",
     "type": "Album",
-    "year": "2023"
+    "year": "2005"
   },
   {
     "artists": [
@@ -435,45 +435,6 @@
         "name": "Eminem"
       }
     ],
-    "browseId": "MPREb_xz8bbrE3RP7",
-    "category": "Albums",
-    "duration": null,
-    "isExplicit": true,
-    "playlistId": "OLAK5uy_m7SR1Tcnj6GBV0Nq1sZko2Wct11MUGrNE",
-    "resultType": "album",
-    "thumbnails": [
-      {
-        "height": 60,
-        "url": "https://yt3.googleusercontent.com/B1N8NXaM93AU45Jwma_drzsPUN5IV9TGm2i4uFBjFeBP6qVVzvZdf09Xj54c_vTaMURvWG-jYYC-D1k=w60-h60-l90-rj",
-        "width": 60
-      },
-      {
-        "height": 120,
-        "url": "https://yt3.googleusercontent.com/B1N8NXaM93AU45Jwma_drzsPUN5IV9TGm2i4uFBjFeBP6qVVzvZdf09Xj54c_vTaMURvWG-jYYC-D1k=w120-h120-l90-rj",
-        "width": 120
-      },
-      {
-        "height": 226,
-        "url": "https://yt3.googleusercontent.com/B1N8NXaM93AU45Jwma_drzsPUN5IV9TGm2i4uFBjFeBP6qVVzvZdf09Xj54c_vTaMURvWG-jYYC-D1k=w226-h226-l90-rj",
-        "width": 226
-      },
-      {
-        "height": 544,
-        "url": "https://yt3.googleusercontent.com/B1N8NXaM93AU45Jwma_drzsPUN5IV9TGm2i4uFBjFeBP6qVVzvZdf09Xj54c_vTaMURvWG-jYYC-D1k=w544-h544-l90-rj",
-        "width": 544
-      }
-    ],
-    "title": "The Marshall Mathers LP2",
-    "type": "Album",
-    "year": "2013"
-  },
-  {
-    "artists": [
-      {
-        "id": "UCedvOgsKFzcK3hA5taf3KoQ",
-        "name": "Eminem"
-      }
-    ],
     "browseId": "MPREb_u1CGn06jajC",
     "category": "Albums",
     "duration": null,
@@ -505,6 +466,45 @@
     "title": "The Slim Shady LP (Expanded Edition)",
     "type": "Album",
     "year": "1999"
+  },
+  {
+    "artists": [
+      {
+        "id": "UCedvOgsKFzcK3hA5taf3KoQ",
+        "name": "Eminem"
+      }
+    ],
+    "browseId": "MPREb_xz8bbrE3RP7",
+    "category": "Albums",
+    "duration": null,
+    "isExplicit": true,
+    "playlistId": "OLAK5uy_m7SR1Tcnj6GBV0Nq1sZko2Wct11MUGrNE",
+    "resultType": "album",
+    "thumbnails": [
+      {
+        "height": 60,
+        "url": "https://yt3.googleusercontent.com/B1N8NXaM93AU45Jwma_drzsPUN5IV9TGm2i4uFBjFeBP6qVVzvZdf09Xj54c_vTaMURvWG-jYYC-D1k=w60-h60-l90-rj",
+        "width": 60
+      },
+      {
+        "height": 120,
+        "url": "https://yt3.googleusercontent.com/B1N8NXaM93AU45Jwma_drzsPUN5IV9TGm2i4uFBjFeBP6qVVzvZdf09Xj54c_vTaMURvWG-jYYC-D1k=w120-h120-l90-rj",
+        "width": 120
+      },
+      {
+        "height": 226,
+        "url": "https://yt3.googleusercontent.com/B1N8NXaM93AU45Jwma_drzsPUN5IV9TGm2i4uFBjFeBP6qVVzvZdf09Xj54c_vTaMURvWG-jYYC-D1k=w226-h226-l90-rj",
+        "width": 226
+      },
+      {
+        "height": 544,
+        "url": "https://yt3.googleusercontent.com/B1N8NXaM93AU45Jwma_drzsPUN5IV9TGm2i4uFBjFeBP6qVVzvZdf09Xj54c_vTaMURvWG-jYYC-D1k=w544-h544-l90-rj",
+        "width": 544
+      }
+    ],
+    "title": "The Marshall Mathers LP2",
+    "type": "Album",
+    "year": "2013"
   },
   {
     "artists": [
@@ -583,45 +583,6 @@
     "title": "Music To Be Murdered By - Side B (Deluxe Edition)",
     "type": "Album",
     "year": "2020"
-  },
-  {
-    "artists": [
-      {
-        "id": "UCedvOgsKFzcK3hA5taf3KoQ",
-        "name": "Eminem"
-      }
-    ],
-    "browseId": "MPREb_4pL8gzRtw1p",
-    "category": "Albums",
-    "duration": null,
-    "isExplicit": true,
-    "playlistId": "OLAK5uy_nMr9h2VlS-2PULNz3M3XVXQj_P3C2bqaY",
-    "resultType": "album",
-    "thumbnails": [
-      {
-        "height": 60,
-        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w60-h60-l90-rj",
-        "width": 60
-      },
-      {
-        "height": 120,
-        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w120-h120-l90-rj",
-        "width": 120
-      },
-      {
-        "height": 226,
-        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w226-h226-l90-rj",
-        "width": 226
-      },
-      {
-        "height": 544,
-        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w544-h544-l90-rj",
-        "width": 544
-      }
-    ],
-    "title": "Revival",
-    "type": "Album",
-    "year": "2017"
   },
   {
     "artists": [
@@ -743,40 +704,79 @@
   {
     "artists": [
       {
-        "id": "UCXc-PlqQCbkPPejzGMBASzQ",
-        "name": "Bloody Rain"
+        "id": "UCedvOgsKFzcK3hA5taf3KoQ",
+        "name": "Eminem"
       }
     ],
-    "browseId": "MPREb_kRFkB36FSNs",
+    "browseId": "MPREb_4pL8gzRtw1p",
     "category": "Albums",
     "duration": null,
     "isExplicit": true,
-    "playlistId": "OLAK5uy_mt6op1CFrVqIe8vUhzoxJkYeO8_F7Oe24",
+    "playlistId": "OLAK5uy_nMr9h2VlS-2PULNz3M3XVXQj_P3C2bqaY",
     "resultType": "album",
     "thumbnails": [
       {
         "height": 60,
-        "url": "https://yt3.googleusercontent.com/8lEovxEZh_5xf8dBQV9pK_Kn8NoVeeOCLUr6sjHryNxRN2_TCamXWfxKz2-jYft9rjd7LSPPuWL7rhQ=w60-h60-l90-rj",
+        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w60-h60-l90-rj",
         "width": 60
       },
       {
         "height": 120,
-        "url": "https://yt3.googleusercontent.com/8lEovxEZh_5xf8dBQV9pK_Kn8NoVeeOCLUr6sjHryNxRN2_TCamXWfxKz2-jYft9rjd7LSPPuWL7rhQ=w120-h120-l90-rj",
+        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w120-h120-l90-rj",
         "width": 120
       },
       {
         "height": 226,
-        "url": "https://yt3.googleusercontent.com/8lEovxEZh_5xf8dBQV9pK_Kn8NoVeeOCLUr6sjHryNxRN2_TCamXWfxKz2-jYft9rjd7LSPPuWL7rhQ=w226-h226-l90-rj",
+        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w226-h226-l90-rj",
         "width": 226
       },
       {
         "height": 544,
-        "url": "https://yt3.googleusercontent.com/8lEovxEZh_5xf8dBQV9pK_Kn8NoVeeOCLUr6sjHryNxRN2_TCamXWfxKz2-jYft9rjd7LSPPuWL7rhQ=w544-h544-l90-rj",
+        "url": "https://yt3.googleusercontent.com/b-euORTq-_MSzc3SyI0QOjLqnCBJbWuMmH1YlyJKAVvJfOpPqv3bFH-KSDoQwV9e8Xey1X2NRo9xZ2U=w544-h544-l90-rj",
         "width": 544
       }
     ],
-    "title": "Somewhat a Recovery",
+    "title": "Revival",
     "type": "Album",
-    "year": "2019"
+    "year": "2017"
+  },
+  {
+    "artists": [
+      {
+        "id": "UCbn0GRdgsQtl9hlV-IqxFGg",
+        "name": "Juice WRLD"
+      }
+    ],
+    "browseId": "MPREb_FquxAEhy8F8",
+    "category": "Albums",
+    "duration": null,
+    "isExplicit": true,
+    "playlistId": "OLAK5uy_lnSkMND7sejfkGL3jAaK3-JNB2Lu_7OUA",
+    "resultType": "album",
+    "thumbnails": [
+      {
+        "height": 60,
+        "url": "https://yt3.googleusercontent.com/WcB2N7PbdLzG5jqNzq11cPVI_RbIyD_Kb-jaVUOMhEAoMlhiB85VfrIzlndklX9ri-51PNz1L-rR7vmP=w60-h60-l90-rj",
+        "width": 60
+      },
+      {
+        "height": 120,
+        "url": "https://yt3.googleusercontent.com/WcB2N7PbdLzG5jqNzq11cPVI_RbIyD_Kb-jaVUOMhEAoMlhiB85VfrIzlndklX9ri-51PNz1L-rR7vmP=w120-h120-l90-rj",
+        "width": 120
+      },
+      {
+        "height": 226,
+        "url": "https://yt3.googleusercontent.com/WcB2N7PbdLzG5jqNzq11cPVI_RbIyD_Kb-jaVUOMhEAoMlhiB85VfrIzlndklX9ri-51PNz1L-rR7vmP=w226-h226-l90-rj",
+        "width": 226
+      },
+      {
+        "height": 544,
+        "url": "https://yt3.googleusercontent.com/WcB2N7PbdLzG5jqNzq11cPVI_RbIyD_Kb-jaVUOMhEAoMlhiB85VfrIzlndklX9ri-51PNz1L-rR7vmP=w544-h544-l90-rj",
+        "width": 544
+      }
+    ],
+    "title": "The Party Never Ends 2.0",
+    "type": "Album",
+    "year": "2024"
   }
 ]

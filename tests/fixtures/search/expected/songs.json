@@ -1,1 +1,344 @@
-[]
+[
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "3:52",
+    "duration_seconds": 232,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "Dancing Queen"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "4:02",
+    "duration_seconds": 242,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "Knowing Me, Knowing You"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "4:07",
+    "duration_seconds": 247,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "Take A Chance On Me"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "3:31",
+    "duration_seconds": 211,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "Mamma Mia"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "4:33",
+    "duration_seconds": 273,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "Lay All Your Love On Me"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "4:12",
+    "duration_seconds": 252,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "Super Trouper"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "4:44",
+    "duration_seconds": 284,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "I Have A Dream"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "4:56",
+    "duration_seconds": 296,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "The Winner Takes It All"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "3:07",
+    "duration_seconds": 187,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "Money, Money, Money"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "3:22",
+    "duration_seconds": 202,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "SOS"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "5:26",
+    "duration_seconds": 326,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "Chiquitita"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "4:13",
+    "duration_seconds": 253,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "Fernando"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "5:07",
+    "duration_seconds": 307,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "Voulez-Vous"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "4:50",
+    "duration_seconds": 290,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "Gimme! Gimme! Gimme! (A Man After Midnight)"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "3:14",
+    "duration_seconds": 194,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "Does Your Mother Know"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "3:55",
+    "duration_seconds": 235,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "One Of Us"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "4:53",
+    "duration_seconds": 293,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "The Name Of The Game"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "3:49",
+    "duration_seconds": 229,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "Thank You For The Music"
+  },
+  {
+    "album": {
+      "id": "MPREb_AjBTTqt6QM6",
+      "name": "ABBA Gold"
+    },
+    "artists": [
+      {
+        "id": "UCuubAXN9AYgtcmSrD0frggQ",
+        "name": "ABBA"
+      }
+    ],
+    "category": "Songs",
+    "duration": "2:46",
+    "duration_seconds": 166,
+    "isExplicit": false,
+    "resultType": "song",
+    "title": "Waterloo"
+  }
+]

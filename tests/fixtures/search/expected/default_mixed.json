@@ -2,22 +2,22 @@
   {
     "artists": [
       {
-        "id": "UCmMUZbaYdNH0bEd1PAlAqsA",
-        "name": "Oasis"
+        "id": "UCRr1xG_2WIDs18a6cIiCxeA",
+        "name": "Daft Punk"
       }
     ],
     "category": "Top result",
     "resultType": "artist",
-    "subscribers": "30.9M",
+    "subscribers": "75.2M",
     "thumbnails": [
       {
         "height": 60,
-        "url": "https://yt3.googleusercontent.com/U5ierX4J6fdj6vlmiIjKKHQhYphsOYHBd43bJRao1T2qrojHb_xcPsnL-gprIEn_y900oPEZhp-iPXs=w60-h60-p-l90-rj",
+        "url": "https://lh3.googleusercontent.com/qLhu6Py_4_xoBsoubKQsXlhOQGqU9YU1ZRAbFusF0LlrPkXbbpu7bEh-k_ZtE4JwLgubvucAQqcK1hRk=w60-h60-p-l90-rj",
         "width": 60
       },
       {
         "height": 120,
-        "url": "https://yt3.googleusercontent.com/U5ierX4J6fdj6vlmiIjKKHQhYphsOYHBd43bJRao1T2qrojHb_xcPsnL-gprIEn_y900oPEZhp-iPXs=w120-h120-p-l90-rj",
+        "url": "https://lh3.googleusercontent.com/qLhu6Py_4_xoBsoubKQsXlhOQGqU9YU1ZRAbFusF0LlrPkXbbpu7bEh-k_ZtE4JwLgubvucAQqcK1hRk=w120-h120-p-l90-rj",
         "width": 120
       }
     ]
@@ -25,466 +25,606 @@
   {
     "artists": [
       {
-        "id": "UCmMUZbaYdNH0bEd1PAlAqsA",
-        "name": "Oasis"
+        "id": "UCRr1xG_2WIDs18a6cIiCxeA",
+        "name": "Daft Punk"
       }
     ],
-    "browseId": "MPREb_9nqEki4ZDpp",
+    "browseId": "MPREb_K8qWMWVqXGi",
     "category": null,
     "duration": null,
     "isExplicit": false,
-    "playlistId": "OLAK5uy_lGQfnMNGvYCRdDq9ZLzJV2BJL2aHQsz9Y",
+    "playlistId": "OLAK5uy_kNhM2yaBTOVwrcZJepB1C9P3-n5_Sfy5c",
     "resultType": "album",
     "thumbnails": [
       {
         "height": 60,
-        "url": "https://yt3.googleusercontent.com/FoVQFdW6zBi3sNA_yZJSV3VTWmi0belhhFzleuEbn27utkirstj1woXHfWmWqkNyHla37ZFbk_F6jvVV=w60-h60-l90-rj",
+        "url": "https://yt3.googleusercontent.com/N55arCGj69gtw6thXK8JUPisxoVYiwuIEQ7I6SGlkEyNcSJ7xIWPe76Vuu1SiUqRyx5w9qvR_zV8fV3CWQ=w60-h60-l90-rj",
         "width": 60
       },
       {
         "height": 120,
-        "url": "https://yt3.googleusercontent.com/FoVQFdW6zBi3sNA_yZJSV3VTWmi0belhhFzleuEbn27utkirstj1woXHfWmWqkNyHla37ZFbk_F6jvVV=w120-h120-l90-rj",
+        "url": "https://yt3.googleusercontent.com/N55arCGj69gtw6thXK8JUPisxoVYiwuIEQ7I6SGlkEyNcSJ7xIWPe76Vuu1SiUqRyx5w9qvR_zV8fV3CWQ=w120-h120-l90-rj",
         "width": 120
       },
       {
         "height": 226,
-        "url": "https://yt3.googleusercontent.com/FoVQFdW6zBi3sNA_yZJSV3VTWmi0belhhFzleuEbn27utkirstj1woXHfWmWqkNyHla37ZFbk_F6jvVV=w226-h226-l90-rj",
+        "url": "https://yt3.googleusercontent.com/N55arCGj69gtw6thXK8JUPisxoVYiwuIEQ7I6SGlkEyNcSJ7xIWPe76Vuu1SiUqRyx5w9qvR_zV8fV3CWQ=w226-h226-l90-rj",
         "width": 226
       },
       {
         "height": 544,
-        "url": "https://yt3.googleusercontent.com/FoVQFdW6zBi3sNA_yZJSV3VTWmi0belhhFzleuEbn27utkirstj1woXHfWmWqkNyHla37ZFbk_F6jvVV=w544-h544-l90-rj",
+        "url": "https://yt3.googleusercontent.com/N55arCGj69gtw6thXK8JUPisxoVYiwuIEQ7I6SGlkEyNcSJ7xIWPe76Vuu1SiUqRyx5w9qvR_zV8fV3CWQ=w544-h544-l90-rj",
         "width": 544
       }
     ],
-    "title": "(What's The Story) Morning Glory? (Remastered)",
+    "title": "Random Access Memories",
     "type": "Album",
-    "year": "1995"
-  },
-  {
-    "category": null,
-    "date": "Oct 30, 2025",
-    "live": false,
-    "podcast": {
-      "id": "MPSPPLrBP7eEjApfP1qyhTTmShfLHCxDdekXYg",
-      "name": "RDS Music For You"
-    },
-    "resultType": "episode",
-    "thumbnails": [
-      {
-        "height": 270,
-        "url": "https://i.ytimg.com/vi/McDZiKAhHbo/hqdefault.jpg?sqp=-oaymwEWCOADEI4CIAQqCggAEOADGC0guwJIWg&rs=AMzJL3kAWgmdYFpIjtSvYjYbO5aLrNPmfw",
-        "width": 480
-      }
-    ],
-    "title": "Oasis' \"Wonderwall\" turns 30: Fun facts about the generational anthem | RDS Music For You",
-    "videoId": "McDZiKAhHbo",
-    "videoType": "MUSIC_VIDEO_TYPE_PODCAST_EPISODE"
-  },
-  {
-    "category": null,
-    "date": "Aug 30, 2024",
-    "live": false,
-    "podcast": {
-      "id": "MPSPPLeyJPHbRnGaaAgINkiIQmNjTVRMB8RGI9",
-      "name": "Front Burner | Daily Podcast"
-    },
-    "resultType": "episode",
-    "thumbnails": [
-      {
-        "height": 270,
-        "url": "https://i.ytimg.com/vi/A0FPeuYgOLc/hqdefault.jpg?sqp=-oaymwEWCOADEI4CIAQqCggAEOADGC0guwJIWg&rs=AMzJL3kMq8qIXU09VuPNOP73V8D89H4fnA",
-        "width": 480
-      }
-    ],
-    "title": "Don't look back in anger: Oasis reunite | Front Burner",
-    "videoId": "A0FPeuYgOLc",
-    "videoType": "MUSIC_VIDEO_TYPE_PODCAST_EPISODE"
+    "year": "2013"
   },
   {
     "artists": [
       {
-        "id": "UCCc0zTjHtuG2pAy9TlSZbkQ",
-        "name": "ProSource Karaoke"
+        "id": "UCRr1xG_2WIDs18a6cIiCxeA",
+        "name": "Daft Punk"
       }
     ],
-    "browseId": "MPREb_YvOuEOu1kin",
+    "browseId": "MPREb_7ltM34kr0mH",
     "category": null,
     "duration": null,
     "isExplicit": false,
-    "playlistId": "OLAK5uy_mTJkK4brBv_nZgpxhQgemKixocNMhs4Bk",
+    "playlistId": "OLAK5uy_mz6eafmqdRHSaR4IwG0ll6J6rgv0_ZpGw",
     "resultType": "album",
     "thumbnails": [
       {
         "height": 60,
-        "url": "https://yt3.googleusercontent.com/nIYsVbTcpoX8G3OuZtmmcgIoXoNsSTEpEr_DmDxnAZTO-EAdsdsoPMbZL9akUVoe3ZdUj-uN0D1kU6vztQ=w60-h60-l90-rj",
+        "url": "https://yt3.googleusercontent.com/qrY7xjdjqL0FEneZKHk845JeeFjdWOgexUa_BhsUxskJ2iflhzpbofqGJZBcPHDGU9JjoZflE4yn3P74=w60-h60-l90-rj",
         "width": 60
       },
       {
         "height": 120,
-        "url": "https://yt3.googleusercontent.com/nIYsVbTcpoX8G3OuZtmmcgIoXoNsSTEpEr_DmDxnAZTO-EAdsdsoPMbZL9akUVoe3ZdUj-uN0D1kU6vztQ=w120-h120-l90-rj",
+        "url": "https://yt3.googleusercontent.com/qrY7xjdjqL0FEneZKHk845JeeFjdWOgexUa_BhsUxskJ2iflhzpbofqGJZBcPHDGU9JjoZflE4yn3P74=w120-h120-l90-rj",
         "width": 120
       },
       {
         "height": 226,
-        "url": "https://yt3.googleusercontent.com/nIYsVbTcpoX8G3OuZtmmcgIoXoNsSTEpEr_DmDxnAZTO-EAdsdsoPMbZL9akUVoe3ZdUj-uN0D1kU6vztQ=w226-h226-l90-rj",
+        "url": "https://yt3.googleusercontent.com/qrY7xjdjqL0FEneZKHk845JeeFjdWOgexUa_BhsUxskJ2iflhzpbofqGJZBcPHDGU9JjoZflE4yn3P74=w226-h226-l90-rj",
         "width": 226
       },
       {
         "height": 544,
-        "url": "https://yt3.googleusercontent.com/nIYsVbTcpoX8G3OuZtmmcgIoXoNsSTEpEr_DmDxnAZTO-EAdsdsoPMbZL9akUVoe3ZdUj-uN0D1kU6vztQ=w544-h544-l90-rj",
+        "url": "https://yt3.googleusercontent.com/qrY7xjdjqL0FEneZKHk845JeeFjdWOgexUa_BhsUxskJ2iflhzpbofqGJZBcPHDGU9JjoZflE4yn3P74=w544-h544-l90-rj",
         "width": 544
       }
     ],
-    "title": "Wonderwall (In the Style of Oasis) [Karaoke Version]",
-    "type": "Single",
-    "year": "2010"
+    "title": "Discovery",
+    "type": "Album",
+    "year": "2001"
   },
   {
     "artists": [
       {
-        "id": "UC7y9dY4zbrBplD3SnA4xPcw",
-        "name": "The Karaoke Channel"
+        "id": "UCRr1xG_2WIDs18a6cIiCxeA",
+        "name": "Daft Punk"
       }
     ],
-    "browseId": "MPREb_9OFcnzkUyvB",
+    "browseId": "MPREb_CtOaObihCXA",
     "category": null,
     "duration": null,
     "isExplicit": false,
-    "playlistId": "OLAK5uy_k0KuTzBQVJQPxJsmCDZxQFpgs6KMacubU",
+    "playlistId": "OLAK5uy_l3hwK_TnlJHsWku43dzTtHx_IjH3VIujs",
     "resultType": "album",
     "thumbnails": [
       {
         "height": 60,
-        "url": "https://yt3.googleusercontent.com/MpOA9MnjC01U2W7vMKhJb7hM3MMODugP4GfmseXgjQS3cVCXsxSkb8K6g5rpeWpKA0UnZzp_WUfzU_NH=w60-h60-l90-rj",
+        "url": "https://yt3.googleusercontent.com/WcxKKKOBAyf3a4qI8N2FjOyylr6Th1wDdoofTEO3rDw5kmjI-DF2h0hPJeGURrCqPCs9BIhJAQj3f10=w60-h60-l90-rj",
         "width": 60
       },
       {
         "height": 120,
-        "url": "https://yt3.googleusercontent.com/MpOA9MnjC01U2W7vMKhJb7hM3MMODugP4GfmseXgjQS3cVCXsxSkb8K6g5rpeWpKA0UnZzp_WUfzU_NH=w120-h120-l90-rj",
+        "url": "https://yt3.googleusercontent.com/WcxKKKOBAyf3a4qI8N2FjOyylr6Th1wDdoofTEO3rDw5kmjI-DF2h0hPJeGURrCqPCs9BIhJAQj3f10=w120-h120-l90-rj",
         "width": 120
       },
       {
         "height": 226,
-        "url": "https://yt3.googleusercontent.com/MpOA9MnjC01U2W7vMKhJb7hM3MMODugP4GfmseXgjQS3cVCXsxSkb8K6g5rpeWpKA0UnZzp_WUfzU_NH=w226-h226-l90-rj",
+        "url": "https://yt3.googleusercontent.com/WcxKKKOBAyf3a4qI8N2FjOyylr6Th1wDdoofTEO3rDw5kmjI-DF2h0hPJeGURrCqPCs9BIhJAQj3f10=w226-h226-l90-rj",
         "width": 226
       },
       {
         "height": 544,
-        "url": "https://yt3.googleusercontent.com/MpOA9MnjC01U2W7vMKhJb7hM3MMODugP4GfmseXgjQS3cVCXsxSkb8K6g5rpeWpKA0UnZzp_WUfzU_NH=w544-h544-l90-rj",
+        "url": "https://yt3.googleusercontent.com/WcxKKKOBAyf3a4qI8N2FjOyylr6Th1wDdoofTEO3rDw5kmjI-DF2h0hPJeGURrCqPCs9BIhJAQj3f10=w544-h544-l90-rj",
         "width": 544
       }
     ],
-    "title": "The Karaoke Channel - Sing Wonderwall Like Oasis",
-    "type": "Single",
-    "year": "2015"
+    "title": "Alive 2007",
+    "type": "Album",
+    "year": "2007"
   },
   {
+    "artist": "Thomas Bangalter",
+    "browseId": "UC-YOnufHj96ev1x6d_5oGGg",
     "category": null,
-    "date": "Nov 6, 2025",
-    "live": false,
-    "podcast": {
-      "id": "MPSPPL7lGdgoUKJQas6jpVtb5Q__3NHbrbC1oq",
-      "name": "Pointless Reviews"
-    },
-    "resultType": "episode",
+    "radioId": "RDEM_GRxEqyhOJ9Jy592ebK21g",
+    "resultType": "artist",
+    "shuffleId": "RDAO_GRxEqyhOJ9Jy592ebK21g",
     "thumbnails": [
       {
-        "height": 270,
-        "url": "https://i.ytimg.com/vi/RcYlr3zZAzc/hqdefault.jpg?sqp=-oaymwEWCOADEI4CIAQqCggAEOADGC0guwJIWg&rs=AMzJL3lm8C61XvTWZCom4CEK7X9trX-Lgg",
-        "width": 480
+        "height": 60,
+        "url": "https://yt3.googleusercontent.com/aDKebH1eZG_kmBoolAd92OoBwWyyuN6NEc9g6HbxVw58vd_TGnvi91g84eTZWrFlcYzXN1cYYTzPietf=w60-h60-l90-rj",
+        "width": 60
+      },
+      {
+        "height": 120,
+        "url": "https://yt3.googleusercontent.com/aDKebH1eZG_kmBoolAd92OoBwWyyuN6NEc9g6HbxVw58vd_TGnvi91g84eTZWrFlcYzXN1cYYTzPietf=w120-h120-l90-rj",
+        "width": 120
       }
-    ],
-    "title": "Wonderwall review clip  #noelgallagher #liamgallagher  #oasis #90smusic #britpop #acousticmusic",
-    "videoId": "RcYlr3zZAzc",
-    "videoType": "MUSIC_VIDEO_TYPE_PODCAST_EPISODE"
+    ]
   },
   {
-    "author": "Mihail Gerginov",
-    "browseId": "VLPLRAYTjp4wR0RwacFAnHJo2QnhPGqp3xCs",
+    "author": "misterepicpants",
+    "browseId": "VLPLdXJrX9OsbOVq2TKvUc3xGUp2Rm8nTUVh",
     "category": null,
-    "itemCount": "Mihail",
+    "itemCount": "misterepicpants",
     "resultType": "playlist",
     "thumbnails": [
       {
         "height": 192,
-        "url": "https://yt3.ggpht.com/Y68XGHFlk4qXnl8ts2cXS4pBVc43_-t-m4sjAyXWUu_YEZLB5x5g7XFAYiVi_KwsnTSa0Wfhsbnv=s192",
+        "url": "https://yt3.ggpht.com/r3BmDhhP_K-KVaEQa9nQnwkZXTi24tZQhehAI5c8fz1f7zpFiVPEN2YZ3dyxvAjJxOANzUGx1w=s192",
         "width": 192
       },
       {
         "height": 576,
-        "url": "https://yt3.ggpht.com/Y68XGHFlk4qXnl8ts2cXS4pBVc43_-t-m4sjAyXWUu_YEZLB5x5g7XFAYiVi_KwsnTSa0Wfhsbnv=s576",
+        "url": "https://yt3.ggpht.com/r3BmDhhP_K-KVaEQa9nQnwkZXTi24tZQhehAI5c8fz1f7zpFiVPEN2YZ3dyxvAjJxOANzUGx1w=s576",
         "width": 576
       },
       {
         "height": 1200,
-        "url": "https://yt3.ggpht.com/Y68XGHFlk4qXnl8ts2cXS4pBVc43_-t-m4sjAyXWUu_YEZLB5x5g7XFAYiVi_KwsnTSa0Wfhsbnv=s1200",
+        "url": "https://yt3.ggpht.com/r3BmDhhP_K-KVaEQa9nQnwkZXTi24tZQhehAI5c8fz1f7zpFiVPEN2YZ3dyxvAjJxOANzUGx1w=s1200",
         "width": 1200
       }
     ],
-    "title": "Mix - Oasis - Wonderwall"
+    "title": "Best Of Daft Punk"
+  },
+  {
+    "artist": "Pharrell Williams",
+    "browseId": "UCJw8VyO6e3v6S0327AsgwcQ",
+    "category": null,
+    "radioId": "RDEM_6oDXbk7AC3eLw4RBn9IIg",
+    "resultType": "artist",
+    "shuffleId": "RDAO_6oDXbk7AC3eLw4RBn9IIg",
+    "thumbnails": [
+      {
+        "height": 60,
+        "url": "https://lh3.googleusercontent.com/4tfdSY9xKgidwJ8GwVmiKAFMfSAW-5TEXCy78ATFMzXjg57kXNx_pmLCuJafVE8R3wGkhxquy0np5Ok=w60-h60-p-l90-rj",
+        "width": 60
+      },
+      {
+        "height": 120,
+        "url": "https://lh3.googleusercontent.com/4tfdSY9xKgidwJ8GwVmiKAFMfSAW-5TEXCy78ATFMzXjg57kXNx_pmLCuJafVE8R3wGkhxquy0np5Ok=w120-h120-p-l90-rj",
+        "width": 120
+      }
+    ]
+  },
+  {
+    "artist": "Daft Punk's Karaoke Band",
+    "browseId": "UCeMvmMQswZlx62mKYeJJ4oA",
+    "category": null,
+    "radioId": "RDEM8LaU_p4Wb5IWu6T7IlO7Nw",
+    "resultType": "artist",
+    "shuffleId": "RDAO8LaU_p4Wb5IWu6T7IlO7Nw",
+    "thumbnails": [
+      {
+        "height": 60,
+        "url": "https://www.gstatic.com/youtube/media/ytm/images/artist_avatar@1200.png?sqp=CMjZ1tgF-oaymwEGCDwQPFgB&rs=ALLJMcL7TCigANJCPRDX39EDsxqZ57jUrw",
+        "width": 60
+      },
+      {
+        "height": 120,
+        "url": "https://www.gstatic.com/youtube/media/ytm/images/artist_avatar@1200.png?sqp=CPLw1tgF-oaymwEGCHgQeFgB&rs=ALLJMcLkubZGQLMxFqq4NT1oPdrY8SoH9A",
+        "width": 120
+      }
+    ]
+  },
+  {
+    "author": "Brandon G",
+    "browseId": "VLPL5A-FXHBxgj3Gfluaje-MuhXC5iBsZF5w",
+    "category": null,
+    "itemCount": "Brandon",
+    "resultType": "playlist",
+    "thumbnails": [
+      {
+        "height": 192,
+        "url": "https://yt3.googleusercontent.com/IU2XXl6Ei4fRXbMUVrV2zFeHSpsckRIF-JG_3rpkf7LWY97FFNkt4MpoRZNf6VuNFXLQo-bSZw=s192",
+        "width": 192
+      },
+      {
+        "height": 576,
+        "url": "https://yt3.googleusercontent.com/IU2XXl6Ei4fRXbMUVrV2zFeHSpsckRIF-JG_3rpkf7LWY97FFNkt4MpoRZNf6VuNFXLQo-bSZw=s576",
+        "width": 576
+      },
+      {
+        "height": 1200,
+        "url": "https://yt3.googleusercontent.com/IU2XXl6Ei4fRXbMUVrV2zFeHSpsckRIF-JG_3rpkf7LWY97FFNkt4MpoRZNf6VuNFXLQo-bSZw=s1200",
+        "width": 1200
+      }
+    ],
+    "title": "Daft Punk Greatest Hits"
+  },
+  {
+    "author": "Dafterlisto",
+    "browseId": "VLPLWChTSolz3cQqS34W3G_NrEUVKPb82MgD",
+    "category": null,
+    "itemCount": "Dafterlisto",
+    "resultType": "playlist",
+    "thumbnails": [
+      {
+        "height": 36,
+        "url": "https://i.ytimg.com/pl_c/PLWChTSolz3cQqS34W3G_NrEUVKPb82MgD/studio_square_thumbnail.jpg?sqp=CM3-zc8G-oaymwEICEAQJCAASFqi85f_AwYIm6PduwY&rs=AMzJL3miT0nMLeE-r0pH6uvjPv5sjm1hXg",
+        "width": 64
+      },
+      {
+        "height": 72,
+        "url": "https://i.ytimg.com/pl_c/PLWChTSolz3cQqS34W3G_NrEUVKPb82MgD/studio_square_thumbnail.jpg?sqp=CM3-zc8G-oaymwEJCIABEEggAEhaovOX_wMGCJuj3bsG&rs=AMzJL3mJVKrAuIuebzpRmhxsYB6ogkfJhQ",
+        "width": 128
+      },
+      {
+        "height": 135,
+        "url": "https://i.ytimg.com/pl_c/PLWChTSolz3cQqS34W3G_NrEUVKPb82MgD/studio_square_thumbnail.jpg?sqp=CM3-zc8G-oaymwEKCPABEIcBIABIWqLzl_8DBgibo927Bg&rs=AMzJL3m6p_7XvxO0lvub_TH-wU6qn6zq7Q",
+        "width": 240
+      },
+      {
+        "height": 306,
+        "url": "https://i.ytimg.com/pl_c/PLWChTSolz3cQqS34W3G_NrEUVKPb82MgD/studio_square_thumbnail.jpg?sqp=CM3-zc8G-oaymwEKCKAEELICIABIWqLzl_8DBgibo927Bg&rs=AMzJL3lj4BImT2zqrtfWiP701zWWOrTFSA",
+        "width": 544
+      },
+      {
+        "height": 459,
+        "url": "https://i.ytimg.com/pl_c/PLWChTSolz3cQqS34W3G_NrEUVKPb82MgD/studio_square_thumbnail.jpg?sqp=CM3-zc8G-oaymwEKCLAGEMsDIABIWqLzl_8DBgibo927Bg&rs=AMzJL3mtQ-NSP7oKiqQA_uKGFVMUKUo0bg",
+        "width": 816
+      },
+      {
+        "height": 810,
+        "url": "https://i.ytimg.com/pl_c/PLWChTSolz3cQqS34W3G_NrEUVKPb82MgD/studio_square_thumbnail.jpg?sqp=CM3-zc8G-oaymwEKCKALEKoGIABIWqLzl_8DBgibo927Bg&rs=AMzJL3nCbPyKBFd45hLteZhrpa_vUdMFLw",
+        "width": 1440
+      },
+      {
+        "height": 1080,
+        "url": "https://i.ytimg.com/pl_c/PLWChTSolz3cQqS34W3G_NrEUVKPb82MgD/studio_square_thumbnail.jpg?sqp=CM3-zc8G-oaymwEKCIAPELgIIABIWqLzl_8DBgibo927Bg&rs=AMzJL3nNHPCdGQTKMTnhRyhLWaPyTzQa8Q",
+        "width": 1920
+      },
+      {
+        "height": 1620,
+        "url": "https://i.ytimg.com/pl_c/PLWChTSolz3cQqS34W3G_NrEUVKPb82MgD/studio_square_thumbnail.jpg?sqp=CM3-zc8G-oaymwEKCMAWENQMIABIWqLzl_8DBgibo927Bg&rs=AMzJL3nZaFHd2OQMfSIdSlfzBs2AqAtAWg",
+        "width": 2880
+      }
+    ],
+    "title": "Daft Punk Archives (Unreleased, Obscure, Live, Produced)"
+  },
+  {
+    "category": null,
+    "date": "8h ago",
+    "live": false,
+    "podcast": {
+      "id": "MPSPPLIRzs331mOdJip5l6QdqMyH77xGVGOOT5",
+      "name": "\ud83c\udf1f Funkzone Sound \u2013 Future Funk Podcast \ud83c\udf1f"
+    },
+    "resultType": "episode",
+    "thumbnails": [
+      {
+        "height": 270,
+        "url": "https://i.ytimg.com/vi/1WNTNye6Rvc/hqdefault.jpg?sqp=-oaymwEWCOADEI4CIAQqCggAEOADGC0guwJIWg&rs=AMzJL3k-vfbFA-VMxeRPKLZo512fnZGEYw",
+        "width": 480
+      }
+    ],
+    "title": "Best Future Funk Playlist - Daft Punk Future Funk & Cyber Funk Playlist for Neon City Vibes",
+    "videoId": "1WNTNye6Rvc",
+    "videoType": "MUSIC_VIDEO_TYPE_PODCAST_EPISODE"
+  },
+  {
+    "category": null,
+    "date": "Feb 24, 2021",
+    "live": false,
+    "podcast": {
+      "id": "MPSPOLIpaq5ETh348VLJfJmyBcTvb9deRQ57n_w",
+      "name": "JusMusic Channel"
+    },
+    "resultType": "episode",
+    "thumbnails": [
+      {
+        "height": 270,
+        "url": "https://i.ytimg.com/vi/ILU16BkikFw/hqdefault.jpg?sqp=-oaymwEWCOADEI4CIAQqCggAEOADGC0guwJIWg&rs=AMzJL3mFL5_-hIQGFKjnoNalWLIEWRAwBg",
+        "width": 480
+      }
+    ],
+    "title": "Daft Punk Made Us Cry",
+    "videoId": "ILU16BkikFw",
+    "videoType": "MUSIC_VIDEO_TYPE_PODCAST_EPISODE"
+  },
+  {
+    "category": null,
+    "date": "Feb 25",
+    "live": false,
+    "podcast": {
+      "id": "MPSPPL-xTbcukqfYDkrUJj-8QOt3n4g_3j0-_F",
+      "name": "Famous Peoples' Histories"
+    },
+    "resultType": "episode",
+    "thumbnails": [
+      {
+        "height": 270,
+        "url": "https://i.ytimg.com/vi/yo2rM1F2gSY/hqdefault.jpg?sqp=-oaymwEWCOADEI4CIAQqCggAEOADGC0guwJIWg&rs=AMzJL3ni1XUmEXhQjoZ36op64f8bfV6bXA",
+        "width": 480
+      }
+    ],
+    "title": "Daft Punk's Electronic Robots Evolution",
+    "videoId": "yo2rM1F2gSY",
+    "videoType": "MUSIC_VIDEO_TYPE_PODCAST_EPISODE"
+  },
+  {
+    "category": null,
+    "date": "Jun 20, 2025",
+    "live": false,
+    "podcast": {
+      "id": "MPSPPLNtRNGOIkVn_d7M1pu4lQeXNk81ffjBB3",
+      "name": "Go with Elmo - Full Episodes"
+    },
+    "resultType": "episode",
+    "thumbnails": [
+      {
+        "height": 270,
+        "url": "https://i.ytimg.com/vi/xVLqjsnaLqY/hqdefault.jpg?sqp=-oaymwEWCOADEI4CIAQqCggAEOADGC0guwJIWg&rs=AMzJL3nQVsLMA1SU0OdNUemNZe9HEeYKmA",
+        "width": 480
+      }
+    ],
+    "title": "Omar Hakim Part 2: Sting, Miles Davis, Madonna, Daft Punk, Get Lucky, Hybrid Drumming, Live, Tour",
+    "videoId": "xVLqjsnaLqY",
+    "videoType": "MUSIC_VIDEO_TYPE_PODCAST_EPISODE"
+  },
+  {
+    "category": null,
+    "date": "Jan 8, 2023",
+    "live": false,
+    "podcast": {
+      "id": "UCK67w-vlFD3SVP0aZRU9p-w",
+      "name": "WWLCgust356"
+    },
+    "resultType": "episode",
+    "thumbnails": [
+      {
+        "height": 270,
+        "url": "https://i.ytimg.com/vi/GUoyS3fc90Q/hqdefault.jpg?sqp=-oaymwEWCOADEI4CIAQqCggAEOADGC0guwJIWg&rs=AMzJL3lFKzwKUfowo2GugsQ_8RUarv27Yg",
+        "width": 480
+      }
+    ],
+    "title": "Daft Punk - Live at Mayan Theatre 1997 [Daftendirektour] (Alive 1997)",
+    "videoId": "GUoyS3fc90Q",
+    "videoType": "MUSIC_VIDEO_TYPE_PODCAST_EPISODE"
   },
   {
     "author": "YouTube Music",
-    "browseId": "VLRDCLAK5uy_kIHyENe_MJL0ztoFsyFrKTZFQMsVmXzWo",
+    "browseId": "VLRDCLAK5uy_n20FRYQXNt1p1wS55Nj2r14IouO5weaYU",
     "category": null,
     "itemCount": "YouTube",
     "resultType": "playlist",
     "thumbnails": [
       {
         "height": 60,
-        "url": "https://yt3.googleusercontent.com/xnegdTdNBwl13rbpXBmsjqh4L9ovVh6ITSfVU8cAYT3gICnBEUAn3AL9nd-cNn9iyptsYOr9Plr_9Vw=w60-h60-l90-rj",
+        "url": "https://yt3.googleusercontent.com/eRtwdlfWFZAS1besPx61TGdPxtN9Vcb3HUnTkKYp5Yv_964RdDxexnS7YPNu_Qg28BYKWwDgwa6tW9M=w60-h60-l90-rj",
         "width": 60
       },
       {
         "height": 120,
-        "url": "https://yt3.googleusercontent.com/xnegdTdNBwl13rbpXBmsjqh4L9ovVh6ITSfVU8cAYT3gICnBEUAn3AL9nd-cNn9iyptsYOr9Plr_9Vw=w120-h120-l90-rj",
+        "url": "https://yt3.googleusercontent.com/eRtwdlfWFZAS1besPx61TGdPxtN9Vcb3HUnTkKYp5Yv_964RdDxexnS7YPNu_Qg28BYKWwDgwa6tW9M=w120-h120-l90-rj",
         "width": 120
       },
       {
         "height": 226,
-        "url": "https://yt3.googleusercontent.com/xnegdTdNBwl13rbpXBmsjqh4L9ovVh6ITSfVU8cAYT3gICnBEUAn3AL9nd-cNn9iyptsYOr9Plr_9Vw=w226-h226-l90-rj",
+        "url": "https://yt3.googleusercontent.com/eRtwdlfWFZAS1besPx61TGdPxtN9Vcb3HUnTkKYp5Yv_964RdDxexnS7YPNu_Qg28BYKWwDgwa6tW9M=w226-h226-l90-rj",
         "width": 226
       },
       {
         "height": 544,
-        "url": "https://yt3.googleusercontent.com/xnegdTdNBwl13rbpXBmsjqh4L9ovVh6ITSfVU8cAYT3gICnBEUAn3AL9nd-cNn9iyptsYOr9Plr_9Vw=w544-h544-l90-rj",
+        "url": "https://yt3.googleusercontent.com/eRtwdlfWFZAS1besPx61TGdPxtN9Vcb3HUnTkKYp5Yv_964RdDxexnS7YPNu_Qg28BYKWwDgwa6tW9M=w544-h544-l90-rj",
         "width": 544
       }
     ],
-    "title": "Presenting Oasis"
+    "title": "Presenting Daft Punk"
   },
   {
-    "author": "bytienl",
-    "browseId": "VLPL_PKki0KGqeOCWd-HhC4jhyp33UI1w-0W",
-    "category": null,
-    "itemCount": "bytienl",
-    "resultType": "playlist",
-    "thumbnails": [
-      {
-        "height": 180,
-        "url": "https://i.ytimg.com/vi/0gVxRvNfFLg/hqdefault.jpg?sqp=-oaymwEWCMACELQBIAQqCghQEJADGFogjgJIWg&rs=AMzJL3nkjpCfvrh2KMqyoMnMSFpkHBW45w",
-        "width": 320
-      }
-    ],
-    "title": "Oasis - Wonderwall"
-  },
-  {
-    "author": "in the bleak midwinter",
-    "browseId": "VLPLzIiD8OvfeeEklIXPvWf8rYjW1f-D0WuB",
-    "category": null,
-    "itemCount": "in",
-    "resultType": "playlist",
-    "thumbnails": [
-      {
-        "height": 225,
-        "url": "https://i.ytimg.com/vi/6RJ3MPdNR70/sddefault.jpg?sqp=-oaymwEWCJADEOEBIAQqCghqEJQEGHgg6AJIWg&rs=AMzJL3l8NxpUIr6TDi1CxWNOJscK5HRX_A",
-        "width": 400
-      },
-      {
-        "height": 240,
-        "url": "https://i.ytimg.com/vi/6RJ3MPdNR70/sddefault.jpg?sqp=-oaymwEWCKoDEPABIAQqCghqEJQEGHgg6AJIWg&rs=AMzJL3nS9Hrg0KjocAiz55_0J4zexYefTQ",
-        "width": 426
-      }
-    ],
-    "title": "(\u0e41\u0e1b\u0e25\u0e44\u0e17\u0e22) Oasis"
-  },
-  {
-    "artist": "Maxi Gonzalez OASIS \u266a",
-    "browseId": "UCG2ju5rRT5OcAcPwIdXa4Cg",
+    "artist": "daft punk",
+    "browseId": "UCqYzmWVTHBszT8J3VGC1zIw",
     "category": null,
     "resultType": "artist",
     "thumbnails": [
       {
         "height": 60,
-        "url": "https://yt3.googleusercontent.com/n4-BVSK_YT782rOMincKXMlT-yDUe8w697HiCZfqLuvDP0stEEWJenpEXfbTmDjCOt7nIHnR=w60-c-h60-k-c0x00ffffff-no-l90-rj",
+        "url": "https://yt3.googleusercontent.com/ytc/AIdro_nMenqtxBh1A2MJ07s276DDEPxkjC-OAHBasUcf8a8EGg=w60-c-h60-k-c0x00ffffff-no-l90-rj",
         "width": 60
       },
       {
         "height": 120,
-        "url": "https://yt3.googleusercontent.com/n4-BVSK_YT782rOMincKXMlT-yDUe8w697HiCZfqLuvDP0stEEWJenpEXfbTmDjCOt7nIHnR=w120-c-h120-k-c0x00ffffff-no-l90-rj",
+        "url": "https://yt3.googleusercontent.com/ytc/AIdro_nMenqtxBh1A2MJ07s276DDEPxkjC-OAHBasUcf8a8EGg=w120-c-h120-k-c0x00ffffff-no-l90-rj",
+        "width": 120
+      }
+    ]
+  },
+  {
+    "artist": "Daft punk discovery1234",
+    "browseId": "UCMAe-IuKNTtLPlZyaqv4fXQ",
+    "category": null,
+    "resultType": "artist",
+    "thumbnails": [
+      {
+        "height": 60,
+        "url": "https://yt3.googleusercontent.com/dkUjwJcOnwduacy7Hqh5hPlgFNsOCxAFiOQ3qgihyMZ3EZiyR6la-v4MZKUmVmVACP7RchgdNQ=w60-c-h60-k-c0x00ffffff-no-l90-rj",
+        "width": 60
+      },
+      {
+        "height": 120,
+        "url": "https://yt3.googleusercontent.com/dkUjwJcOnwduacy7Hqh5hPlgFNsOCxAFiOQ3qgihyMZ3EZiyR6la-v4MZKUmVmVACP7RchgdNQ=w120-c-h120-k-c0x00ffffff-no-l90-rj",
+        "width": 120
+      }
+    ]
+  },
+  {
+    "artist": "DAFT PUNK ME",
+    "browseId": "UCQh3zCs8lE-WWQemrUMrlsg",
+    "category": null,
+    "resultType": "artist",
+    "thumbnails": [
+      {
+        "height": 60,
+        "url": "https://yt3.googleusercontent.com/1hTEiEGw_bICvQoocc0C_KIk1ECHheqh_Rbq5pPnlI9gK3ti3g4CdQK2Pt8Pdi5CxkIx22Tv=w60-c-h60-k-c0x00ffffff-no-l90-rj",
+        "width": 60
+      },
+      {
+        "height": 120,
+        "url": "https://yt3.googleusercontent.com/1hTEiEGw_bICvQoocc0C_KIk1ECHheqh_Rbq5pPnlI9gK3ti3g4CdQK2Pt8Pdi5CxkIx22Tv=w120-c-h120-k-c0x00ffffff-no-l90-rj",
         "width": 120
       }
     ]
   },
   {
     "author": "YouTube Music",
-    "browseId": "VLRDCLAK5uy_mWTdoSEwzAScsxFgMV-8jIP8Xn2jM7ZLM",
+    "browseId": "VLRDCLAK5uy_lfTOUBaGMSEoO2The1XiaG75RghLtrVtM",
     "category": null,
     "itemCount": "YouTube",
     "resultType": "playlist",
     "thumbnails": [
       {
         "height": 60,
-        "url": "https://yt3.googleusercontent.com/BGBqi4Pg8HlJFEf8yBJSe4dTZ71fwAistVm_5twPvxqb-5kXTTBIrhRo_ZFQcPy7w1p5SrT0oYWoJEI=w60-h60-l90-rj",
+        "url": "https://yt3.googleusercontent.com/U_IPKDWPJKqFQkICqMlJgoiyasU-Fm7eGmqFM9UvQTLsxgoAkkPsqxRRKJgLaLKjd9PdbEG8eFxflAGp=w60-h60-l90-rj",
         "width": 60
       },
       {
         "height": 120,
-        "url": "https://yt3.googleusercontent.com/BGBqi4Pg8HlJFEf8yBJSe4dTZ71fwAistVm_5twPvxqb-5kXTTBIrhRo_ZFQcPy7w1p5SrT0oYWoJEI=w120-h120-l90-rj",
+        "url": "https://yt3.googleusercontent.com/U_IPKDWPJKqFQkICqMlJgoiyasU-Fm7eGmqFM9UvQTLsxgoAkkPsqxRRKJgLaLKjd9PdbEG8eFxflAGp=w120-h120-l90-rj",
         "width": 120
       },
       {
         "height": 226,
-        "url": "https://yt3.googleusercontent.com/BGBqi4Pg8HlJFEf8yBJSe4dTZ71fwAistVm_5twPvxqb-5kXTTBIrhRo_ZFQcPy7w1p5SrT0oYWoJEI=w226-h226-l90-rj",
+        "url": "https://yt3.googleusercontent.com/U_IPKDWPJKqFQkICqMlJgoiyasU-Fm7eGmqFM9UvQTLsxgoAkkPsqxRRKJgLaLKjd9PdbEG8eFxflAGp=w226-h226-l90-rj",
         "width": 226
       },
       {
         "height": 544,
-        "url": "https://yt3.googleusercontent.com/BGBqi4Pg8HlJFEf8yBJSe4dTZ71fwAistVm_5twPvxqb-5kXTTBIrhRo_ZFQcPy7w1p5SrT0oYWoJEI=w544-h544-l90-rj",
+        "url": "https://yt3.googleusercontent.com/U_IPKDWPJKqFQkICqMlJgoiyasU-Fm7eGmqFM9UvQTLsxgoAkkPsqxRRKJgLaLKjd9PdbEG8eFxflAGp=w544-h544-l90-rj",
         "width": 544
       }
     ],
-    "title": "Oasis 2025 Setlist"
-  },
-  {
-    "artist": "Rodrigo Diaz",
-    "browseId": "UCz3VRYX7GYwTC1GEBEU_SkA",
-    "category": null,
-    "resultType": "artist",
-    "thumbnails": [
-      {
-        "height": 60,
-        "url": "https://yt3.googleusercontent.com/ytc/AIdro_myCgNCCP4CjG5ppMjObJsnNMSjfXLKk4Rt6jCv-7yJkRnU=w60-c-h60-k-c0x00ffffff-no-l90-rj",
-        "width": 60
-      },
-      {
-        "height": 120,
-        "url": "https://yt3.googleusercontent.com/ytc/AIdro_myCgNCCP4CjG5ppMjObJsnNMSjfXLKk4Rt6jCv-7yJkRnU=w120-c-h120-k-c0x00ffffff-no-l90-rj",
-        "width": 120
-      }
-    ]
-  },
-  {
-    "artist": "Herry Clay",
-    "browseId": "UCr9nc-0kzw-htho2qgS-_Rw",
-    "category": null,
-    "resultType": "artist",
-    "thumbnails": [
-      {
-        "height": 60,
-        "url": "https://yt3.googleusercontent.com/ytc/AIdro_m1VkGYk2pZnjW62os5X3r48QgjDr7K7JFzrE2iLzMVISE=w60-c-h60-k-c0x00ffffff-no-l90-rj",
-        "width": 60
-      },
-      {
-        "height": 120,
-        "url": "https://yt3.googleusercontent.com/ytc/AIdro_m1VkGYk2pZnjW62os5X3r48QgjDr7K7JFzrE2iLzMVISE=w120-c-h120-k-c0x00ffffff-no-l90-rj",
-        "width": 120
-      }
-    ]
+    "title": "Indie Disco"
   },
   {
     "author": "YouTube Music",
-    "browseId": "VLRDCLAK5uy_nfrVn6_UDA0TrYu8sSpraHoLEC0OqrYQc",
+    "browseId": "VLRDCLAK5uy_l607eBFIYRZ_itkDW19eigUzFefu5bJ6Y",
     "category": null,
     "itemCount": "YouTube",
     "resultType": "playlist",
     "thumbnails": [
       {
         "height": 60,
-        "url": "https://yt3.googleusercontent.com/CL86mt-mf2gOKpw2636VKBLBnOcm8fwd3G_-Xyy3L2xn2Hx2eQUzezybyfvNNTVByDvP9hJyDvEO2nc=w60-h60-l90-rj",
+        "url": "https://yt3.googleusercontent.com/fb1o9l3EsCFqSKADQ8mYU8yi_nAOWdM1qynVDAPpQW60Uv8gYrvm1q35ASigDavWuM_DpLaod4wnJDCI=w60-h60-l90-rj",
         "width": 60
       },
       {
         "height": 120,
-        "url": "https://yt3.googleusercontent.com/CL86mt-mf2gOKpw2636VKBLBnOcm8fwd3G_-Xyy3L2xn2Hx2eQUzezybyfvNNTVByDvP9hJyDvEO2nc=w120-h120-l90-rj",
+        "url": "https://yt3.googleusercontent.com/fb1o9l3EsCFqSKADQ8mYU8yi_nAOWdM1qynVDAPpQW60Uv8gYrvm1q35ASigDavWuM_DpLaod4wnJDCI=w120-h120-l90-rj",
         "width": 120
       },
       {
         "height": 226,
-        "url": "https://yt3.googleusercontent.com/CL86mt-mf2gOKpw2636VKBLBnOcm8fwd3G_-Xyy3L2xn2Hx2eQUzezybyfvNNTVByDvP9hJyDvEO2nc=w226-h226-l90-rj",
+        "url": "https://yt3.googleusercontent.com/fb1o9l3EsCFqSKADQ8mYU8yi_nAOWdM1qynVDAPpQW60Uv8gYrvm1q35ASigDavWuM_DpLaod4wnJDCI=w226-h226-l90-rj",
         "width": 226
       },
       {
         "height": 544,
-        "url": "https://yt3.googleusercontent.com/CL86mt-mf2gOKpw2636VKBLBnOcm8fwd3G_-Xyy3L2xn2Hx2eQUzezybyfvNNTVByDvP9hJyDvEO2nc=w544-h544-l90-rj",
+        "url": "https://yt3.googleusercontent.com/fb1o9l3EsCFqSKADQ8mYU8yi_nAOWdM1qynVDAPpQW60Uv8gYrvm1q35ASigDavWuM_DpLaod4wnJDCI=w544-h544-l90-rj",
         "width": 544
       }
     ],
-    "title": "Supersonic Sing-Along"
+    "title": "Summer Sonic 2026: Lineup"
   },
   {
-    "browseId": "MPSPPLsxjNspYtCSdRYt26aujxQgXjKCyMswMG",
+    "browseId": "MPSPPLVtN7_Wd8XZxrPbHqSRE5KnK0YdIZXBh7",
     "category": null,
     "resultType": "podcast",
     "thumbnails": [
       {
         "height": 60,
-        "url": "https://i.ytimg.com/podcasts_artwork/PLsxjNspYtCSdRYt26aujxQgXjKCyMswMG/rss_feed_ingested.jpg?sqp=CN7szc8G-oaymwEICDwQPCAASFo&rs=AMzJL3k1VDUWdZODM3dWf06biFzsSm2aJQ",
+        "url": "https://yt3.googleusercontent.com/yaVeVEOv3rqy386NFTc3VOCqPRjujpaSKDUFfEVBFziHgkfaKRhzLkA21C9_jWNRcQHQ-eqiQqg=w60-c-h60-k-c0x00ffffff-no-l90-rj",
         "width": 60
       },
       {
         "height": 120,
-        "url": "https://i.ytimg.com/podcasts_artwork/PLsxjNspYtCSdRYt26aujxQgXjKCyMswMG/rss_feed_ingested.jpg?sqp=CN7szc8G-oaymwEICHgQeCAASFo&rs=AMzJL3kJDDYOFE1Z2ABXy0cWl5zmu0vCiQ",
+        "url": "https://yt3.googleusercontent.com/yaVeVEOv3rqy386NFTc3VOCqPRjujpaSKDUFfEVBFziHgkfaKRhzLkA21C9_jWNRcQHQ-eqiQqg=w120-c-h120-k-c0x00ffffff-no-l90-rj",
         "width": 120
       },
       {
         "height": 226,
-        "url": "https://i.ytimg.com/podcasts_artwork/PLsxjNspYtCSdRYt26aujxQgXjKCyMswMG/rss_feed_ingested.jpg?sqp=CN7szc8G-oaymwEKCOIBEOIBIABIWg&rs=AMzJL3l-6am3ksZMA9qYOfdcwhRCNOK4gg",
+        "url": "https://yt3.googleusercontent.com/yaVeVEOv3rqy386NFTc3VOCqPRjujpaSKDUFfEVBFziHgkfaKRhzLkA21C9_jWNRcQHQ-eqiQqg=w226-c-h226-k-c0x00ffffff-no-l90-rj",
         "width": 226
       },
       {
         "height": 544,
-        "url": "https://i.ytimg.com/podcasts_artwork/PLsxjNspYtCSdRYt26aujxQgXjKCyMswMG/rss_feed_ingested.jpg?sqp=CN7szc8G-oaymwEKCKAEEKAEIABIWg&rs=AMzJL3lElo0zXKpZbkN9FJvdvloxiaKwpA",
+        "url": "https://yt3.googleusercontent.com/yaVeVEOv3rqy386NFTc3VOCqPRjujpaSKDUFfEVBFziHgkfaKRhzLkA21C9_jWNRcQHQ-eqiQqg=w544-c-h544-k-c0x00ffffff-no-l90-rj",
         "width": 544
       }
     ],
-    "title": "Song Story"
+    "title": "off Track Podcast Season 2"
   },
   {
-    "browseId": "MPSPPLFSnyf358NltIdXC72oqRgVk9fRkrRRV0",
+    "browseId": "MPSPPLJ_nfpcpS5g1ohxeXTTX7EHUWxP6ki2qf",
     "category": null,
     "resultType": "podcast",
     "thumbnails": [
       {
         "height": 60,
-        "url": "https://i.ytimg.com/pl_c/PLFSnyf358NltIdXC72oqRgVk9fRkrRRV0/studio_square_thumbnail.jpg?sqp=CN7szc8G-oaymwEICDwQPCAASFqi85f_AwYI1O3LqAY&rs=AMzJL3mawyH_ioW4_bT9kv4kdvc7i3eDmA",
+        "url": "https://i.ytimg.com/pl_c/PLJ_nfpcpS5g1ohxeXTTX7EHUWxP6ki2qf/studio_square_thumbnail.jpg?sqp=CM3-zc8G-oaymwEICDwQPCAASFqi85f_AwYIm_PArgY&rs=AMzJL3lnxDAwkYJ_621Mcx96O4q8qjQUhA",
         "width": 60
       },
       {
         "height": 120,
-        "url": "https://i.ytimg.com/pl_c/PLFSnyf358NltIdXC72oqRgVk9fRkrRRV0/studio_square_thumbnail.jpg?sqp=CN7szc8G-oaymwEICHgQeCAASFqi85f_AwYI1O3LqAY&rs=AMzJL3kQAqUKqCXtSaNJ71RPW6KmdqQyWA",
+        "url": "https://i.ytimg.com/pl_c/PLJ_nfpcpS5g1ohxeXTTX7EHUWxP6ki2qf/studio_square_thumbnail.jpg?sqp=CM3-zc8G-oaymwEICHgQeCAASFqi85f_AwYIm_PArgY&rs=AMzJL3lXrJnrRLCNpYVeKvIU1KsE0JGCxA",
         "width": 120
       },
       {
         "height": 226,
-        "url": "https://i.ytimg.com/pl_c/PLFSnyf358NltIdXC72oqRgVk9fRkrRRV0/studio_square_thumbnail.jpg?sqp=CN7szc8G-oaymwEKCOIBEOIBIABIWqLzl_8DBgjU7cuoBg&rs=AMzJL3n3PXOmM1qJnQl7n3u5DsSjnt5dZQ",
+        "url": "https://i.ytimg.com/pl_c/PLJ_nfpcpS5g1ohxeXTTX7EHUWxP6ki2qf/studio_square_thumbnail.jpg?sqp=CM3-zc8G-oaymwEKCOIBEOIBIABIWqLzl_8DBgib88CuBg&rs=AMzJL3kta2UIjlDwQlljCAdgIzRkgJVR-g",
         "width": 226
       },
       {
         "height": 544,
-        "url": "https://i.ytimg.com/pl_c/PLFSnyf358NltIdXC72oqRgVk9fRkrRRV0/studio_square_thumbnail.jpg?sqp=CN7szc8G-oaymwEKCKAEEKAEIABIWqLzl_8DBgjU7cuoBg&rs=AMzJL3noNH2Vp8XW3Z9D1PSmzuHE_aArOg",
+        "url": "https://i.ytimg.com/pl_c/PLJ_nfpcpS5g1ohxeXTTX7EHUWxP6ki2qf/studio_square_thumbnail.jpg?sqp=CM3-zc8G-oaymwEKCKAEEKAEIABIWqLzl_8DBgib88CuBg&rs=AMzJL3la76zA_fuzOZ5i_4uM0l3O4kh8aQ",
         "width": 544
       }
     ],
-    "title": "UNFILTERED with Jet and Mitchy"
+    "title": "Podcast Episodes - Season 1"
   },
   {
-    "browseId": "MPSPPLrBP7eEjApfP1qyhTTmShfLHCxDdekXYg",
+    "browseId": "MPSPPLc5edlR2gtA3qVqHNLu_wEUYhZih_pSFh",
     "category": null,
     "resultType": "podcast",
     "thumbnails": [
       {
         "height": 60,
-        "url": "https://i.ytimg.com/pl_c/PLrBP7eEjApfP1qyhTTmShfLHCxDdekXYg/studio_square_thumbnail.jpg?sqp=CN7szc8G-oaymwEICDwQPCAASFqi85f_AwYI89TXpwY&rs=AMzJL3lVuRuIvZ1_aHtWi5AZpbDoaVgFzg",
+        "url": "https://yt3.googleusercontent.com/BI8hKdyk97KgSlBFkL6tAEiTg1Jp7l2yjXW36Z6FtFb9_7zfG6QLIFmrE4_Ee4Uj7B7e-Mlbazw=w60-c-h60-k-c0x00ffffff-no-l90-rj",
         "width": 60
       },
       {
         "height": 120,
-        "url": "https://i.ytimg.com/pl_c/PLrBP7eEjApfP1qyhTTmShfLHCxDdekXYg/studio_square_thumbnail.jpg?sqp=CN7szc8G-oaymwEICHgQeCAASFqi85f_AwYI89TXpwY&rs=AMzJL3nplu3vNCgeBvy_C8NuxpYyXGwKtg",
+        "url": "https://yt3.googleusercontent.com/BI8hKdyk97KgSlBFkL6tAEiTg1Jp7l2yjXW36Z6FtFb9_7zfG6QLIFmrE4_Ee4Uj7B7e-Mlbazw=w120-c-h120-k-c0x00ffffff-no-l90-rj",
         "width": 120
       },
       {
         "height": 226,
-        "url": "https://i.ytimg.com/pl_c/PLrBP7eEjApfP1qyhTTmShfLHCxDdekXYg/studio_square_thumbnail.jpg?sqp=CN7szc8G-oaymwEKCOIBEOIBIABIWqLzl_8DBgjz1NenBg&rs=AMzJL3lxWc769KDcnLI3Yb5hRVW0tD-0KA",
+        "url": "https://yt3.googleusercontent.com/BI8hKdyk97KgSlBFkL6tAEiTg1Jp7l2yjXW36Z6FtFb9_7zfG6QLIFmrE4_Ee4Uj7B7e-Mlbazw=w226-c-h226-k-c0x00ffffff-no-l90-rj",
         "width": 226
       },
       {
         "height": 544,
-        "url": "https://i.ytimg.com/pl_c/PLrBP7eEjApfP1qyhTTmShfLHCxDdekXYg/studio_square_thumbnail.jpg?sqp=CN7szc8G-oaymwEKCKAEEKAEIABIWqLzl_8DBgjz1NenBg&rs=AMzJL3me4_6QQTHGHyo3Dqc3AlgmDTDWzA",
+        "url": "https://yt3.googleusercontent.com/BI8hKdyk97KgSlBFkL6tAEiTg1Jp7l2yjXW36Z6FtFb9_7zfG6QLIFmrE4_Ee4Uj7B7e-Mlbazw=w544-c-h544-k-c0x00ffffff-no-l90-rj",
         "width": 544
       }
     ],
-    "title": "RDS Music For You"
+    "title": "Random Podcast Memories"
   }
 ]
