@@ -6,6 +6,7 @@ use tokio::sync::OnceCell;
 use crate::{
     Error, SearchQuery, SearchResult,
     search::{
+        parse::parse_search_response,
         request::{USER_AGENT, bootstrap_visitor_id, build_search_body},
     },
 };
@@ -81,7 +82,7 @@ impl YtMusic {
             serde_json::from_str(&response_body).map_err(Error::JsonDecode)?;
         validate_search_response_structure(&response_json)?;
 
-        Ok(Vec::new())
+        parse_search_response(&response_json, query.filter)
     }
 }
 

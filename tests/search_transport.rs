@@ -1,4 +1,4 @@
-use serde_json::json;
+use serde_json::{Value, json};
 use wiremock::matchers::{body_partial_json, header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 use ytmusicapi::{Error, SearchFilter, SearchQuery, YtMusic};
@@ -9,9 +9,8 @@ async fn search_bootstraps_visitor_id_and_posts_search_request() {
 
     Mock::given(method("GET"))
         .and(path("/"))
-        .respond_with(
-            ResponseTemplate::new(200).set_body_string(
-                r#"
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"
                 <html>
                   <script>
                     ytcfg.set({
@@ -21,8 +20,7 @@ async fn search_bootstraps_visitor_id_and_posts_search_request() {
                   </script>
                 </html>
                 "#,
-            ),
-        )
+        ))
         .mount(&server)
         .await;
 
@@ -32,20 +30,17 @@ async fn search_bootstraps_visitor_id_and_posts_search_request() {
         .and(header("x-goog-visitor-id", "visitor-id-123"))
         .and(body_partial_json(json!({
             "query": "hip hop",
-            "params": "EgWKAQIIAWoMEA4QChADEAQQCRAF",
+            "params": "EgWKAQIYAWoMEA4QChADEAQQCRAF",
             "context": {
                 "client": {
                     "clientName": "WEB_REMIX"
                 }
             }
         })))
-        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
-            "contents": {
-                "tabbedSearchResultsRenderer": {
-                    "tabs": []
-                }
-            }
-        })))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/search/raw/albums.json")),
+        )
         .mount(&server)
         .await;
 
@@ -57,9 +52,13 @@ async fn search_bootstraps_visitor_id_and_posts_search_request() {
         .build()
         .unwrap();
 
-    let query = SearchQuery::new("hip hop").with_filter(SearchFilter::Songs);
+    let query = SearchQuery::new("hip hop").with_filter(SearchFilter::Albums);
     let result = client.search(query).await.unwrap();
-    assert!(result.is_empty());
+    assert_eq!(
+        serde_json::to_value(result).unwrap(),
+        serde_json::from_str::<Value>(include_str!("fixtures/search/expected/albums.json"))
+            .unwrap()
+    );
 }
 
 #[tokio::test]
@@ -69,9 +68,8 @@ async fn search_reuses_bootstrapped_visitor_id_across_requests() {
     Mock::given(method("GET"))
         .and(path("/"))
         .respond_with(
-            ResponseTemplate::new(200).set_body_string(
-                r#"window.ytcfg.set({ "VISITOR_DATA" : "visitor-id-123" });"#,
-            ),
+            ResponseTemplate::new(200)
+                .set_body_string(r#"window.ytcfg.set({ "VISITOR_DATA" : "visitor-id-123" });"#),
         )
         .expect(1)
         .mount(&server)
@@ -81,13 +79,10 @@ async fn search_reuses_bootstrapped_visitor_id_across_requests() {
         .and(path("/youtubei/v1/search"))
         .and(query_param("alt", "json"))
         .and(header("x-goog-visitor-id", "visitor-id-123"))
-        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
-            "contents": {
-                "tabbedSearchResultsRenderer": {
-                    "tabs": []
-                }
-            }
-        })))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/search/raw/default_mixed.json")),
+        )
         .expect(2)
         .mount(&server)
         .await;
@@ -98,8 +93,11 @@ async fn search_reuses_bootstrapped_visitor_id_across_requests() {
         .build()
         .unwrap();
 
-    assert!(client.search(SearchQuery::new("first")).await.unwrap().is_empty());
-    assert!(client.search(SearchQuery::new("second")).await.unwrap().is_empty());
+    let first = client.search(SearchQuery::new("first")).await.unwrap();
+    let second = client.search(SearchQuery::new("second")).await.unwrap();
+
+    assert_eq!(first.len(), 24);
+    assert_eq!(second.len(), 24);
 }
 
 #[tokio::test]
@@ -109,9 +107,8 @@ async fn missing_visitor_id_is_reported() {
     Mock::given(method("GET"))
         .and(path("/"))
         .respond_with(
-            ResponseTemplate::new(200).set_body_string(
-                r#"ytcfg.set({ "INNERTUBE_CONTEXT": { "client": {} } });"#,
-            ),
+            ResponseTemplate::new(200)
+                .set_body_string(r#"ytcfg.set({ "INNERTUBE_CONTEXT": { "client": {} } });"#),
         )
         .mount(&server)
         .await;
