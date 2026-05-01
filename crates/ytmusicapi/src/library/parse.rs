@@ -35,8 +35,29 @@ fn library_playlist_items<'a>(response: &'a Value) -> Result<Option<&'a [Value]>
     )?;
 
     for section in sections {
-        if section.get("gridRenderer").is_some() {
-            return required_array_at(section, "/gridRenderer/items").map(Some);
+        if let Some(items) = section_grid_items(section)? {
+            return Ok(Some(items));
+        }
+    }
+
+    Ok(None)
+}
+
+fn section_grid_items<'a>(section: &'a Value) -> Result<Option<&'a [Value]>, Error> {
+    if section.get("gridRenderer").is_some() {
+        return required_array_at(section, "/gridRenderer/items").map(Some);
+    }
+
+    let Some(contents) = section
+        .pointer("/itemSectionRenderer/contents")
+        .and_then(Value::as_array)
+    else {
+        return Ok(None);
+    };
+
+    for content in contents {
+        if content.get("gridRenderer").is_some() {
+            return required_array_at(content, "/gridRenderer/items").map(Some);
         }
     }
 

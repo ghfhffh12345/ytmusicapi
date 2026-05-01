@@ -414,6 +414,76 @@ async fn get_library_playlists_ignores_grids_outside_selected_library_tab() {
 }
 
 #[tokio::test]
+async fn get_library_playlists_supports_wrapped_item_section_grid() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "itemSectionRenderer": {
+                                            "contents": [{
+                                                "gridRenderer": {
+                                                    "items": [{
+                                                        "musicTwoRowItemRenderer": {
+                                                            "title": { "runs": [{ "text": "Create playlist" }] },
+                                                            "subtitle": { "runs": [{ "text": "Control tile" }] },
+                                                            "thumbnailRenderer": { "musicThumbnailRenderer": { "thumbnail": { "thumbnails": [] } } }
+                                                        }
+                                                    }, {
+                                                        "musicTwoRowItemRenderer": {
+                                                            "title": { "runs": [{ "text": "Wrapped Playlist", "navigationEndpoint": { "browseEndpoint": { "browseId": "VLPLWRAPPED" } } }] },
+                                                            "subtitle": { "runs": [{ "text": "OpenAI" }, { "text": " • " }, { "text": "7 songs" }] },
+                                                            "thumbnailRenderer": { "musicThumbnailRenderer": { "thumbnail": { "thumbnails": [{ "url": "https://example.com/wrapped.jpg", "width": 300, "height": 300 }] } } }
+                                                        }
+                                                    }]
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        })))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let playlists = client.get_library_playlists().await.unwrap();
+    assert_eq!(playlists.len(), 1);
+    assert_eq!(playlists[0].playlist_id, "PLWRAPPED");
+    assert_eq!(playlists[0].title.as_deref(), Some("Wrapped Playlist"));
+}
+
+#[tokio::test]
 async fn get_library_playlists_errors_when_tabs_are_missing() {
     let server = MockServer::start().await;
 
