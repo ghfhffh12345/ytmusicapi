@@ -26,7 +26,6 @@ fn library_playlist_items<'a>(response: &'a Value) -> Result<Option<&'a [Value]>
                 .and_then(Value::as_bool)
                 .unwrap_or(false)
         })
-        .or_else(|| (tabs.len() == 1).then(|| &tabs[0]))
         .ok_or_else(|| Error::Parse("library response missing selected library tab".to_owned()))?;
 
     let sections = required_array_at(
