@@ -17,6 +17,8 @@ pub enum Error {
     JsonDecode(#[source] serde_json::Error),
     #[error("failed to bootstrap visitor id")]
     MissingVisitorId,
+    #[error("failed to bootstrap anonymous client config: missing {0}")]
+    MissingBootstrapField(&'static str),
     #[error("failed to parse search response: {0}")]
     Parse(String),
     #[error("unsupported feature: {0}")]

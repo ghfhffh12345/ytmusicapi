@@ -1,7 +1,9 @@
 use serde_json::{Value, json};
-use wiremock::matchers::{body_partial_json, header, method, path, query_param};
+use wiremock::matchers::{method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 use ytmusicapi::{Error, SearchFilter, SearchQuery, YtMusic};
+
+const BROWSER_USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36";
 
 #[tokio::test]
 async fn search_bootstraps_visitor_id_and_posts_search_request() {
@@ -13,9 +15,11 @@ async fn search_bootstraps_visitor_id_and_posts_search_request() {
             r#"
                 <html>
                   <script>
+                    ytcfg.set({ "INNERTUBE_CONTEXT": {} });
                     ytcfg.set({
                       "VISITOR_DATA": "visitor-id-123",
-                      "INNERTUBE_CONTEXT": {}
+                      "INNERTUBE_API_KEY": "test-api-key",
+                      "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00"
                     });
                   </script>
                 </html>
@@ -26,17 +30,6 @@ async fn search_bootstraps_visitor_id_and_posts_search_request() {
 
     Mock::given(method("POST"))
         .and(path("/youtubei/v1/search"))
-        .and(query_param("alt", "json"))
-        .and(header("x-goog-visitor-id", "visitor-id-123"))
-        .and(body_partial_json(json!({
-            "query": "hip hop",
-            "params": "EgWKAQIYAWoMEA4QChADEAQQCRAF",
-            "context": {
-                "client": {
-                    "clientName": "WEB_REMIX"
-                }
-            }
-        })))
         .respond_with(
             ResponseTemplate::new(200)
                 .set_body_string(include_str!("fixtures/search/raw/albums.json")),
@@ -59,6 +52,52 @@ async fn search_bootstraps_visitor_id_and_posts_search_request() {
         serde_json::from_str::<Value>(include_str!("fixtures/search/expected/albums.json"))
             .unwrap()
     );
+
+    let requests = server.received_requests().await.unwrap();
+    let bootstrap_request = requests
+        .iter()
+        .find(|request| request.method.as_str() == "GET")
+        .expect("expected bootstrap GET request");
+    let search_request = requests
+        .iter()
+        .find(|request| request.method.as_str() == "POST")
+        .expect("expected search POST request");
+    let search_body: Value = serde_json::from_slice(&search_request.body).unwrap();
+
+    assert_eq!(bootstrap_request.url.path(), "/");
+    assert_eq!(
+        bootstrap_request
+            .headers
+            .get("user-agent")
+            .and_then(|value| value.to_str().ok()),
+        Some(BROWSER_USER_AGENT)
+    );
+    assert_eq!(search_request.url.path(), "/youtubei/v1/search");
+    assert_eq!(
+        search_request.url.query(),
+        Some("alt=json&key=test-api-key")
+    );
+    assert_eq!(
+        search_request
+            .headers
+            .get("user-agent")
+            .and_then(|value| value.to_str().ok()),
+        Some(BROWSER_USER_AGENT)
+    );
+    assert_eq!(
+        search_request
+            .headers
+            .get("x-goog-visitor-id")
+            .and_then(|value| value.to_str().ok()),
+        Some("visitor-id-123")
+    );
+    assert_eq!(search_body["query"], "hip hop");
+    assert_eq!(search_body["params"], "EgWKAQIYAWoMEA4QChADEAQQCRAF");
+    assert_eq!(search_body["context"]["client"]["clientName"], "WEB_REMIX");
+    assert_eq!(
+        search_body["context"]["client"]["clientVersion"],
+        "1.20250501.01.00"
+    );
 }
 
 #[tokio::test]
@@ -68,8 +107,9 @@ async fn search_reuses_bootstrapped_visitor_id_across_requests() {
     Mock::given(method("GET"))
         .and(path("/"))
         .respond_with(
-            ResponseTemplate::new(200)
-                .set_body_string(r#"window.ytcfg.set({ "VISITOR_DATA" : "visitor-id-123" });"#),
+            ResponseTemplate::new(200).set_body_string(
+                r#"window.ytcfg.set({ "VISITOR_DATA" : "visitor-id-123", "INNERTUBE_API_KEY": "cached-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.02.00" });"#,
+            ),
         )
         .expect(1)
         .mount(&server)
@@ -77,8 +117,6 @@ async fn search_reuses_bootstrapped_visitor_id_across_requests() {
 
     Mock::given(method("POST"))
         .and(path("/youtubei/v1/search"))
-        .and(query_param("alt", "json"))
-        .and(header("x-goog-visitor-id", "visitor-id-123"))
         .respond_with(
             ResponseTemplate::new(200)
                 .set_body_string(include_str!("fixtures/search/raw/default_mixed.json")),
@@ -98,17 +136,58 @@ async fn search_reuses_bootstrapped_visitor_id_across_requests() {
 
     assert_eq!(first.len(), 24);
     assert_eq!(second.len(), 24);
+
+    let requests = server.received_requests().await.unwrap();
+    let bootstrap_requests: Vec<_> = requests
+        .iter()
+        .filter(|request| request.method.as_str() == "GET")
+        .collect();
+    let post_requests: Vec<_> = requests
+        .iter()
+        .filter(|request| request.method.as_str() == "POST")
+        .collect();
+    assert_eq!(bootstrap_requests.len(), 1);
+    assert_eq!(post_requests.len(), 2);
+
+    assert_eq!(bootstrap_requests[0].url.path(), "/");
+    assert_eq!(
+        bootstrap_requests[0]
+            .headers
+            .get("user-agent")
+            .and_then(|value| value.to_str().ok()),
+        Some(BROWSER_USER_AGENT)
+    );
+
+    for request in post_requests {
+        let body: Value = serde_json::from_slice(&request.body).unwrap();
+
+        assert_eq!(request.url.path(), "/youtubei/v1/search");
+        assert_eq!(request.url.query(), Some("alt=json&key=cached-api-key"));
+        assert_eq!(
+            request
+                .headers
+                .get("x-goog-visitor-id")
+                .and_then(|value| value.to_str().ok()),
+            Some("visitor-id-123")
+        );
+        assert_eq!(body["context"]["client"]["clientName"], "WEB_REMIX");
+        assert_eq!(
+            body["context"]["client"]["clientVersion"],
+            "1.20250501.02.00"
+        );
+    }
 }
 
 #[tokio::test]
-async fn missing_visitor_id_is_reported() {
+async fn missing_bootstrap_field_is_reported() {
     let server = MockServer::start().await;
 
     Mock::given(method("GET"))
         .and(path("/"))
         .respond_with(
-            ResponseTemplate::new(200)
-                .set_body_string(r#"ytcfg.set({ "INNERTUBE_CONTEXT": { "client": {} } });"#),
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+            ),
         )
         .mount(&server)
         .await;
@@ -121,8 +200,8 @@ async fn missing_visitor_id_is_reported() {
 
     let error = client.search(SearchQuery::new("abba")).await.unwrap_err();
     match error {
-        Error::MissingVisitorId => {}
-        other => panic!("expected MissingVisitorId error, got {other:?}"),
+        Error::MissingBootstrapField(field) => assert_eq!(field, "INNERTUBE_API_KEY"),
+        other => panic!("expected MissingBootstrapField error, got {other:?}"),
     }
 }
 
@@ -133,8 +212,9 @@ async fn invalid_json_response_is_reported() {
     Mock::given(method("GET"))
         .and(path("/"))
         .respond_with(
-            ResponseTemplate::new(200)
-                .set_body_string(r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123" });"#),
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.04.00" });"#,
+            ),
         )
         .mount(&server)
         .await;
@@ -166,8 +246,9 @@ async fn structurally_invalid_json_response_is_parse_error() {
     Mock::given(method("GET"))
         .and(path("/"))
         .respond_with(
-            ResponseTemplate::new(200)
-                .set_body_string(r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123" });"#),
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.05.00" });"#,
+            ),
         )
         .mount(&server)
         .await;
@@ -203,8 +284,9 @@ async fn empty_successful_search_response_returns_empty_results() {
     Mock::given(method("GET"))
         .and(path("/"))
         .respond_with(
-            ResponseTemplate::new(200)
-                .set_body_string(r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123" });"#),
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.06.00" });"#,
+            ),
         )
         .mount(&server)
         .await;
@@ -240,8 +322,9 @@ async fn unsupported_filtered_empty_successful_search_is_rejected() {
     Mock::given(method("GET"))
         .and(path("/"))
         .respond_with(
-            ResponseTemplate::new(200)
-                .set_body_string(r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123" });"#),
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.07.00" });"#,
+            ),
         )
         .mount(&server)
         .await;
@@ -284,8 +367,9 @@ async fn server_status_is_mapped_to_status_error() {
     Mock::given(method("GET"))
         .and(path("/"))
         .respond_with(
-            ResponseTemplate::new(200)
-                .set_body_string(r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123" });"#),
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.08.00" });"#,
+            ),
         )
         .mount(&server)
         .await;

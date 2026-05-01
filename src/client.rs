@@ -7,7 +7,7 @@ use crate::{
     Error, SearchQuery, SearchResult,
     search::{
         parse::parse_search_response,
-        request::{USER_AGENT, bootstrap_visitor_id, build_search_body},
+        request::{BootstrapConfig, USER_AGENT, bootstrap_config, build_search_body},
     },
 };
 
@@ -16,7 +16,7 @@ pub struct YtMusic {
     pub(crate) http_client: Client,
     pub(crate) base_url: String,
     pub(crate) homepage_url: String,
-    pub(crate) visitor_id: Arc<OnceCell<String>>,
+    pub(crate) bootstrap_config: Arc<OnceCell<BootstrapConfig>>,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -50,21 +50,25 @@ impl YtMusic {
     pub async fn search(&self, query: SearchQuery) -> Result<Vec<SearchResult>, Error> {
         query.validate()?;
 
-        let visitor_id = self
-            .visitor_id
+        let bootstrap_config = self
+            .bootstrap_config
             .get_or_try_init(|| async {
-                bootstrap_visitor_id(&self.http_client, &self.homepage_url).await
+                bootstrap_config(&self.http_client, &self.homepage_url).await
             })
             .await?;
 
-        let url = format!("{}/search?alt=json", self.base_url.trim_end_matches('/'));
-        let body = build_search_body(&query).to_string();
+        let url = format!(
+            "{}/search?alt=json&key={}",
+            self.base_url.trim_end_matches('/'),
+            bootstrap_config.innertube_api_key
+        );
+        let body = build_search_body(&query, bootstrap_config).to_string();
         let response = self
             .http_client
             .post(url)
             .header(header::CONTENT_TYPE, "application/json")
             .header(header::USER_AGENT, USER_AGENT)
-            .header("x-goog-visitor-id", visitor_id)
+            .header("x-goog-visitor-id", &bootstrap_config.visitor_id)
             .body(body)
             .send()
             .await
@@ -116,7 +120,7 @@ impl YtMusicBuilder {
             homepage_url: self
                 .homepage_url
                 .unwrap_or_else(|| "https://music.youtube.com".to_owned()),
-            visitor_id: Arc::new(OnceCell::new()),
+            bootstrap_config: Arc::new(OnceCell::new()),
         })
     }
 }
