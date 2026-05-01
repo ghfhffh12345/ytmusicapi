@@ -20,7 +20,6 @@ pub struct YtMusic {
     pub(crate) base_url: String,
     pub(crate) homepage_url: String,
     pub(crate) bootstrap_config: Arc<OnceCell<BootstrapConfig>>,
-    #[allow(dead_code)]
     pub(crate) browser_auth: Option<crate::auth::BrowserAuthHeaders>,
 }
 

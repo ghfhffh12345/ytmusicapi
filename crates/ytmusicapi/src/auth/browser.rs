@@ -62,6 +62,10 @@ impl BrowserAuthHeaders {
 
         let mut header_map = HeaderMap::new();
         for (name, value) in headers {
+            if name == "content-encoding" {
+                continue;
+            }
+
             let header_name = HeaderName::from_bytes(name.as_bytes()).map_err(|source| {
                 Error::AuthValidation(format!("invalid browser auth header name {name}: {source}"))
             })?;
@@ -373,5 +377,33 @@ mod tests {
 
         assert_ne!(authorization, "SAPISIDHASH stale-copy");
         assert!(authorization.starts_with("SAPISIDHASH "));
+    }
+
+    #[test]
+    fn to_header_map_omits_stored_content_encoding() {
+        let headers = BrowserAuthHeaders {
+            headers: BTreeMap::from([
+                ("content-encoding".to_owned(), "gzip".to_owned()),
+                (
+                    "cookie".to_owned(),
+                    "__Secure-3PAPISID=test-sapisid".to_owned(),
+                ),
+                ("x-goog-authuser".to_owned(), "0".to_owned()),
+                (
+                    "x-origin".to_owned(),
+                    "https://music.youtube.com".to_owned(),
+                ),
+                ("origin".to_owned(), "https://music.youtube.com".to_owned()),
+                ("x-youtube-client-name".to_owned(), "67".to_owned()),
+                (
+                    "x-youtube-client-version".to_owned(),
+                    "1.20250501.01.00".to_owned(),
+                ),
+            ]),
+        };
+
+        let header_map = headers.to_header_map(None).unwrap();
+
+        assert!(!header_map.contains_key("content-encoding"));
     }
 }

@@ -85,6 +85,8 @@ async fn authenticated_client_posts_browse_with_browser_headers() {
         browse.headers["x-youtube-client-version"],
         "1.20250501.01.00"
     );
+    assert_eq!(browse.headers["content-type"], "application/json");
+    assert!(!browse.headers.contains_key("content-encoding"));
     assert!(
         browse.headers["authorization"]
             .to_str()
