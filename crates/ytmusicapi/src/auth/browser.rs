@@ -1,5 +1,10 @@
 use std::{collections::BTreeMap, fs, path::Path};
 
+use serde::{
+    Deserialize,
+    de::{self, MapAccess, Visitor},
+};
+
 use crate::Error;
 
 pub(crate) type BrowserAuthHeaders = BTreeMap<String, String>;
@@ -25,7 +30,12 @@ pub(crate) fn load_browser_auth_file(path: &Path) -> Result<BrowserAuthHeaders, 
         path: path_display.clone(),
         source,
     })?;
-    let headers = serde_json::from_str::<BrowserAuthHeaders>(&contents).map_err(|source| {
+    let headers = deserialize_browser_auth_headers(&contents).map_err(|source| {
+        let message = source.to_string();
+        if message.starts_with("duplicate browser auth header after normalization: ") {
+            return Error::AuthValidation(message);
+        }
+
         Error::AuthFileDecode {
             path: path_display,
             source,
@@ -53,12 +63,12 @@ fn parse_raw_headers(raw_headers: &str) -> Result<BrowserAuthHeaders, Error> {
             )));
         };
 
-        let name = name.to_ascii_lowercase();
+        let name = normalize_header_name(name);
         if should_drop_header(&name) {
             continue;
         }
 
-        headers.insert(name, value.to_owned());
+        insert_header(&mut headers, name, value.to_owned())?;
     }
 
     finalize_headers(headers)
@@ -96,4 +106,73 @@ fn is_request_line(line: &str) -> bool {
 
 fn should_drop_header(name: &str) -> bool {
     matches!(name, "host" | "content-length" | "accept-encoding") || name.starts_with("sec-")
+}
+
+fn normalize_header_name(name: &str) -> String {
+    name.to_ascii_lowercase()
+}
+
+fn insert_header(
+    headers: &mut BrowserAuthHeaders,
+    name: String,
+    value: String,
+) -> Result<(), Error> {
+    if headers.insert(name.clone(), value).is_some() {
+        return Err(Error::AuthValidation(format!(
+            "duplicate browser auth header after normalization: {name}"
+        )));
+    }
+
+    Ok(())
+}
+
+fn deserialize_browser_auth_headers(
+    contents: &str,
+) -> Result<BrowserAuthHeaders, serde_json::Error> {
+    serde_json::from_str::<NormalizedBrowserAuthHeaders>(contents).map(|headers| headers.0)
+}
+
+struct NormalizedBrowserAuthHeaders(BrowserAuthHeaders);
+
+impl<'de> Deserialize<'de> for NormalizedBrowserAuthHeaders {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        deserializer.deserialize_map(NormalizedBrowserAuthHeadersVisitor)
+    }
+}
+
+struct NormalizedBrowserAuthHeadersVisitor;
+
+impl<'de> Visitor<'de> for NormalizedBrowserAuthHeadersVisitor {
+    type Value = NormalizedBrowserAuthHeaders;
+
+    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter.write_str("a JSON object containing browser auth headers")
+    }
+
+    fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
+    where
+        A: MapAccess<'de>,
+    {
+        let mut headers = BrowserAuthHeaders::new();
+
+        while let Some(name) = map.next_key::<String>()? {
+            let value = map.next_value::<String>()?;
+            let name = normalize_header_name(&name);
+
+            if should_drop_header(&name) {
+                continue;
+            }
+
+            if headers.insert(name.clone(), value).is_some() {
+                return Err(de::Error::custom(format!(
+                    "duplicate browser auth header after normalization: {name}"
+                )));
+            }
+        }
+
+        Ok(NormalizedBrowserAuthHeaders(headers))
+    }
 }

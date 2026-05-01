@@ -16,6 +16,16 @@ X-Youtube-Client-Version: 1.20250501.01.00\n\
 Cookie: __Secure-3PAPISID=test-sapisid; VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D\n"
 }
 
+fn mixed_case_browser_json() -> &'static str {
+    r#"{
+  "Cookie": "__Secure-3PAPISID=test-sapisid; VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D",
+  "X-Goog-AuthUser": "0",
+  "X-Origin": "https://music.youtube.com",
+  "X-Youtube-Client-Name": "67",
+  "X-Youtube-Client-Version": "1.20250501.01.00"
+}"#
+}
+
 #[test]
 fn setup_browser_auth_normalizes_firefox_headers() {
     let json = setup_browser_auth(firefox_headers()).unwrap();
@@ -40,6 +50,15 @@ fn setup_browser_auth_rejects_missing_required_headers() {
 }
 
 #[test]
+fn setup_browser_auth_rejects_duplicate_header_names_after_normalization() {
+    let error = setup_browser_auth(
+        "Cookie: __Secure-3PAPISID=test-sapisid\ncookie: duplicate\nX-Goog-AuthUser: 0\n",
+    )
+    .unwrap_err();
+    assert!(matches!(error, Error::AuthValidation(_)));
+}
+
+#[test]
 fn authenticated_client_loads_browser_json_file() {
     let dir = tempdir().unwrap();
     let path = dir.path().join("browser.json");
@@ -48,6 +67,35 @@ fn authenticated_client_loads_browser_json_file() {
     let client = YtMusic::from_browser_auth_file(&path).unwrap();
     let debug = format!("{client:?}");
     assert!(debug.contains("YtMusic"));
+}
+
+#[test]
+fn authenticated_client_loads_mixed_case_browser_json_file() {
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, mixed_case_browser_json()).unwrap();
+
+    let client = YtMusic::from_browser_auth_file(&path).unwrap();
+    let debug = format!("{client:?}");
+    assert!(debug.contains("YtMusic"));
+}
+
+#[test]
+fn authenticated_client_rejects_case_colliding_browser_json_keys() {
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(
+        &path,
+        r#"{
+  "Cookie": "__Secure-3PAPISID=test-sapisid",
+  "cookie": "duplicate",
+  "X-Goog-AuthUser": "0"
+}"#,
+    )
+    .unwrap();
+
+    let error = YtMusic::from_browser_auth_file(&path).unwrap_err();
+    assert!(matches!(error, Error::AuthValidation(_)));
 }
 
 #[test]
