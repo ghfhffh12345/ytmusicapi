@@ -19,6 +19,7 @@ pub enum SearchResultType {
     Video,
     Album,
     Artist,
+    Profile,
     Playlist,
     Episode,
     Podcast,
@@ -31,6 +32,7 @@ impl SearchResultType {
             Self::Video => "video",
             Self::Album => "album",
             Self::Artist => "artist",
+            Self::Profile => "profile",
             Self::Playlist => "playlist",
             Self::Episode => "episode",
             Self::Podcast => "podcast",
@@ -45,6 +47,7 @@ pub enum SearchResult {
     Video(VideoResult),
     Album(AlbumResult),
     Artist(ArtistResult),
+    Profile(ProfileResult),
     Playlist(PlaylistResult),
 }
 
@@ -125,6 +128,17 @@ pub struct ArtistResult {
     pub radio_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub shuffle_id: Option<String>,
+    pub thumbnails: Vec<Thumbnail>,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProfileResult {
+    pub category: Option<String>,
+    pub result_type: SearchResultType,
+    pub browse_id: String,
+    pub name: String,
+    pub handle: String,
     pub thumbnails: Vec<Thumbnail>,
 }
 

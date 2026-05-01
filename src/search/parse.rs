@@ -5,7 +5,8 @@ use crate::{
     model::{
         common::{AlbumRef, ArtistRef, Thumbnail},
         search::{
-            AlbumResult, ArtistResult, PlaylistResult, SearchResult, SearchResultType, VideoResult,
+            AlbumResult, ArtistResult, PlaylistResult, ProfileResult, SearchResult,
+            SearchResultType, VideoResult,
         },
     },
 };
@@ -103,8 +104,8 @@ fn parse_shelf_item(item: &Value, category: Option<String>) -> Result<SearchResu
     match kind.as_str() {
         "Album" | "Single" | "EP" => parse_album_result(renderer, category, title, &metadata_parts),
         "Artist" => parse_artist_result(renderer, category, title, true),
-        "Profile" => parse_artist_result(renderer, category, title, false),
-        "Playlist" => parse_playlist_result(renderer, category, title),
+        "Profile" => parse_profile_result(renderer, category, title, &metadata_parts),
+        "Playlist" => parse_playlist_result(renderer, category, title, &metadata_parts),
         "Episode" => parse_episode_result(renderer, category, title, &metadata_parts),
         "Podcast" => parse_podcast_result(renderer, category, title),
         other => Err(Error::Parse(format!(
@@ -182,23 +183,57 @@ fn parse_artist_result(
     }))
 }
 
+fn parse_profile_result(
+    renderer: &Value,
+    category: Option<String>,
+    title: String,
+    metadata_parts: &[&Value],
+) -> Result<SearchResult, Error> {
+    let handle = metadata_parts
+        .get(1)
+        .map(|run| required_text(run, "/text"))
+        .transpose()?
+        .ok_or_else(|| Error::Parse("search response missing profile handle".to_owned()))?;
+
+    Ok(SearchResult::Profile(ProfileResult {
+        category,
+        result_type: SearchResultType::Profile,
+        browse_id: required_text(renderer, "/navigationEndpoint/browseEndpoint/browseId")?,
+        name: title,
+        handle,
+        thumbnails: parse_thumbnails(renderer)?,
+    }))
+}
+
 fn parse_playlist_result(
     renderer: &Value,
     category: Option<String>,
     title: String,
+    metadata_parts: &[&Value],
 ) -> Result<SearchResult, Error> {
-    let author = required_text(
-        renderer,
-        "/flexColumns/1/musicResponsiveListItemFlexColumnRenderer/text/runs/2/text",
-    )?;
+    let author = metadata_parts
+        .get(1)
+        .map(|run| required_text(run, "/text"))
+        .transpose()?
+        .ok_or_else(|| Error::Parse("search response missing playlist author".to_owned()))?;
+    let item_count = metadata_parts
+        .get(2)
+        .map(|run| required_text(run, "/text"))
+        .transpose()?
+        .and_then(|value| {
+            value
+                .contains("song")
+                .then(|| value.split_whitespace().next().map(str::to_owned))
+                .flatten()
+        });
 
     Ok(SearchResult::Playlist(PlaylistResult {
         category,
         result_type: SearchResultType::Playlist,
         browse_id: required_text(renderer, "/navigationEndpoint/browseEndpoint/browseId")?,
         title,
-        author: Some(author.clone()),
-        item_count: author.split_whitespace().next().map(str::to_owned),
+        author: Some(author),
+        item_count,
         thumbnails: parse_thumbnails(renderer)?,
     }))
 }

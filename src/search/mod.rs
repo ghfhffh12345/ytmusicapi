@@ -1,3 +1,3 @@
 pub mod params;
-pub mod parse;
+pub(crate) mod parse;
 pub mod request;
