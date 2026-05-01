@@ -15,6 +15,16 @@ pub fn parse_search_response(
     response: &Value,
     filter: Option<SearchFilter>,
 ) -> Result<Vec<SearchResult>, Error> {
+    match filter {
+        Some(SearchFilter::Songs | SearchFilter::Videos) => {
+            return Err(Error::UnsupportedFeature(
+                "search parser currently supports only default mixed, albums, artists, and playlists responses"
+                    .to_owned(),
+            ));
+        }
+        _ => {}
+    }
+
     let tabs = required_array_at(response, "/contents/tabbedSearchResultsRenderer/tabs")?;
     if tabs.is_empty() {
         return Ok(Vec::new());
@@ -29,13 +39,8 @@ pub fn parse_search_response(
         None => parse_default_mixed_sections(sections),
         Some(SearchFilter::Albums) => parse_filtered_sections(sections, SearchFilter::Albums),
         Some(SearchFilter::Artists) => parse_filtered_sections(sections, SearchFilter::Artists),
-        Some(SearchFilter::Playlists) => {
-            parse_filtered_sections(sections, SearchFilter::Playlists)
-        }
-        Some(_) => Err(Error::UnsupportedFeature(
-            "search parser currently supports only default mixed, albums, artists, and playlists responses"
-                .to_owned(),
-        )),
+        Some(SearchFilter::Playlists) => parse_filtered_sections(sections, SearchFilter::Playlists),
+        Some(_) => unreachable!("unsupported filters are rejected before section parsing"),
     }
 }
 
