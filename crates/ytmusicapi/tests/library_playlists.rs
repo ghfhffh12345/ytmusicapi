@@ -4,7 +4,7 @@ use serde_json::json;
 use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
-use ytmusicapi::{ArtistRef, LibraryPlaylist, Thumbnail, YtMusic, setup_browser_auth};
+use ytmusicapi::{ArtistRef, Error, LibraryPlaylist, Thumbnail, YtMusic, setup_browser_auth};
 
 fn browser_auth_json() -> String {
     setup_browser_auth(
@@ -62,6 +62,12 @@ async fn get_library_playlists_returns_first_page_results() {
                                     "contents": [{
                                         "gridRenderer": {
                                             "items": [{
+                                                "musicTwoRowItemRenderer": {
+                                                    "title": { "runs": [{ "text": "Create playlist" }] },
+                                                    "subtitle": { "runs": [{ "text": "Control tile" }] },
+                                                    "thumbnailRenderer": { "musicThumbnailRenderer": { "thumbnail": { "thumbnails": [] } } }
+                                                }
+                                            }, {
                                                 "musicTwoRowItemRenderer": {
                                                     "title": { "runs": [{ "text": "Synthwave Mix", "navigationEndpoint": { "browseEndpoint": { "browseId": "VLPL123" } } }] },
                                                     "subtitle": { "runs": [{ "text": "OpenAI" }, { "text": " • " }, { "text": "15 songs" }] },
@@ -127,6 +133,82 @@ async fn get_library_playlists_returns_first_page_results() {
                 thumbnails: vec![],
             }
         ]
+    );
+}
+
+#[tokio::test]
+async fn get_library_playlists_skips_leading_grid_item() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "gridRenderer": {
+                                            "items": [{
+                                                "musicTwoRowItemRenderer": {
+                                                    "title": { "runs": [{ "text": "Create playlist" }] },
+                                                    "subtitle": { "runs": [{ "text": "Control tile" }] },
+                                                    "thumbnailRenderer": { "musicThumbnailRenderer": { "thumbnail": { "thumbnails": [] } } }
+                                                }
+                                            }, {
+                                                "musicTwoRowItemRenderer": {
+                                                    "title": { "runs": [{ "text": "Actual Playlist", "navigationEndpoint": { "browseEndpoint": { "browseId": "VLPL456" } } }] },
+                                                    "subtitle": { "runs": [{ "text": "OpenAI" }, { "text": " • " }, { "text": "8 songs" }] },
+                                                    "thumbnailRenderer": { "musicThumbnailRenderer": { "thumbnail": { "thumbnails": [] } } }
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        })))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let playlists = client.get_library_playlists().await.unwrap();
+    assert_eq!(
+        playlists,
+        vec![LibraryPlaylist {
+            playlist_id: "PL456".to_owned(),
+            title: Some("Actual Playlist".to_owned()),
+            authors: vec![ArtistRef {
+                id: String::new(),
+                name: "OpenAI".to_owned(),
+            }],
+            item_count: Some(8),
+            thumbnails: vec![],
+        }]
     );
 }
 
@@ -250,6 +332,14 @@ async fn get_library_playlists_falls_back_to_bootstrap_client_version_in_body() 
         body["context"]["client"]["clientVersion"],
         "1.20250501.09.99"
     );
+}
+
+#[tokio::test]
+async fn get_library_playlists_requires_browser_auth() {
+    let client = YtMusic::builder().build().unwrap();
+
+    let error = client.get_library_playlists().await.unwrap_err();
+    assert!(matches!(error, Error::UnsupportedFeature(_)));
 }
 
 #[tokio::test]

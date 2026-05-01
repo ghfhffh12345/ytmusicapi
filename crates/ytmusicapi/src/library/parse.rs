@@ -11,6 +11,7 @@ pub(crate) fn parse_library_playlists_response(
 
     items
         .iter()
+        .skip(1)
         .filter_map(|item| item.get("musicTwoRowItemRenderer"))
         .map(parse_library_playlist)
         .collect()
