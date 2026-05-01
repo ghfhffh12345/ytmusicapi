@@ -197,16 +197,6 @@ impl SearchQuery {
             return Err(Error::InvalidInput("query must not be blank".to_owned()));
         }
 
-        if matches!(
-            self.filter,
-            Some(SearchFilter::Songs | SearchFilter::Videos)
-        ) {
-            return Err(Error::UnsupportedFeature(
-                "search parser currently supports only default mixed, albums, artists, and playlists responses"
-                    .to_owned(),
-            ));
-        }
-
         if self.limit == 0 {
             return Err(Error::InvalidInput(
                 "limit must be greater than zero".to_owned(),

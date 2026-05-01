@@ -15,13 +15,6 @@ pub fn parse_search_response(
     response: &Value,
     filter: Option<SearchFilter>,
 ) -> Result<Vec<SearchResult>, Error> {
-    if let Some(SearchFilter::Songs | SearchFilter::Videos) = filter {
-        return Err(Error::UnsupportedFeature(
-            "search parser currently supports only default mixed, albums, artists, and playlists responses"
-                .to_owned(),
-        ));
-    }
-
     let tabs = required_array_at(response, "/contents/tabbedSearchResultsRenderer/tabs")?;
     if tabs.is_empty() {
         return Ok(Vec::new());
@@ -34,10 +27,11 @@ pub fn parse_search_response(
 
     match filter {
         None => parse_default_mixed_sections(sections),
+        Some(SearchFilter::Songs) => parse_filtered_sections(sections, SearchFilter::Songs),
+        Some(SearchFilter::Videos) => parse_filtered_sections(sections, SearchFilter::Videos),
         Some(SearchFilter::Albums) => parse_filtered_sections(sections, SearchFilter::Albums),
         Some(SearchFilter::Artists) => parse_filtered_sections(sections, SearchFilter::Artists),
         Some(SearchFilter::Playlists) => parse_filtered_sections(sections, SearchFilter::Playlists),
-        Some(_) => unreachable!("unsupported filters are rejected before section parsing"),
     }
 }
 
@@ -182,6 +176,8 @@ fn parse_filtered_shelf_item(
     let metadata_parts = non_separator_runs(metadata_runs);
 
     match filter {
+        SearchFilter::Songs => parse_song_result(renderer, category, title, &metadata_parts),
+        SearchFilter::Videos => parse_video_result(renderer, category, title, &metadata_parts),
         SearchFilter::Albums => parse_album_result(renderer, category, title, &metadata_parts),
         SearchFilter::Artists => {
             parse_artist_result(renderer, category, title, &metadata_parts, true)
@@ -189,9 +185,6 @@ fn parse_filtered_shelf_item(
         SearchFilter::Playlists => {
             parse_playlist_result(renderer, category, title, &metadata_parts, false)
         }
-        other => Err(Error::UnsupportedFeature(format!(
-            "search parser does not support filtered {other:?} responses"
-        ))),
     }
 }
 
@@ -644,7 +637,7 @@ fn required_value_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a Value, E
 #[cfg(test)]
 mod tests {
     use super::parse_search_response;
-    use crate::{Error, SearchFilter, SearchResult};
+    use crate::{SearchFilter, SearchResult};
     use serde_json::{Value, json};
 
     fn parse_fixture(raw_fixture: &str, filter: Option<SearchFilter>) -> Vec<SearchResult> {
@@ -681,6 +674,20 @@ mod tests {
         parse_fixture(
             include_str!("../../tests/fixtures/search/raw/playlists.json"),
             Some(SearchFilter::Playlists),
+        )
+    }
+
+    fn parse_songs() -> Vec<SearchResult> {
+        parse_fixture(
+            include_str!("../../tests/fixtures/search/raw/songs.json"),
+            Some(SearchFilter::Songs),
+        )
+    }
+
+    fn parse_videos() -> Vec<SearchResult> {
+        parse_fixture(
+            include_str!("../../tests/fixtures/search/raw/videos.json"),
+            Some(SearchFilter::Videos),
         )
     }
 
@@ -833,18 +840,31 @@ mod tests {
     }
 
     #[test]
-    fn parse_search_response_rejects_unsupported_filtered_queries() {
-        let response: Value = serde_json::from_str(include_str!(
-            "../../tests/fixtures/search/raw/default_mixed.json"
-        ))
-        .unwrap();
+    fn songs_fixture_allows_empty_filtered_results() {
+        let parsed = parse_songs();
 
-        let error = parse_search_response(&response, Some(SearchFilter::Songs)).unwrap_err();
+        assert!(parsed.is_empty());
+    }
+
+    #[test]
+    fn videos_fixture_preserves_critical_invariants() {
+        let parsed = parse_videos();
 
         assert!(matches!(
-            error,
-            Error::UnsupportedFeature(message)
-                if message == "search parser currently supports only default mixed, albums, artists, and playlists responses"
+            &parsed[..],
+            [SearchResult::Video(first), SearchResult::Video(second)]
+                if first.category.as_deref() == Some("Videos")
+                    && first.title == "BTS (방탄소년단) 'Butter''"
+                    && first.video_id == "o9mLyHtSLjk"
+                    && first.video_type.as_deref() == Some("MUSIC_VIDEO_TYPE_PODCAST_EPISODE")
+                    && first.duration.is_none()
+                    && first.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
+                        == vec!["BTS - Topic"]
+                    && second.title == "butter - bts // audio edit"
+                    && second.video_id == "6G1CDqvbE4s"
+                    && second.duration.is_none()
+                    && second.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
+                        == vec!["andrian."]
         ));
     }
 

@@ -354,8 +354,28 @@ async fn search_applies_query_limit_to_first_page_results() {
 }
 
 #[tokio::test]
-async fn unsupported_filtered_queries_are_rejected_before_network() {
+async fn songs_filtered_search_accepts_empty_results() {
     let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.07.00" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(query_param("alt", "json"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/search/raw/songs.json")),
+        )
+        .mount(&server)
+        .await;
 
     let client = YtMusic::builder()
         .homepage_url(server.uri())
@@ -363,24 +383,84 @@ async fn unsupported_filtered_queries_are_rejected_before_network() {
         .build()
         .unwrap();
 
-    for filter in [SearchFilter::Songs, SearchFilter::Videos] {
-        let error = client
-            .search(SearchQuery::new("abba").with_filter(filter))
-            .await
-            .unwrap_err();
+    let result = client
+        .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
+        .await
+        .unwrap();
 
-        assert!(matches!(
-            error,
-            Error::UnsupportedFeature(message)
-                if message == "search parser currently supports only default mixed, albums, artists, and playlists responses"
-        ));
-    }
+    assert!(result.is_empty());
 
     let requests = server.received_requests().await.unwrap();
-    assert!(
-        requests.is_empty(),
-        "unsupported filters should not trigger bootstrap/search requests"
-    );
+    let search_request = requests
+        .iter()
+        .find(|request| request.method.as_str() == "POST")
+        .expect("expected search POST request");
+    let search_body: Value = serde_json::from_slice(&search_request.body).unwrap();
+
+    assert_eq!(search_body["params"], "EgWKAQIIAWoMEA4QChADEAQQCRAF");
+}
+
+#[tokio::test]
+async fn videos_filtered_search_parses_current_fixture() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.07.50" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(query_param("alt", "json"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/search/raw/videos.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let result = client
+        .search(SearchQuery::new("abba").with_filter(SearchFilter::Videos))
+        .await
+        .unwrap();
+
+    assert!(matches!(
+        &result[..],
+        [
+            ytmusicapi::SearchResult::Video(first),
+            ytmusicapi::SearchResult::Video(second),
+        ] if first.category.as_deref() == Some("Videos")
+            && first.title == "BTS (방탄소년단) 'Butter''"
+            && first.video_id == "o9mLyHtSLjk"
+            && first.video_type.as_deref() == Some("MUSIC_VIDEO_TYPE_PODCAST_EPISODE")
+            && first.duration.is_none()
+            && first.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
+                == vec!["BTS - Topic"]
+            && second.title == "butter - bts // audio edit"
+            && second.video_id == "6G1CDqvbE4s"
+            && second.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
+                == vec!["andrian."]
+    ));
+
+    let requests = server.received_requests().await.unwrap();
+    let search_request = requests
+        .iter()
+        .find(|request| request.method.as_str() == "POST")
+        .expect("expected search POST request");
+    let search_body: Value = serde_json::from_slice(&search_request.body).unwrap();
+
+    assert_eq!(search_body["params"], "EgWKAQIQAWoMEA4QChADEAQQCRAF");
 }
 
 #[tokio::test]
