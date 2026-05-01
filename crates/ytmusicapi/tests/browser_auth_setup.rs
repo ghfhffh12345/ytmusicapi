@@ -16,6 +16,19 @@ X-Youtube-Client-Version: 1.20250501.01.00\n\
 Cookie: __Secure-3PAPISID=test-sapisid; VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D\n"
 }
 
+fn headers_without_secure_3papisid() -> &'static str {
+    "POST /youtubei/v1/browse HTTP/3\n\
+Host: music.youtube.com\n\
+User-Agent: Mozilla/5.0\n\
+Accept: */*\n\
+Content-Type: application/json\n\
+X-Goog-AuthUser: 0\n\
+X-Origin: https://music.youtube.com\n\
+X-Youtube-Client-Name: 67\n\
+X-Youtube-Client-Version: 1.20250501.01.00\n\
+Cookie: VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D\n"
+}
+
 fn mixed_case_browser_json() -> &'static str {
     r#"{
   "Cookie": "__Secure-3PAPISID=test-sapisid; VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D",
@@ -68,6 +81,18 @@ Cookie: __Secure-3PAPISID=test-sapisid; VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%
 fn setup_browser_auth_rejects_missing_required_headers() {
     let error = setup_browser_auth("Cookie: __Secure-3PAPISID=test-sapisid\n").unwrap_err();
     assert!(matches!(error, Error::AuthValidation(_)));
+}
+
+#[test]
+fn setup_browser_auth_accepts_cookie_without_secure_3papisid() {
+    let json = setup_browser_auth(headers_without_secure_3papisid()).unwrap();
+    let value: serde_json::Value = serde_json::from_str(&json).unwrap();
+
+    assert_eq!(
+        value["cookie"],
+        "VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D"
+    );
+    assert_eq!(value["x-goog-authuser"], "0");
 }
 
 #[test]
@@ -134,14 +159,7 @@ fn authenticated_client_rejects_authorization_without_secure_3papisid() {
     let path = dir.path().join("browser.json");
     fs::write(
         &path,
-        r#"{
-  "Cookie": "VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D",
-  "Authorization": "SAPISIDHASH stale-copy",
-  "X-Goog-AuthUser": "0",
-  "X-Origin": "https://music.youtube.com",
-  "X-Youtube-Client-Name": "67",
-  "X-Youtube-Client-Version": "1.20250501.01.00"
-}"#,
+        setup_browser_auth(headers_without_secure_3papisid()).unwrap(),
     )
     .unwrap();
 

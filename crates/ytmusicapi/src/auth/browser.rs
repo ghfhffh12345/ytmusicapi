@@ -110,7 +110,7 @@ pub(crate) fn load_browser_auth_file(path: &Path) -> Result<BrowserAuthHeaders, 
         }
     })?;
 
-    finalize_headers(headers)
+    finalize_headers(headers, true)
 }
 
 fn parse_raw_headers(raw_headers: &str) -> Result<BrowserAuthHeaders, Error> {
@@ -139,10 +139,13 @@ fn parse_raw_headers(raw_headers: &str) -> Result<BrowserAuthHeaders, Error> {
         insert_header(&mut headers, name, value.to_owned())?;
     }
 
-    finalize_headers(headers)
+    finalize_headers(headers, false)
 }
 
-fn finalize_headers(mut headers: BTreeMap<String, String>) -> Result<BrowserAuthHeaders, Error> {
+fn finalize_headers(
+    mut headers: BTreeMap<String, String>,
+    require_secure_3papisid: bool,
+) -> Result<BrowserAuthHeaders, Error> {
     if let Some(x_origin) = headers.get("x-origin").cloned() {
         headers.entry("origin".to_owned()).or_insert(x_origin);
     }
@@ -161,8 +164,10 @@ fn finalize_headers(mut headers: BTreeMap<String, String>) -> Result<BrowserAuth
         }
     }
 
-    let cookie = headers.get("cookie").expect("validated cookie header");
-    let _ = sapisid_from_cookie(cookie)?;
+    if require_secure_3papisid {
+        let cookie = headers.get("cookie").expect("validated cookie header");
+        let _ = sapisid_from_cookie(cookie)?;
+    }
 
     Ok(BrowserAuthHeaders { headers })
 }

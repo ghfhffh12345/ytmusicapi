@@ -12,8 +12,15 @@ pub(crate) fn parse_library_playlists_response(
     items
         .iter()
         .skip(1)
-        .filter_map(|item| item.get("musicTwoRowItemRenderer"))
-        .map(parse_library_playlist)
+        .map(|item| {
+            item.get("musicTwoRowItemRenderer").ok_or_else(|| {
+                Error::Parse(
+                    "library response missing musicTwoRowItemRenderer after leading control item"
+                        .to_owned(),
+                )
+            })
+        })
+        .map(|renderer| renderer.and_then(parse_library_playlist))
         .collect()
 }
 

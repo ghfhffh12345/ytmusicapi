@@ -1141,3 +1141,69 @@ async fn get_library_playlists_errors_when_grid_items_are_malformed() {
     let error = client.get_library_playlists().await.unwrap_err();
     assert!(matches!(error, ytmusicapi::Error::Parse(_)));
 }
+
+#[tokio::test]
+async fn get_library_playlists_errors_when_non_leading_item_is_malformed() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "gridRenderer": {
+                                            "items": [{
+                                                "musicTwoRowItemRenderer": {
+                                                    "title": { "runs": [{ "text": "Create playlist" }] },
+                                                    "subtitle": { "runs": [{ "text": "Control tile" }] },
+                                                    "thumbnailRenderer": { "musicThumbnailRenderer": { "thumbnail": { "thumbnails": [] } } }
+                                                }
+                                            }, {
+                                                "badRenderer": {}
+                                            }, {
+                                                "musicTwoRowItemRenderer": {
+                                                    "title": { "runs": [{ "text": "Should Not Be Reached", "navigationEndpoint": { "browseEndpoint": { "browseId": "VLPL123" } } }] },
+                                                    "subtitle": { "runs": [{ "text": "OpenAI" }, { "text": " • " }, { "text": "5 songs" }] },
+                                                    "thumbnailRenderer": { "musicThumbnailRenderer": { "thumbnail": { "thumbnails": [] } } }
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        })))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let error = client.get_library_playlists().await.unwrap_err();
+    assert!(matches!(error, ytmusicapi::Error::Parse(_)));
+}
