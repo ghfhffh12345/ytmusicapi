@@ -86,7 +86,9 @@ impl YtMusic {
             serde_json::from_str(&response_body).map_err(Error::JsonDecode)?;
         validate_search_response_structure(&response_json)?;
 
-        parse_search_response(&response_json, query.filter)
+        let mut results = parse_search_response(&response_json, query.filter)?;
+        results.truncate(query.limit);
+        Ok(results)
     }
 }
 

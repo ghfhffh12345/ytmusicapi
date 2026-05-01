@@ -134,8 +134,8 @@ async fn search_reuses_bootstrapped_visitor_id_across_requests() {
     let first = client.search(SearchQuery::new("first")).await.unwrap();
     let second = client.search(SearchQuery::new("second")).await.unwrap();
 
-    assert_eq!(first.len(), 24);
-    assert_eq!(second.len(), 24);
+    assert_eq!(first.len(), 20);
+    assert_eq!(second.len(), 20);
 
     let requests = server.received_requests().await.unwrap();
     let bootstrap_requests: Vec<_> = requests
@@ -313,6 +313,44 @@ async fn empty_successful_search_response_returns_empty_results() {
     let result = client.search(SearchQuery::new("abba")).await.unwrap();
 
     assert!(result.is_empty());
+}
+
+#[tokio::test]
+async fn search_applies_query_limit_to_first_page_results() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.06.50" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(query_param("alt", "json"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/search/raw/default_mixed.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let result = client
+        .search(SearchQuery::new("abba").with_limit(3))
+        .await
+        .unwrap();
+
+    assert_eq!(result.len(), 3);
 }
 
 #[tokio::test]

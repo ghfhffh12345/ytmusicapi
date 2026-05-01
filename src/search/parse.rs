@@ -6,7 +6,7 @@ use crate::{
         common::{AlbumRef, ArtistRef, Thumbnail},
         search::{
             AlbumResult, ArtistResult, PlaylistResult, ProfileResult, SearchResult,
-            SearchResultType, VideoResult,
+            SearchResultType, SongResult, VideoResult,
         },
     },
 };
@@ -77,10 +77,8 @@ fn parse_filtered_sections(
 }
 
 fn parse_top_result(card: &Value) -> Result<SearchResult, Error> {
+    let title = required_runs_text_at(card, "/title/runs")?;
     let title_runs = required_array_at(card, "/title/runs")?;
-    let artist_run = title_runs
-        .first()
-        .ok_or_else(|| Error::Parse("search response missing /title/runs/0".to_owned()))?;
     let subtitle_runs = required_array_at(card, "/subtitle/runs")?;
     let subtitle_parts = non_separator_runs(subtitle_runs);
     let result_kind = subtitle_parts
@@ -89,30 +87,38 @@ fn parse_top_result(card: &Value) -> Result<SearchResult, Error> {
         .transpose()?
         .ok_or_else(|| Error::Parse("search response missing top result type label".to_owned()))?;
 
-    if result_kind != "Artist" {
-        return Err(Error::Parse(format!(
-            "unsupported top result type in default mixed fixture: {result_kind}"
-        )));
+    match result_kind.as_str() {
+        "Artist" => {
+            let artist_run = title_runs
+                .first()
+                .ok_or_else(|| Error::Parse("search response missing /title/runs/0".to_owned()))?;
+            let subscribers = subtitle_parts
+                .get(1)
+                .map(|run| required_text(run, "/text"))
+                .transpose()?
+                .and_then(|value| value.split_whitespace().next().map(str::to_owned))
+                .ok_or_else(|| {
+                    Error::Parse("search response missing top result subscribers".to_owned())
+                })?;
+
+            Ok(SearchResult::Artist(ArtistResult {
+                category: Some("Top result".to_owned()),
+                result_type: SearchResultType::Artist,
+                artist: None,
+                artists: vec![parse_artist_ref(artist_run)?],
+                subscribers: Some(subscribers),
+                browse_id: None,
+                radio_id: None,
+                shuffle_id: None,
+                thumbnails: parse_thumbnails(card)?,
+            }))
+        }
+        "Song" => parse_song_result(card, Some("Top result".to_owned()), title, &subtitle_parts),
+        "Video" => parse_video_result(card, Some("Top result".to_owned()), title, &subtitle_parts),
+        other => Err(Error::Parse(format!(
+            "unsupported top result type in default mixed fixture: {other}"
+        ))),
     }
-
-    let subscribers = subtitle_parts
-        .get(1)
-        .map(|run| required_text(run, "/text"))
-        .transpose()?
-        .and_then(|value| value.split_whitespace().next().map(str::to_owned))
-        .ok_or_else(|| Error::Parse("search response missing top result subscribers".to_owned()))?;
-
-    Ok(SearchResult::Artist(ArtistResult {
-        category: Some("Top result".to_owned()),
-        result_type: SearchResultType::Artist,
-        artist: None,
-        artists: vec![parse_artist_ref(artist_run)?],
-        subscribers: Some(subscribers),
-        browse_id: None,
-        radio_id: None,
-        shuffle_id: None,
-        thumbnails: parse_thumbnails(card)?,
-    }))
 }
 
 fn parse_shelf_item(item: &Value, category: Option<String>) -> Result<SearchResult, Error> {
@@ -136,6 +142,8 @@ fn parse_shelf_item(item: &Value, category: Option<String>) -> Result<SearchResu
 
     match kind.as_str() {
         "Album" | "Single" | "EP" => parse_album_result(renderer, category, title, &metadata_parts),
+        "Song" => parse_song_result(renderer, category, title, &metadata_parts),
+        "Video" => parse_video_result(renderer, category, title, &metadata_parts),
         "Artist" => parse_artist_result(renderer, category, title, &metadata_parts, false),
         "Profile" => parse_profile_result(renderer, category, title, &metadata_parts),
         "Playlist" => parse_playlist_result(renderer, category, title, &metadata_parts, true),
@@ -207,6 +215,51 @@ fn parse_album_result(
         is_explicit: has_explicit_badge(renderer),
         artists: vec![parse_artist_ref(artist_run)?],
         thumbnails: parse_thumbnails(renderer)?,
+    }))
+}
+
+fn parse_song_result(
+    renderer: &Value,
+    category: Option<String>,
+    title: String,
+    metadata_parts: &[&Value],
+) -> Result<SearchResult, Error> {
+    let metadata = parse_media_metadata(metadata_parts);
+
+    Ok(SearchResult::Song(SongResult {
+        category,
+        result_type: SearchResultType::Song,
+        video_id: required_video_id(renderer)?,
+        title,
+        artists: metadata.artists,
+        album: metadata.album,
+        duration: metadata.duration,
+        thumbnails: parse_thumbnails(renderer)?,
+        is_explicit: has_explicit_badge(renderer),
+    }))
+}
+
+fn parse_video_result(
+    renderer: &Value,
+    category: Option<String>,
+    title: String,
+    metadata_parts: &[&Value],
+) -> Result<SearchResult, Error> {
+    let metadata = parse_media_metadata(metadata_parts);
+
+    Ok(SearchResult::Video(VideoResult {
+        category,
+        result_type: SearchResultType::Video,
+        title,
+        video_id: required_video_id(renderer)?,
+        video_type: optional_video_type(renderer),
+        artists: metadata.artists,
+        thumbnails: parse_thumbnails(renderer)?,
+        duration: metadata.duration,
+        views: metadata.views,
+        date: None,
+        podcast: None,
+        live: None,
     }))
 }
 
@@ -373,6 +426,61 @@ fn parse_podcast_result(
     }))
 }
 
+struct ParsedMediaMetadata {
+    artists: Vec<ArtistRef>,
+    album: Option<AlbumRef>,
+    duration: Option<String>,
+    views: Option<String>,
+}
+
+fn parse_media_metadata(metadata_parts: &[&Value]) -> ParsedMediaMetadata {
+    let mut parsed = ParsedMediaMetadata {
+        artists: Vec::new(),
+        album: None,
+        duration: None,
+        views: None,
+    };
+
+    for part in metadata_parts.iter().skip(1) {
+        if let Some(browse_id) = part
+            .pointer("/navigationEndpoint/browseEndpoint/browseId")
+            .and_then(Value::as_str)
+        {
+            let name = part
+                .pointer("/text")
+                .and_then(Value::as_str)
+                .unwrap_or_default()
+                .to_owned();
+            if browse_id.starts_with("MPRE") || browse_id.contains("release_detail") {
+                if parsed.album.is_none() {
+                    parsed.album = Some(AlbumRef {
+                        id: browse_id.to_owned(),
+                        name,
+                    });
+                }
+            } else {
+                parsed.artists.push(ArtistRef {
+                    id: browse_id.to_owned(),
+                    name,
+                });
+            }
+            continue;
+        }
+
+        let Some(text) = part.pointer("/text").and_then(Value::as_str) else {
+            continue;
+        };
+
+        if parsed.duration.is_none() && looks_like_duration(text) {
+            parsed.duration = Some(text.to_owned());
+        } else if parsed.views.is_none() && text.to_ascii_lowercase().contains("view") {
+            parsed.views = Some(text.to_owned());
+        }
+    }
+
+    parsed
+}
+
 fn parse_artist_ref(run: &Value) -> Result<ArtistRef, Error> {
     Ok(ArtistRef {
         id: required_text(run, "/navigationEndpoint/browseEndpoint/browseId")?,
@@ -432,6 +540,55 @@ fn non_separator_runs(runs: &[Value]) -> Vec<&Value> {
         .collect()
 }
 
+fn optional_text_at(value: &Value, pointer: &str) -> Option<String> {
+    value
+        .pointer(pointer)
+        .and_then(Value::as_str)
+        .map(str::to_owned)
+}
+
+fn required_video_id(value: &Value) -> Result<String, Error> {
+    optional_text_at(
+        value,
+        "/overlay/musicItemThumbnailOverlayRenderer/content/musicPlayButtonRenderer/playNavigationEndpoint/watchEndpoint/videoId",
+    )
+    .or_else(|| optional_text_at(value, "/onTap/watchEndpoint/videoId"))
+    .ok_or_else(|| Error::Parse("search response missing song/video id".to_owned()))
+}
+
+fn optional_video_type(value: &Value) -> Option<String> {
+    optional_text_at(
+        value,
+        "/overlay/musicItemThumbnailOverlayRenderer/content/musicPlayButtonRenderer/playNavigationEndpoint/watchEndpoint/watchEndpointMusicSupportedConfigs/watchEndpointMusicConfig/musicVideoType",
+    )
+    .or_else(|| {
+        optional_text_at(
+            value,
+            "/onTap/watchEndpoint/watchEndpointMusicSupportedConfigs/watchEndpointMusicConfig/musicVideoType",
+        )
+    })
+}
+
+fn looks_like_duration(value: &str) -> bool {
+    let mut parts = value.split(':');
+    let Some(first) = parts.next() else {
+        return false;
+    };
+    if first.is_empty() || !first.chars().all(|ch| ch.is_ascii_digit()) {
+        return false;
+    }
+
+    let mut count = 1;
+    for part in parts {
+        if part.is_empty() || !part.chars().all(|ch| ch.is_ascii_digit()) {
+            return false;
+        }
+        count += 1;
+    }
+
+    count >= 2
+}
+
 fn optional_runs_text_at(value: &Value, pointer: &str) -> Option<String> {
     let runs = value.pointer(pointer)?.as_array()?;
     let mut text = String::new();
@@ -479,7 +636,7 @@ fn required_value_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a Value, E
 mod tests {
     use super::parse_search_response;
     use crate::{Error, SearchFilter, SearchResult};
-    use serde_json::Value;
+    use serde_json::{Value, json};
 
     fn parse_fixture(raw_fixture: &str, filter: Option<SearchFilter>) -> Vec<SearchResult> {
         let response: Value = serde_json::from_str(raw_fixture).unwrap();
@@ -516,6 +673,28 @@ mod tests {
             include_str!("../../tests/fixtures/search/raw/playlists.json"),
             Some(SearchFilter::Playlists),
         )
+    }
+
+    fn parse_inline_default_mixed(sections: Vec<Value>) -> Vec<SearchResult> {
+        parse_search_response(
+            &json!({
+                "contents": {
+                    "tabbedSearchResultsRenderer": {
+                        "tabs": [{
+                            "tabRenderer": {
+                                "content": {
+                                    "sectionListRenderer": {
+                                        "contents": sections
+                                    }
+                                }
+                            }
+                        }]
+                    }
+                }
+            }),
+            None,
+        )
+        .unwrap()
     }
 
     fn expected_default_mixed() -> Value {
@@ -657,6 +836,250 @@ mod tests {
             error,
             Error::UnsupportedFeature(message)
                 if message == "search parser currently supports only default mixed, albums, artists, and playlists responses"
+        ));
+    }
+
+    #[test]
+    fn default_mixed_parses_song_top_result_cards() {
+        let parsed = parse_inline_default_mixed(vec![json!({
+            "musicCardShelfRenderer": {
+                "title": { "runs": [{ "text": "Wonderwall" }] },
+                "subtitle": {
+                    "runs": [
+                        { "text": "Song" },
+                        { "text": " • " },
+                        {
+                            "text": "Oasis",
+                            "navigationEndpoint": { "browseEndpoint": { "browseId": "UCmMUZbaYdNH0bEd1PAlAqsA" } }
+                        },
+                        { "text": " • " },
+                        {
+                            "text": "(What's the Story) Morning Glory?",
+                            "navigationEndpoint": { "browseEndpoint": { "browseId": "MPREb_wvE8SfA1VxJ" } }
+                        },
+                        { "text": " • " },
+                        { "text": "4:18" }
+                    ]
+                },
+                "onTap": {
+                    "watchEndpoint": {
+                        "videoId": "song-top-result-id",
+                        "watchEndpointMusicSupportedConfigs": {
+                            "watchEndpointMusicConfig": {
+                                "musicVideoType": "MUSIC_VIDEO_TYPE_ATV"
+                            }
+                        }
+                    }
+                },
+                "thumbnail": {
+                    "musicThumbnailRenderer": {
+                        "thumbnail": {
+                            "thumbnails": [{ "url": "https://example.com/song-top.jpg", "width": 60, "height": 60 }]
+                        }
+                    }
+                }
+            }
+        })]);
+
+        assert!(matches!(
+            &parsed[0],
+            SearchResult::Song(result)
+                if result.category.as_deref() == Some("Top result")
+                    && result.title == "Wonderwall"
+                    && result.video_id == "song-top-result-id"
+                    && result.duration.as_deref() == Some("4:18")
+                    && result.album.as_ref().map(|album| album.name.as_str())
+                        == Some("(What's the Story) Morning Glory?")
+                    && result.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
+                        == vec!["Oasis"]
+        ));
+    }
+
+    #[test]
+    fn default_mixed_parses_video_top_result_cards() {
+        let parsed = parse_inline_default_mixed(vec![json!({
+            "musicCardShelfRenderer": {
+                "title": { "runs": [{ "text": "Live Forever" }] },
+                "subtitle": {
+                    "runs": [
+                        { "text": "Video" },
+                        { "text": " • " },
+                        {
+                            "text": "Oasis",
+                            "navigationEndpoint": { "browseEndpoint": { "browseId": "UCmMUZbaYdNH0bEd1PAlAqsA" } }
+                        },
+                        { "text": " • " },
+                        { "text": "4:37" }
+                    ]
+                },
+                "onTap": {
+                    "watchEndpoint": {
+                        "videoId": "video-top-result-id",
+                        "watchEndpointMusicSupportedConfigs": {
+                            "watchEndpointMusicConfig": {
+                                "musicVideoType": "MUSIC_VIDEO_TYPE_OMV"
+                            }
+                        }
+                    }
+                },
+                "thumbnail": {
+                    "musicThumbnailRenderer": {
+                        "thumbnail": {
+                            "thumbnails": [{ "url": "https://example.com/video-top.jpg", "width": 60, "height": 60 }]
+                        }
+                    }
+                }
+            }
+        })]);
+
+        assert!(matches!(
+            &parsed[0],
+            SearchResult::Video(result)
+                if result.category.as_deref() == Some("Top result")
+                    && result.title == "Live Forever"
+                    && result.video_id == "video-top-result-id"
+                    && result.video_type.as_deref() == Some("MUSIC_VIDEO_TYPE_OMV")
+                    && result.duration.as_deref() == Some("4:37")
+                    && result.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
+                        == vec!["Oasis"]
+        ));
+    }
+
+    #[test]
+    fn default_mixed_parses_song_and_video_shelf_rows() {
+        let parsed = parse_inline_default_mixed(vec![json!({
+            "musicShelfRenderer": {
+                "title": { "runs": [{ "text": "Songs" }] },
+                "contents": [
+                    {
+                        "musicResponsiveListItemRenderer": {
+                            "flexColumns": [
+                                {
+                                    "musicResponsiveListItemFlexColumnRenderer": {
+                                        "text": { "runs": [{ "text": "Wonderwall" }] }
+                                    }
+                                },
+                                {
+                                    "musicResponsiveListItemFlexColumnRenderer": {
+                                        "text": {
+                                            "runs": [
+                                                { "text": "Song" },
+                                                { "text": " • " },
+                                                {
+                                                    "text": "Oasis",
+                                                    "navigationEndpoint": { "browseEndpoint": { "browseId": "UCmMUZbaYdNH0bEd1PAlAqsA" } }
+                                                },
+                                                { "text": " • " },
+                                                {
+                                                    "text": "(What's the Story) Morning Glory?",
+                                                    "navigationEndpoint": { "browseEndpoint": { "browseId": "MPREb_wvE8SfA1VxJ" } }
+                                                },
+                                                { "text": " • " },
+                                                { "text": "4:18" }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            "overlay": {
+                                "musicItemThumbnailOverlayRenderer": {
+                                    "content": {
+                                        "musicPlayButtonRenderer": {
+                                            "playNavigationEndpoint": {
+                                                "watchEndpoint": {
+                                                    "videoId": "song-shelf-id",
+                                                    "watchEndpointMusicSupportedConfigs": {
+                                                        "watchEndpointMusicConfig": {
+                                                            "musicVideoType": "MUSIC_VIDEO_TYPE_ATV"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "thumbnail": {
+                                "musicThumbnailRenderer": {
+                                    "thumbnail": {
+                                        "thumbnails": [{ "url": "https://example.com/song-shelf.jpg", "width": 60, "height": 60 }]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "musicResponsiveListItemRenderer": {
+                            "flexColumns": [
+                                {
+                                    "musicResponsiveListItemFlexColumnRenderer": {
+                                        "text": { "runs": [{ "text": "Live Forever" }] }
+                                    }
+                                },
+                                {
+                                    "musicResponsiveListItemFlexColumnRenderer": {
+                                        "text": {
+                                            "runs": [
+                                                { "text": "Video" },
+                                                { "text": " • " },
+                                                {
+                                                    "text": "Oasis",
+                                                    "navigationEndpoint": { "browseEndpoint": { "browseId": "UCmMUZbaYdNH0bEd1PAlAqsA" } }
+                                                },
+                                                { "text": " • " },
+                                                { "text": "4:37" }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            "overlay": {
+                                "musicItemThumbnailOverlayRenderer": {
+                                    "content": {
+                                        "musicPlayButtonRenderer": {
+                                            "playNavigationEndpoint": {
+                                                "watchEndpoint": {
+                                                    "videoId": "video-shelf-id",
+                                                    "watchEndpointMusicSupportedConfigs": {
+                                                        "watchEndpointMusicConfig": {
+                                                            "musicVideoType": "MUSIC_VIDEO_TYPE_OMV"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "thumbnail": {
+                                "musicThumbnailRenderer": {
+                                    "thumbnail": {
+                                        "thumbnails": [{ "url": "https://example.com/video-shelf.jpg", "width": 60, "height": 60 }]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        })]);
+
+        assert!(matches!(
+            &parsed[0],
+            SearchResult::Song(result)
+                if result.category.as_deref() == Some("Songs")
+                    && result.video_id == "song-shelf-id"
+                    && result.duration.as_deref() == Some("4:18")
+                    && result.album.as_ref().map(|album| album.name.as_str())
+                        == Some("(What's the Story) Morning Glory?")
+        ));
+        assert!(matches!(
+            &parsed[1],
+            SearchResult::Video(result)
+                if result.category.as_deref() == Some("Songs")
+                    && result.video_id == "video-shelf-id"
+                    && result.video_type.as_deref() == Some("MUSIC_VIDEO_TYPE_OMV")
+                    && result.duration.as_deref() == Some("4:37")
         ));
     }
 }
