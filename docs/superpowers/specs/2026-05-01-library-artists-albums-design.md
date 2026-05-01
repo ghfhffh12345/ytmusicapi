@@ -8,7 +8,7 @@ Status: Approved design for next implementation slice
 
 The next slice expands the authenticated library-read surface by adding `get_library_artists` and `get_library_albums`.
 
-This work should not be implemented as two isolated endpoint parsers. Instead, it should extract a shared internal library-browse core from the current `get_library_playlists` path, then layer endpoint-specific parsing for artists and albums on top of that shared traversal. Publicly, the slice remains narrow: browser-authenticated clients only, default upstream ordering only, and first-page behavior only.
+This work should not be implemented as two isolated endpoint parsers. Instead, it should extract a shared internal library-browse core from the current `get_library_playlists` path, then layer endpoint-specific parsing for artists and albums on top of that shared traversal. Publicly, the slice remains narrow: browser-authenticated clients only, no `limit` or `order` controls at all, and first-page behavior only.
 
 ## Goals
 
@@ -24,7 +24,8 @@ This work should not be implemented as two isolated endpoint parsers. Instead, i
 - `get_library_subscriptions`
 - Upload-library endpoints
 - Pagination or continuation support
-- `limit` or `order` parameters in this slice
+- `limit` support
+- `order` support
 - OAuth support
 - Library mutation or playlist mutation
 
@@ -51,11 +52,11 @@ The existing browser-authenticated construction flow remains the only supported 
 
 These methods intentionally do not accept parameters in this slice. They should represent:
 
-- default upstream library ordering
+- the endpoint's plain first-page behavior with no exposed ordering controls
 - authenticated first-page behavior only
 - no explicit continuation token support
 
-The public API should not imply that `limit`, `order`, or pagination already exist.
+The public API should not imply that `limit`, `order`, or pagination already exist. When continuation support is added later, it should be explicit in the API so callers can request the next page themselves rather than receiving hidden automatic pagination.
 
 ## Library Architecture
 
@@ -121,7 +122,7 @@ Authenticated library reads should follow this flow:
 5. The endpoint-specific parser converts extracted renderers into typed `LibraryArtist` or `LibraryAlbum` values.
 6. The typed results are returned to the caller.
 
-This slice continues the current default-first approach: if upstream supports alternate ordering or continuations, those are intentionally left out of the public flow for now.
+This slice continues the current first-page-only approach: if upstream supports alternate ordering or continuations, those are intentionally left out of the public flow for now. A later continuation design should expose explicit caller-driven pagination rather than silently following continuations inside these methods.
 
 ## Error Handling
 
@@ -151,7 +152,7 @@ For upstream `ytmusicapi` `v1.12.0`, this slice should be considered compatible 
 - browser-authenticated clients can perform the default library artists read
 - browser-authenticated clients can perform the default library albums read
 - the returned typed models preserve the key stable fields of upstream results within the documented subset
-- known unsupported features such as `limit`, `order`, and pagination are clearly absent rather than partially implemented
+- known unsupported features such as `limit`, `order`, and continuation handling are clearly absent rather than partially implemented
 
 The Rust port does not need to mimic upstream Python mixin boundaries or dictionary shapes.
 
