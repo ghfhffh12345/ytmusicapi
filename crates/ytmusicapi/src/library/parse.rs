@@ -17,7 +17,7 @@ pub(crate) fn parse_library_playlists_response(
         .collect()
 }
 
-fn library_playlist_items<'a>(response: &'a Value) -> Result<Option<&'a [Value]>, Error> {
+fn library_playlist_items(response: &Value) -> Result<Option<&[Value]>, Error> {
     let tabs = required_array_at(response, "/contents/singleColumnBrowseResultsRenderer/tabs")?;
 
     let library_tab = tabs
@@ -43,7 +43,7 @@ fn library_playlist_items<'a>(response: &'a Value) -> Result<Option<&'a [Value]>
     Ok(None)
 }
 
-fn section_grid_items<'a>(section: &'a Value) -> Result<Option<&'a [Value]>, Error> {
+fn section_grid_items(section: &Value) -> Result<Option<&[Value]>, Error> {
     if section.get("gridRenderer").is_some() {
         return required_array_at(section, "/gridRenderer/items").map(Some);
     }
