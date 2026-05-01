@@ -11,11 +11,13 @@ pub(crate) fn parse_library_playlists_response(
 
     items
         .iter()
-        .skip(1)
+        .enumerate()
+        .filter(|(index, item)| !(*index == 0 && is_leading_control_tile(item)))
+        .map(|(_, item)| item)
         .map(|item| {
             item.get("musicTwoRowItemRenderer").ok_or_else(|| {
                 Error::Parse(
-                    "library response missing musicTwoRowItemRenderer after leading control item"
+                    "library response missing musicTwoRowItemRenderer in playlist grid item"
                         .to_owned(),
                 )
             })
@@ -92,8 +94,7 @@ fn section_grid_items(section: &Value) -> Result<Option<&[Value]>, Error> {
 }
 
 fn parse_library_playlist(renderer: &Value) -> Result<LibraryPlaylist, Error> {
-    let title_run = required_value_at(renderer, "/title/runs/0")?;
-    let browse_id = required_text(title_run, "/navigationEndpoint/browseEndpoint/browseId")?;
+    let browse_id = library_playlist_browse_id(renderer)?;
     let subtitle_runs = renderer
         .pointer("/subtitle/runs")
         .and_then(Value::as_array)
@@ -106,11 +107,34 @@ fn parse_library_playlist(renderer: &Value) -> Result<LibraryPlaylist, Error> {
             .strip_prefix("VL")
             .unwrap_or(&browse_id)
             .to_owned(),
-        title: optional_text(title_run, "/text"),
+        title: library_playlist_title(renderer),
         authors: parse_authors(author_runs),
         item_count: parse_item_count(count_runs),
         thumbnails: parse_thumbnails(renderer)?,
     })
+}
+
+fn is_leading_control_tile(item: &Value) -> bool {
+    item.get("musicTwoRowItemRenderer")
+        .is_some_and(|renderer| optional_library_playlist_browse_id(renderer).is_none())
+}
+
+fn library_playlist_browse_id(renderer: &Value) -> Result<String, Error> {
+    optional_library_playlist_browse_id(renderer)
+        .ok_or_else(|| Error::Parse("library response missing playlist browse id".to_owned()))
+}
+
+fn optional_library_playlist_browse_id(renderer: &Value) -> Option<String> {
+    optional_text(
+        renderer,
+        "/title/runs/0/navigationEndpoint/browseEndpoint/browseId",
+    )
+    .or_else(|| optional_text(renderer, "/navigationEndpoint/browseEndpoint/browseId"))
+}
+
+fn library_playlist_title(renderer: &Value) -> Option<String> {
+    optional_text(renderer, "/title/runs/0/text")
+        .or_else(|| optional_text(renderer, "/title/simpleText"))
 }
 
 fn parse_authors(runs: &[Value]) -> Vec<ArtistRef> {
