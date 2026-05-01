@@ -22,11 +22,8 @@ fn library_playlist_items(response: &Value) -> Result<Option<&[Value]>, Error> {
 
     let library_tab = tabs
         .iter()
-        .find(|tab| {
-            tab.pointer("/tabRenderer/selected")
-                .and_then(Value::as_bool)
-                .unwrap_or(false)
-        })
+        .find(|tab| is_selected_tab(tab))
+        .or_else(|| legacy_library_tab(tabs))
         .ok_or_else(|| Error::Parse("library response missing selected library tab".to_owned()))?;
 
     let sections = required_array_at(
@@ -41,6 +38,29 @@ fn library_playlist_items(response: &Value) -> Result<Option<&[Value]>, Error> {
     }
 
     Ok(None)
+}
+
+fn is_selected_tab(tab: &Value) -> bool {
+    tab.pointer("/tabRenderer/selected")
+        .and_then(Value::as_bool)
+        .unwrap_or(false)
+}
+
+fn legacy_library_tab(tabs: &[Value]) -> Option<&Value> {
+    if tabs
+        .iter()
+        .any(|tab| tab.pointer("/tabRenderer/selected").is_some())
+    {
+        return None;
+    }
+
+    let library_tab_index = match tabs.len() {
+        2 => 1,
+        3.. => 2,
+        _ => return None,
+    };
+
+    tabs.get(library_tab_index)
 }
 
 fn section_grid_items(section: &Value) -> Result<Option<&[Value]>, Error> {
@@ -125,10 +145,22 @@ fn parse_item_count(runs: &[Value]) -> Option<u32> {
 }
 
 fn parse_count_text(text: &str) -> Option<u32> {
-    let mut parts = text.split_whitespace();
-    let count = parts.next()?.parse().ok()?;
-    let unit = parts.next()?.to_ascii_lowercase();
-    unit.starts_with("song").then_some(count)
+    let digits_end = text
+        .find(|ch: char| !ch.is_ascii_digit() && ch != ',')
+        .unwrap_or(text.len());
+    if digits_end == 0 {
+        return None;
+    }
+
+    if text[digits_end..]
+        .chars()
+        .next()
+        .is_some_and(|ch| ch.is_ascii_alphanumeric())
+    {
+        return None;
+    }
+
+    text[..digits_end].replace(',', "").parse().ok()
 }
 
 fn parse_thumbnails(value: &Value) -> Result<Vec<Thumbnail>, Error> {
