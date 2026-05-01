@@ -111,7 +111,7 @@ fn parse_authors(runs: &[Value]) -> Vec<ArtistRef> {
         .filter_map(|run| {
             let text = optional_text(run, "/text")?;
             let trimmed = text.trim();
-            if trimmed.is_empty() || trimmed == "•" || parse_count_text(trimmed).is_some() {
+            if trimmed.is_empty() || trimmed == "•" {
                 return None;
             }
 
@@ -125,16 +125,37 @@ fn parse_authors(runs: &[Value]) -> Vec<ArtistRef> {
 }
 
 fn split_subtitle_runs(runs: &[Value]) -> (&[Value], &[Value]) {
-    let Some(separator_index) = runs.iter().position(is_separator_run) else {
-        return (runs, runs);
-    };
+    if let Some(separator_index) = runs.iter().position(is_separator_run) {
+        return (&runs[..separator_index], &runs[separator_index + 1..]);
+    }
 
-    (&runs[..separator_index], &runs[separator_index + 1..])
+    if runs.len() > 1 {
+        let (author_runs, trailing_runs) = runs.split_at(runs.len() - 1);
+        let trailing_count = trailing_runs
+            .first()
+            .and_then(|run| optional_text(run, "/text"))
+            .and_then(|text| parse_count_text(text.trim()));
+
+        if trailing_count.is_some() && author_runs.iter().any(has_non_separator_text) {
+            return (author_runs, trailing_runs);
+        }
+    }
+
+    (runs, &[])
 }
 
 fn is_separator_run(run: &Value) -> bool {
     optional_text(run, "/text")
         .map(|text| text.trim() == "•")
+        .unwrap_or(false)
+}
+
+fn has_non_separator_text(run: &Value) -> bool {
+    optional_text(run, "/text")
+        .map(|text| {
+            let trimmed = text.trim();
+            !trimmed.is_empty() && trimmed != "•"
+        })
         .unwrap_or(false)
 }
 
