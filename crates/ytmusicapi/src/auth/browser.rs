@@ -1,5 +1,11 @@
-use std::{collections::BTreeMap, fs, path::Path};
+use std::{
+    collections::BTreeMap,
+    fs,
+    path::Path,
+    time::{SystemTime, UNIX_EPOCH},
+};
 
+use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
 use serde::{
     Deserialize,
     de::{self, MapAccess, Visitor},
@@ -7,7 +13,57 @@ use serde::{
 
 use crate::Error;
 
-pub(crate) type BrowserAuthHeaders = BTreeMap<String, String>;
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct BrowserAuthHeaders {
+    pub(crate) headers: BTreeMap<String, String>,
+}
+
+impl BrowserAuthHeaders {
+    pub(crate) fn to_header_map(
+        &self,
+        fallback_visitor_id: Option<&str>,
+    ) -> Result<HeaderMap, Error> {
+        let mut headers = self.headers.clone();
+
+        if !headers.contains_key("authorization") {
+            let cookie = headers.get("cookie").ok_or_else(|| {
+                Error::AuthValidation("missing required browser auth header: cookie".to_owned())
+            })?;
+            let origin = headers
+                .get("origin")
+                .or_else(|| headers.get("x-origin"))
+                .ok_or_else(|| {
+                    Error::AuthValidation("missing required browser auth header: origin".to_owned())
+                })?;
+            let sapisid = sapisid_from_cookie(cookie)?;
+            headers.insert(
+                "authorization".to_owned(),
+                build_sapisidhash_authorization(&sapisid, origin),
+            );
+        }
+
+        if !headers.contains_key("x-goog-visitor-id")
+            && let Some(visitor_id) = fallback_visitor_id
+        {
+            headers.insert("x-goog-visitor-id".to_owned(), visitor_id.to_owned());
+        }
+
+        let mut header_map = HeaderMap::new();
+        for (name, value) in headers {
+            let header_name = HeaderName::from_bytes(name.as_bytes()).map_err(|source| {
+                Error::AuthValidation(format!("invalid browser auth header name {name}: {source}"))
+            })?;
+            let header_value = HeaderValue::from_str(&value).map_err(|source| {
+                Error::AuthValidation(format!(
+                    "invalid browser auth header value for {name}: {source}"
+                ))
+            })?;
+            header_map.insert(header_name, header_value);
+        }
+
+        Ok(header_map)
+    }
+}
 
 const DEFAULT_HEADERS: [(&str, &str); 5] = [
     ("user-agent", crate::search::request::USER_AGENT),
@@ -19,7 +75,7 @@ const DEFAULT_HEADERS: [(&str, &str); 5] = [
 
 pub fn setup_browser_auth(raw_headers: &str) -> Result<String, Error> {
     let headers = parse_raw_headers(raw_headers)?;
-    serde_json::to_string_pretty(&headers).map_err(|source| {
+    serde_json::to_string_pretty(&headers.headers).map_err(|source| {
         Error::AuthValidation(format!("failed to serialize browser auth json: {source}"))
     })
 }
@@ -46,7 +102,7 @@ pub(crate) fn load_browser_auth_file(path: &Path) -> Result<BrowserAuthHeaders, 
 }
 
 fn parse_raw_headers(raw_headers: &str) -> Result<BrowserAuthHeaders, Error> {
-    let mut headers = BrowserAuthHeaders::new();
+    let mut headers = BTreeMap::new();
 
     for line in raw_headers.lines() {
         if line.trim().is_empty() {
@@ -74,7 +130,7 @@ fn parse_raw_headers(raw_headers: &str) -> Result<BrowserAuthHeaders, Error> {
     finalize_headers(headers)
 }
 
-fn finalize_headers(mut headers: BrowserAuthHeaders) -> Result<BrowserAuthHeaders, Error> {
+fn finalize_headers(mut headers: BTreeMap<String, String>) -> Result<BrowserAuthHeaders, Error> {
     if let Some(x_origin) = headers.get("x-origin").cloned() {
         headers.entry("origin".to_owned()).or_insert(x_origin);
     }
@@ -93,7 +149,12 @@ fn finalize_headers(mut headers: BrowserAuthHeaders) -> Result<BrowserAuthHeader
         }
     }
 
-    Ok(headers)
+    if !headers.contains_key("authorization") {
+        let cookie = headers.get("cookie").expect("validated cookie header");
+        let _ = sapisid_from_cookie(cookie)?;
+    }
+
+    Ok(BrowserAuthHeaders { headers })
 }
 
 fn is_request_line(line: &str) -> bool {
@@ -113,7 +174,7 @@ fn normalize_header_name(name: &str) -> String {
 }
 
 fn insert_header(
-    headers: &mut BrowserAuthHeaders,
+    headers: &mut BTreeMap<String, String>,
     name: String,
     value: String,
 ) -> Result<(), Error> {
@@ -128,11 +189,11 @@ fn insert_header(
 
 fn deserialize_browser_auth_headers(
     contents: &str,
-) -> Result<BrowserAuthHeaders, serde_json::Error> {
+) -> Result<BTreeMap<String, String>, serde_json::Error> {
     serde_json::from_str::<NormalizedBrowserAuthHeaders>(contents).map(|headers| headers.0)
 }
 
-struct NormalizedBrowserAuthHeaders(BrowserAuthHeaders);
+struct NormalizedBrowserAuthHeaders(BTreeMap<String, String>);
 
 impl<'de> Deserialize<'de> for NormalizedBrowserAuthHeaders {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
@@ -156,7 +217,7 @@ impl<'de> Visitor<'de> for NormalizedBrowserAuthHeadersVisitor {
     where
         A: MapAccess<'de>,
     {
-        let mut headers = BrowserAuthHeaders::new();
+        let mut headers = BTreeMap::new();
 
         while let Some(name) = map.next_key::<String>()? {
             let value = map.next_value::<String>()?;
@@ -174,5 +235,212 @@ impl<'de> Visitor<'de> for NormalizedBrowserAuthHeadersVisitor {
         }
 
         Ok(NormalizedBrowserAuthHeaders(headers))
+    }
+}
+
+fn sapisid_from_cookie(raw_cookie: &str) -> Result<String, Error> {
+    for part in raw_cookie.split(';') {
+        let trimmed = part.trim();
+        let Some((name, value)) = trimmed.split_once('=') else {
+            continue;
+        };
+
+        if name == "__Secure-3PAPISID" && !value.is_empty() {
+            return Ok(value.to_owned());
+        }
+    }
+
+    Err(Error::AuthValidation(
+        "browser auth cookie must include __Secure-3PAPISID".to_owned(),
+    ))
+}
+
+fn build_sapisidhash_authorization(sapisid: &str, origin: &str) -> String {
+    let timestamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("system clock before unix epoch")
+        .as_secs();
+    let digest = sha1_hex(format!("{timestamp} {sapisid} {origin}").as_bytes());
+    format!("SAPISIDHASH {timestamp}_{digest}")
+}
+
+fn sha1_hex(bytes: &[u8]) -> String {
+    let mut hasher = Sha1::new();
+    hasher.update(bytes);
+    let digest = hasher.finalize();
+
+    let mut hex = String::with_capacity(digest.len() * 2);
+    for byte in digest {
+        use std::fmt::Write as _;
+        let _ = write!(hex, "{byte:02x}");
+    }
+    hex
+}
+
+struct Sha1 {
+    state: [u32; 5],
+    buffer: [u8; 64],
+    buffer_len: usize,
+    message_len_bits: u64,
+}
+
+impl Sha1 {
+    fn new() -> Self {
+        Self {
+            state: [
+                0x6745_2301,
+                0xEFCD_AB89,
+                0x98BA_DCFE,
+                0x1032_5476,
+                0xC3D2_E1F0,
+            ],
+            buffer: [0; 64],
+            buffer_len: 0,
+            message_len_bits: 0,
+        }
+    }
+
+    fn update(&mut self, input: &[u8]) {
+        self.message_len_bits = self.message_len_bits.wrapping_add((input.len() as u64) * 8);
+
+        let mut remaining = input;
+        while !remaining.is_empty() {
+            let space = 64 - self.buffer_len;
+            let take = remaining.len().min(space);
+            self.buffer[self.buffer_len..self.buffer_len + take]
+                .copy_from_slice(&remaining[..take]);
+            self.buffer_len += take;
+            remaining = &remaining[take..];
+
+            if self.buffer_len == 64 {
+                let block = self.buffer;
+                self.process_block(&block);
+                self.buffer_len = 0;
+            }
+        }
+    }
+
+    fn finalize(mut self) -> [u8; 20] {
+        self.buffer[self.buffer_len] = 0x80;
+        self.buffer_len += 1;
+
+        if self.buffer_len > 56 {
+            for byte in &mut self.buffer[self.buffer_len..] {
+                *byte = 0;
+            }
+            let block = self.buffer;
+            self.process_block(&block);
+            self.buffer = [0; 64];
+            self.buffer_len = 0;
+        }
+
+        for byte in &mut self.buffer[self.buffer_len..56] {
+            *byte = 0;
+        }
+        self.buffer[56..].copy_from_slice(&self.message_len_bits.to_be_bytes());
+        let block = self.buffer;
+        self.process_block(&block);
+
+        let mut digest = [0u8; 20];
+        for (index, word) in self.state.iter().enumerate() {
+            digest[index * 4..(index + 1) * 4].copy_from_slice(&word.to_be_bytes());
+        }
+        digest
+    }
+
+    fn process_block(&mut self, block: &[u8; 64]) {
+        let mut words = [0u32; 80];
+        for (index, chunk) in block.chunks_exact(4).enumerate() {
+            words[index] = u32::from_be_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
+        }
+        for index in 16..80 {
+            words[index] =
+                (words[index - 3] ^ words[index - 8] ^ words[index - 14] ^ words[index - 16])
+                    .rotate_left(1);
+        }
+
+        let mut a = self.state[0];
+        let mut b = self.state[1];
+        let mut c = self.state[2];
+        let mut d = self.state[3];
+        let mut e = self.state[4];
+
+        for (index, word) in words.iter().enumerate() {
+            let (f, k) = match index {
+                0..=19 => ((b & c) | ((!b) & d), 0x5A82_7999),
+                20..=39 => (b ^ c ^ d, 0x6ED9_EBA1),
+                40..=59 => ((b & c) | (b & d) | (c & d), 0x8F1B_BCDC),
+                _ => (b ^ c ^ d, 0xCA62_C1D6),
+            };
+
+            let temp = a
+                .rotate_left(5)
+                .wrapping_add(f)
+                .wrapping_add(e)
+                .wrapping_add(k)
+                .wrapping_add(*word);
+            e = d;
+            d = c;
+            c = b.rotate_left(30);
+            b = a;
+            a = temp;
+        }
+
+        self.state[0] = self.state[0].wrapping_add(a);
+        self.state[1] = self.state[1].wrapping_add(b);
+        self.state[2] = self.state[2].wrapping_add(c);
+        self.state[3] = self.state[3].wrapping_add(d);
+        self.state[4] = self.state[4].wrapping_add(e);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::BrowserAuthHeaders;
+    use std::collections::BTreeMap;
+
+    #[test]
+    fn sha1_hex_matches_known_vector() {
+        assert_eq!(
+            super::sha1_hex(b"abc"),
+            "a9993e364706816aba3e25717850c26c9cd0d89d"
+        );
+    }
+
+    #[test]
+    fn to_header_map_adds_authorization_and_fallback_visitor_id() {
+        let headers = BrowserAuthHeaders {
+            headers: BTreeMap::from([
+                (
+                    "cookie".to_owned(),
+                    "__Secure-3PAPISID=test-sapisid".to_owned(),
+                ),
+                ("x-goog-authuser".to_owned(), "0".to_owned()),
+                (
+                    "x-origin".to_owned(),
+                    "https://music.youtube.com".to_owned(),
+                ),
+                ("origin".to_owned(), "https://music.youtube.com".to_owned()),
+                ("x-youtube-client-name".to_owned(), "67".to_owned()),
+                (
+                    "x-youtube-client-version".to_owned(),
+                    "1.20250501.01.00".to_owned(),
+                ),
+            ]),
+        };
+
+        let header_map = headers.to_header_map(Some("visitor-id-123")).unwrap();
+
+        assert_eq!(
+            header_map["x-goog-visitor-id"].to_str().unwrap(),
+            "visitor-id-123"
+        );
+        assert_eq!(header_map["x-goog-authuser"].to_str().unwrap(), "0");
+        assert!(
+            header_map["authorization"]
+                .to_str()
+                .unwrap()
+                .starts_with("SAPISIDHASH ")
+        );
     }
 }

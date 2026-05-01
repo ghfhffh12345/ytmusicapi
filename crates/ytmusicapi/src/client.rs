@@ -7,7 +7,10 @@ use crate::{
     Error, SearchQuery, SearchResult,
     search::{
         parse::parse_search_response,
-        request::{BootstrapConfig, USER_AGENT, bootstrap_config, build_search_body},
+        request::{
+            BootstrapConfig, USER_AGENT, bootstrap_config as fetch_bootstrap_config,
+            build_library_playlists_body, build_search_body,
+        },
     },
 };
 
@@ -59,12 +62,7 @@ impl YtMusic {
     pub async fn search(&self, query: SearchQuery) -> Result<Vec<SearchResult>, Error> {
         query.validate()?;
 
-        let bootstrap_config = self
-            .bootstrap_config
-            .get_or_try_init(|| async {
-                bootstrap_config(&self.http_client, &self.homepage_url).await
-            })
-            .await?;
+        let bootstrap_config = self.bootstrap_config().await?;
 
         let url = format!(
             "{}/search?alt=json&key={}",
@@ -98,6 +96,51 @@ impl YtMusic {
         let mut results = parse_search_response(&response_json, query.filter)?;
         results.truncate(query.limit);
         Ok(results)
+    }
+
+    pub async fn get_library_playlists(&self) -> Result<serde_json::Value, Error> {
+        let _response = self.post_browse(build_library_playlists_body()).await?;
+        Err(Error::UnsupportedFeature(
+            "get_library_playlists parsing not implemented".to_owned(),
+        ))
+    }
+
+    async fn bootstrap_config(&self) -> Result<&BootstrapConfig, Error> {
+        self.bootstrap_config
+            .get_or_try_init(|| async {
+                fetch_bootstrap_config(&self.http_client, &self.homepage_url).await
+            })
+            .await
+    }
+
+    async fn post_browse(&self, body: serde_json::Value) -> Result<serde_json::Value, Error> {
+        let bootstrap_config = self.bootstrap_config().await?;
+        let url = format!(
+            "{}/browse?alt=json&key={}",
+            self.base_url.trim_end_matches('/'),
+            bootstrap_config.innertube_api_key
+        );
+
+        let request = self.http_client.post(url).body(body.to_string());
+        let request = if let Some(browser_auth) = &self.browser_auth {
+            request.headers(browser_auth.to_header_map(Some(&bootstrap_config.visitor_id))?)
+        } else {
+            request
+                .header(header::CONTENT_TYPE, "application/json")
+                .header(header::USER_AGENT, USER_AGENT)
+                .header("x-goog-visitor-id", &bootstrap_config.visitor_id)
+        };
+
+        let response = request.send().await.map_err(Error::HttpTransport)?;
+        let status = response.status();
+        let response_body = response.text().await.map_err(Error::HttpTransport)?;
+
+        if !status.is_success() {
+            let message = extract_status_message(&response_body);
+            return Err(Error::HttpStatus { status, message });
+        }
+
+        serde_json::from_str(&response_body).map_err(Error::JsonDecode)
     }
 }
 

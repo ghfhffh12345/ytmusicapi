@@ -55,6 +55,12 @@ pub fn build_search_body(query: &SearchQuery, bootstrap_config: &BootstrapConfig
     body
 }
 
+pub(crate) fn build_library_playlists_body() -> Value {
+    json!({
+        "browseId": "FEmusic_liked_playlists"
+    })
+}
+
 fn parse_bootstrap_config(body: &str) -> Result<BootstrapConfig, Error> {
     let mut missing_field = None;
 
