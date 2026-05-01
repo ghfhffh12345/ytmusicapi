@@ -70,6 +70,18 @@ fn authenticated_client_loads_browser_json_file() {
 }
 
 #[test]
+fn authenticated_client_debug_output_redacts_browser_auth() {
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, setup_browser_auth(firefox_headers()).unwrap()).unwrap();
+
+    let client = YtMusic::from_browser_auth_file(&path).unwrap();
+    let debug = format!("{client:?}");
+    assert!(!debug.contains("__Secure-3PAPISID=test-sapisid"));
+    assert!(!debug.contains("VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D"));
+}
+
+#[test]
 fn authenticated_client_loads_mixed_case_browser_json_file() {
     let dir = tempdir().unwrap();
     let path = dir.path().join("browser.json");

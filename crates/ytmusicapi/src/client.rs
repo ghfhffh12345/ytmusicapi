@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{fmt, sync::Arc};
 
 use reqwest::{Client, header};
 use tokio::sync::OnceCell;
@@ -11,7 +11,7 @@ use crate::{
     },
 };
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct YtMusic {
     pub(crate) http_client: Client,
     pub(crate) base_url: String,
@@ -98,6 +98,20 @@ impl YtMusic {
         let mut results = parse_search_response(&response_json, query.filter)?;
         results.truncate(query.limit);
         Ok(results)
+    }
+}
+
+impl fmt::Debug for YtMusic {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let browser_auth = self.browser_auth.as_ref().map(|_| "<redacted>");
+
+        f.debug_struct("YtMusic")
+            .field("http_client", &self.http_client)
+            .field("base_url", &self.base_url)
+            .field("homepage_url", &self.homepage_url)
+            .field("bootstrap_config", &self.bootstrap_config)
+            .field("browser_auth", &browser_auth)
+            .finish()
     }
 }
 
