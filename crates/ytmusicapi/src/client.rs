@@ -98,14 +98,26 @@ impl YtMusic {
         Ok(results)
     }
 
-    pub async fn get_library_playlists(&self) -> Result<serde_json::Value, Error> {
+    pub async fn get_library_playlists(&self) -> Result<Vec<crate::LibraryPlaylist>, Error> {
+        if self.browser_auth.is_none() {
+            return Err(Error::UnsupportedFeature(
+                "get_library_playlists requires browser authentication".to_owned(),
+            ));
+        }
+
         let bootstrap_config = self.bootstrap_config().await?;
-        let _response = self
-            .post_browse(build_library_playlists_body(bootstrap_config))
-            .await?;
-        Err(Error::UnsupportedFeature(
-            "get_library_playlists parsing not implemented".to_owned(),
-        ))
+        let client_version = self
+            .browser_auth
+            .as_ref()
+            .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
+            .map(String::as_str)
+            .unwrap_or(&bootstrap_config.client_version);
+        let mut browse_config = bootstrap_config.clone();
+        browse_config.client_version = client_version.to_owned();
+        let body = build_library_playlists_body(&browse_config);
+
+        let response = self.post_browse(body).await?;
+        crate::library::parse::parse_library_playlists_response(&response)
     }
 
     async fn bootstrap_config(&self) -> Result<&BootstrapConfig, Error> {
