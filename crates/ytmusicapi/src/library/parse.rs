@@ -5,7 +5,7 @@ use crate::{ArtistRef, Error, LibraryPlaylist, Thumbnail};
 pub(crate) fn parse_library_playlists_response(
     response: &Value,
 ) -> Result<Vec<LibraryPlaylist>, Error> {
-    let Some(items) = library_playlist_items(response) else {
+    let Some(items) = library_playlist_items(response)? else {
         return Ok(Vec::new());
     };
 
@@ -16,10 +16,8 @@ pub(crate) fn parse_library_playlists_response(
         .collect()
 }
 
-fn library_playlist_items<'a>(response: &'a Value) -> Option<&'a [Value]> {
-    let tabs = response
-        .pointer("/contents/singleColumnBrowseResultsRenderer/tabs")
-        .and_then(Value::as_array)?;
+fn library_playlist_items<'a>(response: &'a Value) -> Result<Option<&'a [Value]>, Error> {
+    let tabs = required_array_at(response, "/contents/singleColumnBrowseResultsRenderer/tabs")?;
 
     let library_tab = tabs
         .iter()
@@ -28,19 +26,24 @@ fn library_playlist_items<'a>(response: &'a Value) -> Option<&'a [Value]> {
                 .and_then(Value::as_bool)
                 .unwrap_or(false)
         })
-        .or_else(|| (tabs.len() == 1).then(|| &tabs[0]))?;
+        .or_else(|| (tabs.len() == 1).then(|| &tabs[0]))
+        .ok_or_else(|| Error::Parse("library response missing selected library tab".to_owned()))?;
 
-    let sections = library_tab
-        .pointer("/tabRenderer/content/sectionListRenderer/contents")
-        .and_then(Value::as_array)?;
+    let sections = required_array_at(
+        library_tab,
+        "/tabRenderer/content/sectionListRenderer/contents",
+    )?;
 
     for section in sections {
-        if let Some(items) = section.pointer("/gridRenderer/items").and_then(Value::as_array) {
-            return Some(items.as_slice());
+        if let Some(items) = section
+            .pointer("/gridRenderer/items")
+            .and_then(Value::as_array)
+        {
+            return Ok(Some(items.as_slice()));
         }
     }
 
-    None
+    Ok(None)
 }
 
 fn parse_library_playlist(renderer: &Value) -> Result<LibraryPlaylist, Error> {
@@ -134,6 +137,13 @@ fn required_u32(value: &Value, pointer: &str) -> Result<u32, Error> {
         .ok_or_else(|| Error::Parse(format!("library response missing {pointer}")))?;
 
     u32::try_from(number).map_err(|_| Error::Parse(format!("library response missing {pointer}")))
+}
+
+fn required_array_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a [Value], Error> {
+    required_value_at(value, pointer)?
+        .as_array()
+        .map(Vec::as_slice)
+        .ok_or_else(|| Error::Parse(format!("library response missing {pointer}")))
 }
 
 fn required_value_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a Value, Error> {

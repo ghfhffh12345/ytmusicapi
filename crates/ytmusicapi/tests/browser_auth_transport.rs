@@ -39,7 +39,20 @@ async fn authenticated_client_posts_browse_with_browser_headers() {
         .and(query_param("alt", "json"))
         .and(query_param("key", "test-api-key"))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
-            "contents": { "singleColumnBrowseResultsRenderer": { "tabs": [] } }
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": []
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
         })))
         .mount(&server)
         .await;
