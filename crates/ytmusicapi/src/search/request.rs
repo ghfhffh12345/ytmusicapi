@@ -71,6 +71,10 @@ pub(crate) fn build_library_playlists_body(bootstrap_config: &BootstrapConfig) -
     build_library_body("FEmusic_liked_playlists", bootstrap_config)
 }
 
+pub(crate) fn build_library_albums_body(bootstrap_config: &BootstrapConfig) -> Value {
+    build_library_body("FEmusic_liked_albums", bootstrap_config)
+}
+
 pub(crate) fn build_library_artists_body(bootstrap_config: &BootstrapConfig) -> Value {
     build_library_body("FEmusic_library_corpus_track_artists", bootstrap_config)
 }
@@ -173,7 +177,10 @@ fn extract_ytcfg_json(remainder: &str) -> Option<&str> {
 
 #[cfg(test)]
 mod tests {
-    use super::{BootstrapConfig, build_library_artists_body, build_library_playlists_body};
+    use super::{
+        BootstrapConfig, build_library_albums_body, build_library_artists_body,
+        build_library_playlists_body,
+    };
 
     #[test]
     fn build_library_playlists_body_includes_bootstrap_context() {
@@ -204,6 +211,24 @@ mod tests {
         let body = build_library_artists_body(&bootstrap_config);
 
         assert_eq!(body["browseId"], "FEmusic_library_corpus_track_artists");
+        assert_eq!(body["context"]["client"]["clientName"], "WEB_REMIX");
+        assert_eq!(
+            body["context"]["client"]["clientVersion"],
+            "1.20250501.02.00"
+        );
+    }
+
+    #[test]
+    fn build_library_albums_body_includes_albums_browse_id() {
+        let bootstrap_config = BootstrapConfig {
+            visitor_id: "visitor-id-123".to_owned(),
+            innertube_api_key: "test-api-key".to_owned(),
+            client_version: "1.20250501.02.00".to_owned(),
+        };
+
+        let body = build_library_albums_body(&bootstrap_config);
+
+        assert_eq!(body["browseId"], "FEmusic_liked_albums");
         assert_eq!(body["context"]["client"]["clientName"], "WEB_REMIX");
         assert_eq!(
             body["context"]["client"]["clientVersion"],
