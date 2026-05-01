@@ -35,11 +35,8 @@ fn library_playlist_items<'a>(response: &'a Value) -> Result<Option<&'a [Value]>
     )?;
 
     for section in sections {
-        if let Some(items) = section
-            .pointer("/gridRenderer/items")
-            .and_then(Value::as_array)
-        {
-            return Ok(Some(items.as_slice()));
+        if section.get("gridRenderer").is_some() {
+            return required_array_at(section, "/gridRenderer/items").map(Some);
         }
     }
 
