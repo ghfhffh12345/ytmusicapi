@@ -15,14 +15,11 @@ pub fn parse_search_response(
     response: &Value,
     filter: Option<SearchFilter>,
 ) -> Result<Vec<SearchResult>, Error> {
-    match filter {
-        Some(SearchFilter::Songs | SearchFilter::Videos) => {
-            return Err(Error::UnsupportedFeature(
-                "search parser currently supports only default mixed, albums, artists, and playlists responses"
-                    .to_owned(),
-            ));
-        }
-        _ => {}
+    if let Some(SearchFilter::Songs | SearchFilter::Videos) = filter {
+        return Err(Error::UnsupportedFeature(
+            "search parser currently supports only default mixed, albums, artists, and playlists responses"
+                .to_owned(),
+        ));
     }
 
     let tabs = required_array_at(response, "/contents/tabbedSearchResultsRenderer/tabs")?;
