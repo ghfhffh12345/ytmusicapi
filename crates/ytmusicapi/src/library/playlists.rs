@@ -1,6 +1,8 @@
 use serde_json::Value;
 
-use crate::{ArtistRef, Error, LibraryPlaylist, Thumbnail};
+use crate::{ArtistRef, Error, LibraryPlaylist};
+
+use super::core::{optional_text, parse_thumbnails};
 
 pub(crate) fn parse_library_playlists_response(
     response: &Value,
@@ -144,45 +146,4 @@ fn parse_count_text(text: &str) -> Option<u32> {
     }
 
     text[..digits_end].replace(',', "").parse().ok()
-}
-
-fn parse_thumbnails(value: &Value) -> Result<Vec<Thumbnail>, Error> {
-    let Some(thumbnails) = value
-        .pointer("/thumbnailRenderer/musicThumbnailRenderer/thumbnail/thumbnails")
-        .and_then(Value::as_array)
-    else {
-        return Ok(Vec::new());
-    };
-
-    thumbnails
-        .iter()
-        .map(|thumbnail| {
-            Ok(Thumbnail {
-                url: required_text(thumbnail, "/url")?,
-                width: required_u32(thumbnail, "/width")?,
-                height: required_u32(thumbnail, "/height")?,
-            })
-        })
-        .collect()
-}
-
-fn optional_text(value: &Value, pointer: &str) -> Option<String> {
-    value
-        .pointer(pointer)
-        .and_then(Value::as_str)
-        .map(str::to_owned)
-}
-
-fn required_text(value: &Value, pointer: &str) -> Result<String, Error> {
-    optional_text(value, pointer)
-        .ok_or_else(|| Error::Parse(format!("library response missing {pointer}")))
-}
-
-fn required_u32(value: &Value, pointer: &str) -> Result<u32, Error> {
-    let number = value
-        .pointer(pointer)
-        .and_then(Value::as_u64)
-        .ok_or_else(|| Error::Parse(format!("library response missing {pointer}")))?;
-
-    u32::try_from(number).map_err(|_| Error::Parse(format!("library response missing {pointer}")))
 }

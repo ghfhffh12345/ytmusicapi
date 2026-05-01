@@ -9,7 +9,7 @@ use crate::{
         parse::parse_search_response,
         request::{
             BootstrapConfig, USER_AGENT, bootstrap_config as fetch_bootstrap_config,
-            build_library_playlists_body, build_search_body,
+            build_library_artists_body, build_library_playlists_body, build_search_body,
         },
     },
 };
@@ -117,6 +117,28 @@ impl YtMusic {
 
         let response = self.post_browse(body).await?;
         crate::library::playlists::parse_library_playlists_response(&response)
+    }
+
+    pub async fn get_library_artists(&self) -> Result<Vec<crate::LibraryArtist>, Error> {
+        if self.browser_auth.is_none() {
+            return Err(Error::UnsupportedFeature(
+                "get_library_artists requires browser authentication".to_owned(),
+            ));
+        }
+
+        let bootstrap_config = self.bootstrap_config().await?;
+        let client_version = self
+            .browser_auth
+            .as_ref()
+            .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
+            .map(String::as_str)
+            .unwrap_or(&bootstrap_config.client_version);
+        let mut browse_config = bootstrap_config.clone();
+        browse_config.client_version = client_version.to_owned();
+        let body = build_library_artists_body(&browse_config);
+
+        let response = self.post_browse(body).await?;
+        crate::library::artists::parse_library_artists_response(&response)
     }
 
     async fn bootstrap_config(&self) -> Result<&BootstrapConfig, Error> {

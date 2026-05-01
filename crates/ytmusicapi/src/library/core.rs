@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use crate::Error;
+use crate::{Error, Thumbnail};
 
 pub(crate) fn selected_library_tab<'a>(response: &'a Value) -> Result<&'a Value, Error> {
     let tabs = required_array_at(response, "/contents/singleColumnBrowseResultsRenderer/tabs")?;
@@ -27,6 +27,76 @@ pub(crate) fn library_grid_items<'a>(response: &'a Value) -> Result<&'a [Value],
     Err(Error::Parse(
         "library response missing grid items in selected library tab".to_owned(),
     ))
+}
+
+pub(crate) fn library_shelf_contents<'a>(response: &'a Value) -> Result<&'a [Value], Error> {
+    let library_tab = selected_library_tab(response)?;
+    let sections = required_array_at(
+        library_tab,
+        "/tabRenderer/content/sectionListRenderer/contents",
+    )?;
+
+    for section in sections {
+        if let Some(contents) = section_shelf_contents(section)? {
+            return Ok(contents);
+        }
+    }
+
+    Err(Error::Parse(
+        "library response missing shelf contents in selected library tab".to_owned(),
+    ))
+}
+
+pub(crate) fn parse_thumbnails(value: &Value) -> Result<Vec<Thumbnail>, Error> {
+    let thumbnails = value
+        .pointer("/thumbnailRenderer/musicThumbnailRenderer/thumbnail/thumbnails")
+        .and_then(Value::as_array)
+        .or_else(|| {
+            value
+                .pointer("/thumbnail/musicThumbnailRenderer/thumbnail/thumbnails")
+                .and_then(Value::as_array)
+        });
+    let Some(thumbnails) = thumbnails else {
+        return Ok(Vec::new());
+    };
+
+    thumbnails
+        .iter()
+        .map(|thumbnail| {
+            Ok(Thumbnail {
+                url: required_text(thumbnail, "/url")?,
+                width: required_u32(thumbnail, "/width")?,
+                height: required_u32(thumbnail, "/height")?,
+            })
+        })
+        .collect()
+}
+
+pub(crate) fn optional_text(value: &Value, pointer: &str) -> Option<String> {
+    value
+        .pointer(pointer)
+        .and_then(Value::as_str)
+        .map(str::to_owned)
+}
+
+pub(crate) fn required_text(value: &Value, pointer: &str) -> Result<String, Error> {
+    optional_text(value, pointer)
+        .ok_or_else(|| Error::Parse(format!("library response missing {pointer}")))
+}
+
+pub(crate) fn optional_runs_text(value: &Value, pointer: &str) -> Option<String> {
+    let runs = value.pointer(pointer)?.as_array()?;
+    let mut text = String::new();
+    for run in runs {
+        text.push_str(run.pointer("/text").and_then(Value::as_str)?);
+    }
+
+    Some(text)
+}
+
+pub(crate) fn required_runs_text(value: &Value, pointer: &str) -> Result<String, Error> {
+    optional_runs_text(value, pointer)
+        .ok_or_else(|| Error::Parse(format!("library response missing {pointer}")))
 }
 
 fn is_selected_tab(tab: &Value) -> bool {
@@ -73,6 +143,27 @@ fn section_grid_items<'a>(section: &'a Value) -> Result<Option<&'a [Value]>, Err
     Ok(None)
 }
 
+fn section_shelf_contents<'a>(section: &'a Value) -> Result<Option<&'a [Value]>, Error> {
+    if section.get("musicShelfRenderer").is_some() {
+        return required_array_at(section, "/musicShelfRenderer/contents").map(Some);
+    }
+
+    let Some(contents) = section
+        .pointer("/itemSectionRenderer/contents")
+        .and_then(Value::as_array)
+    else {
+        return Ok(None);
+    };
+
+    for content in contents {
+        if content.get("musicShelfRenderer").is_some() {
+            return required_array_at(content, "/musicShelfRenderer/contents").map(Some);
+        }
+    }
+
+    Ok(None)
+}
+
 fn required_array_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a [Value], Error> {
     required_value_at(value, pointer)?
         .as_array()
@@ -86,11 +177,20 @@ fn required_value_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a Value, E
         .ok_or_else(|| Error::Parse(format!("library response missing {pointer}")))
 }
 
+fn required_u32(value: &Value, pointer: &str) -> Result<u32, Error> {
+    let number = value
+        .pointer(pointer)
+        .and_then(Value::as_u64)
+        .ok_or_else(|| Error::Parse(format!("library response missing {pointer}")))?;
+
+    u32::try_from(number).map_err(|_| Error::Parse(format!("library response missing {pointer}")))
+}
+
 #[cfg(test)]
 mod tests {
     use serde_json::json;
 
-    use super::{library_grid_items, selected_library_tab};
+    use super::{library_grid_items, library_shelf_contents, selected_library_tab};
 
     #[test]
     fn selected_library_tab_prefers_selected_marker() {
@@ -208,5 +308,41 @@ mod tests {
         let error = library_grid_items(&response).unwrap_err();
 
         assert!(matches!(error, crate::Error::Parse(_)));
+    }
+
+    #[test]
+    fn library_shelf_contents_returns_selected_tab_shelf() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "musicShelfRenderer": {
+                                            "contents": [{
+                                                "musicResponsiveListItemRenderer": {
+                                                    "navigationEndpoint": {
+                                                        "browseEndpoint": {
+                                                            "browseId": "UCArtist1"
+                                                        }
+                                                    }
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let contents = library_shelf_contents(&response).unwrap();
+
+        assert_eq!(contents.len(), 1);
     }
 }
