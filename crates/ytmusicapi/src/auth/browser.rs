@@ -26,22 +26,20 @@ impl BrowserAuthHeaders {
     ) -> Result<HeaderMap, Error> {
         let mut headers = self.headers.clone();
 
-        if !headers.contains_key("authorization") {
-            let cookie = headers.get("cookie").ok_or_else(|| {
-                Error::AuthValidation("missing required browser auth header: cookie".to_owned())
+        let cookie = headers.get("cookie").ok_or_else(|| {
+            Error::AuthValidation("missing required browser auth header: cookie".to_owned())
+        })?;
+        let origin = headers
+            .get("origin")
+            .or_else(|| headers.get("x-origin"))
+            .ok_or_else(|| {
+                Error::AuthValidation("missing required browser auth header: origin".to_owned())
             })?;
-            let origin = headers
-                .get("origin")
-                .or_else(|| headers.get("x-origin"))
-                .ok_or_else(|| {
-                    Error::AuthValidation("missing required browser auth header: origin".to_owned())
-                })?;
-            let sapisid = sapisid_from_cookie(cookie)?;
-            headers.insert(
-                "authorization".to_owned(),
-                build_sapisidhash_authorization(&sapisid, origin),
-            );
-        }
+        let sapisid = sapisid_from_cookie(cookie)?;
+        headers.insert(
+            "authorization".to_owned(),
+            build_sapisidhash_authorization(&sapisid, origin),
+        );
 
         if !headers.contains_key("x-goog-visitor-id")
             && let Some(visitor_id) = fallback_visitor_id
@@ -150,10 +148,8 @@ fn finalize_headers(mut headers: BTreeMap<String, String>) -> Result<BrowserAuth
         }
     }
 
-    if !headers.contains_key("authorization") {
-        let cookie = headers.get("cookie").expect("validated cookie header");
-        let _ = sapisid_from_cookie(cookie)?;
-    }
+    let cookie = headers.get("cookie").expect("validated cookie header");
+    let _ = sapisid_from_cookie(cookie)?;
 
     Ok(BrowserAuthHeaders { headers })
 }
@@ -167,7 +163,10 @@ fn is_request_line(line: &str) -> bool {
 }
 
 fn should_drop_header(name: &str) -> bool {
-    matches!(name, "host" | "content-length" | "accept-encoding") || name.starts_with("sec-")
+    matches!(
+        name,
+        "host" | "content-length" | "accept-encoding" | "authorization"
+    ) || name.starts_with("sec-")
 }
 
 fn normalize_header_name(name: &str) -> String {
@@ -323,5 +322,38 @@ mod tests {
                 .unwrap()
                 .starts_with("SAPISIDHASH ")
         );
+    }
+
+    #[test]
+    fn to_header_map_overwrites_stale_authorization() {
+        let headers = BrowserAuthHeaders {
+            headers: BTreeMap::from([
+                (
+                    "cookie".to_owned(),
+                    "__Secure-3PAPISID=test-sapisid".to_owned(),
+                ),
+                (
+                    "authorization".to_owned(),
+                    "SAPISIDHASH stale-copy".to_owned(),
+                ),
+                ("x-goog-authuser".to_owned(), "0".to_owned()),
+                (
+                    "x-origin".to_owned(),
+                    "https://music.youtube.com".to_owned(),
+                ),
+                ("origin".to_owned(), "https://music.youtube.com".to_owned()),
+                ("x-youtube-client-name".to_owned(), "67".to_owned()),
+                (
+                    "x-youtube-client-version".to_owned(),
+                    "1.20250501.01.00".to_owned(),
+                ),
+            ]),
+        };
+
+        let header_map = headers.to_header_map(None).unwrap();
+        let authorization = header_map["authorization"].to_str().unwrap();
+
+        assert_ne!(authorization, "SAPISIDHASH stale-copy");
+        assert!(authorization.starts_with("SAPISIDHASH "));
     }
 }

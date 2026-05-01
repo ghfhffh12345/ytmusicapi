@@ -44,6 +44,27 @@ fn setup_browser_auth_normalizes_firefox_headers() {
 }
 
 #[test]
+fn setup_browser_auth_drops_copied_authorization_header() {
+    let json = setup_browser_auth(
+        "POST /youtubei/v1/browse HTTP/3\n\
+Host: music.youtube.com\n\
+User-Agent: Mozilla/5.0\n\
+Accept: */*\n\
+Content-Type: application/json\n\
+Authorization: SAPISIDHASH stale-copy\n\
+X-Goog-AuthUser: 0\n\
+X-Origin: https://music.youtube.com\n\
+X-Youtube-Client-Name: 67\n\
+X-Youtube-Client-Version: 1.20250501.01.00\n\
+Cookie: __Secure-3PAPISID=test-sapisid; VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D\n",
+    )
+    .unwrap();
+    let value: serde_json::Value = serde_json::from_str(&json).unwrap();
+
+    assert!(value.get("authorization").is_none());
+}
+
+#[test]
 fn setup_browser_auth_rejects_missing_required_headers() {
     let error = setup_browser_auth("Cookie: __Secure-3PAPISID=test-sapisid\n").unwrap_err();
     assert!(matches!(error, Error::AuthValidation(_)));
@@ -105,6 +126,27 @@ fn authenticated_client_loads_mixed_case_browser_json_file() {
     let client = YtMusic::from_browser_auth_file(&path).unwrap();
     let debug = format!("{client:?}");
     assert!(debug.contains("YtMusic"));
+}
+
+#[test]
+fn authenticated_client_rejects_authorization_without_secure_3papisid() {
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(
+        &path,
+        r#"{
+  "Cookie": "VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D",
+  "Authorization": "SAPISIDHASH stale-copy",
+  "X-Goog-AuthUser": "0",
+  "X-Origin": "https://music.youtube.com",
+  "X-Youtube-Client-Name": "67",
+  "X-Youtube-Client-Version": "1.20250501.01.00"
+}"#,
+    )
+    .unwrap();
+
+    let error = YtMusic::from_browser_auth_file(&path).unwrap_err();
+    assert!(matches!(error, Error::AuthValidation(_)));
 }
 
 #[test]
