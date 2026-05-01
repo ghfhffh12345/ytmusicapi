@@ -15,6 +15,11 @@ pub fn parse_search_response(
     response: &Value,
     filter: Option<SearchFilter>,
 ) -> Result<Vec<SearchResult>, Error> {
+    let tabs = required_array_at(response, "/contents/tabbedSearchResultsRenderer/tabs")?;
+    if tabs.is_empty() {
+        return Ok(Vec::new());
+    }
+
     let sections = required_array_at(
         response,
         "/contents/tabbedSearchResultsRenderer/tabs/0/tabRenderer/content/sectionListRenderer/contents",
@@ -129,7 +134,7 @@ fn parse_shelf_item(item: &Value, category: Option<String>) -> Result<SearchResu
 
     match kind.as_str() {
         "Album" | "Single" | "EP" => parse_album_result(renderer, category, title, &metadata_parts),
-        "Artist" => parse_artist_result(renderer, category, title),
+        "Artist" => parse_artist_result(renderer, category, title, &metadata_parts, false),
         "Profile" => parse_profile_result(renderer, category, title, &metadata_parts),
         "Playlist" => parse_playlist_result(renderer, category, title, &metadata_parts, true),
         "Episode" => parse_episode_result(renderer, category, title, &metadata_parts),
@@ -158,7 +163,9 @@ fn parse_filtered_shelf_item(
 
     match filter {
         SearchFilter::Albums => parse_album_result(renderer, category, title, &metadata_parts),
-        SearchFilter::Artists => parse_artist_result(renderer, category, title),
+        SearchFilter::Artists => {
+            parse_artist_result(renderer, category, title, &metadata_parts, true)
+        }
         SearchFilter::Playlists => {
             parse_playlist_result(renderer, category, title, &metadata_parts, false)
         }
@@ -205,8 +212,19 @@ fn parse_artist_result(
     renderer: &Value,
     category: Option<String>,
     title: String,
+    metadata_parts: &[&Value],
+    preserve_subscribers: bool,
 ) -> Result<SearchResult, Error> {
     let browse_id = required_text(renderer, "/navigationEndpoint/browseEndpoint/browseId")?;
+    let subscribers = preserve_subscribers
+        .then(|| {
+            metadata_parts
+                .get(1)
+                .map(|run| required_text(run, "/text"))
+                .transpose()
+        })
+        .transpose()?
+        .flatten();
     let menu_playlist_ids = renderer
         .pointer("/menu/menuRenderer/items")
         .and_then(Value::as_array)
@@ -229,7 +247,7 @@ fn parse_artist_result(
         result_type: SearchResultType::Artist,
         artist: Some(title),
         artists: Vec::new(),
-        subscribers: None,
+        subscribers,
         browse_id: Some(browse_id),
         radio_id: menu_playlist_ids.get(1).cloned(),
         shuffle_id: menu_playlist_ids.first().cloned(),
@@ -278,6 +296,10 @@ fn parse_playlist_result(
         .map(|run| required_text(run, "/text"))
         .transpose()?
         .and_then(|value| {
+            let lower = value.to_ascii_lowercase();
+            if lower.contains("view") {
+                return None;
+            }
             if has_type_label {
                 value.contains("song").then(|| first_token(value)).flatten()
             } else {
@@ -607,6 +629,7 @@ mod tests {
             &artists[3],
             SearchResult::Artist(result)
                 if result.artist.as_deref() == Some("Armin van Buuren ASOT Radio")
+                    && result.subscribers.as_deref() == Some("5.74K subscribers")
                     && result.shuffle_id.is_none()
                     && result.radio_id.is_none()
         ));
@@ -615,7 +638,7 @@ mod tests {
             SearchResult::Playlist(result)
                 if result.title == "best 100 classical music"
                     && result.author.as_deref() == Some("Adam")
-                    && result.item_count.as_deref() == Some("1.8M")
+                    && result.item_count.is_none()
         ));
     }
 
