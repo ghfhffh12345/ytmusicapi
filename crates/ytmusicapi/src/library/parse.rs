@@ -21,21 +21,22 @@ fn library_playlist_items<'a>(response: &'a Value) -> Option<&'a [Value]> {
         .pointer("/contents/singleColumnBrowseResultsRenderer/tabs")
         .and_then(Value::as_array)?;
 
-    for tab in tabs {
-        let Some(sections) = tab
-            .pointer("/tabRenderer/content/sectionListRenderer/contents")
-            .and_then(Value::as_array)
-        else {
-            continue;
-        };
+    let library_tab = tabs
+        .iter()
+        .find(|tab| {
+            tab.pointer("/tabRenderer/selected")
+                .and_then(Value::as_bool)
+                .unwrap_or(false)
+        })
+        .or_else(|| (tabs.len() == 1).then(|| &tabs[0]))?;
 
-        for section in sections {
-            if let Some(items) = section
-                .pointer("/gridRenderer/items")
-                .and_then(Value::as_array)
-            {
-                return Some(items.as_slice());
-            }
+    let sections = library_tab
+        .pointer("/tabRenderer/content/sectionListRenderer/contents")
+        .and_then(Value::as_array)?;
+
+    for section in sections {
+        if let Some(items) = section.pointer("/gridRenderer/items").and_then(Value::as_array) {
+            return Some(items.as_slice());
         }
     }
 

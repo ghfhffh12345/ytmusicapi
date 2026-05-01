@@ -41,6 +41,7 @@ async fn get_library_playlists_returns_first_page_results() {
                 "singleColumnBrowseResultsRenderer": {
                     "tabs": [{
                         "tabRenderer": {
+                            "selected": true,
                             "content": {
                                 "sectionListRenderer": {
                                     "contents": [{
@@ -165,4 +166,75 @@ async fn get_library_playlists_prefers_browser_auth_client_version_in_body() {
         body["context"]["client"]["clientVersion"],
         "1.20250501.01.00"
     );
+}
+
+#[tokio::test]
+async fn get_library_playlists_ignores_grids_outside_selected_library_tab() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": false,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "gridRenderer": {
+                                            "items": [{
+                                                "musicTwoRowItemRenderer": {
+                                                    "title": { "runs": [{ "text": "Wrong Tab Playlist", "navigationEndpoint": { "browseEndpoint": { "browseId": "VLPLWRONG" } } }] },
+                                                    "subtitle": { "runs": [{ "text": "Elsewhere" }, { "text": " • " }, { "text": "3 songs" }] },
+                                                    "thumbnailRenderer": { "musicThumbnailRenderer": { "thumbnail": { "thumbnails": [] } } }
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }, {
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "musicShelfRenderer": {
+                                            "contents": []
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        })))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let playlists = client.get_library_playlists().await.unwrap();
+    assert!(playlists.is_empty());
 }
