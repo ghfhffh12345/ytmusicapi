@@ -115,6 +115,16 @@ fn parse_top_result(card: &Value) -> Result<SearchResult, Error> {
         }
         "Song" => parse_song_result(card, Some("Top result".to_owned()), title, &subtitle_parts),
         "Video" => parse_video_result(card, Some("Top result".to_owned()), title, &subtitle_parts),
+        "Album" | "Single" | "EP" => {
+            parse_album_result(card, Some("Top result".to_owned()), title, &subtitle_parts)
+        }
+        "Playlist" => parse_playlist_result(
+            card,
+            Some("Top result".to_owned()),
+            title,
+            &subtitle_parts,
+            true,
+        ),
         other => Err(Error::Parse(format!(
             "unsupported top result type in default mixed fixture: {other}"
         ))),
@@ -197,20 +207,19 @@ fn parse_album_result(
     let year = metadata_parts
         .get(2)
         .map(|run| required_text(run, "/text"))
-        .transpose()?
-        .ok_or_else(|| Error::Parse("search response missing album year".to_owned()))?;
+        .transpose()?;
 
     Ok(SearchResult::Album(AlbumResult {
         category,
         result_type: SearchResultType::Album,
         browse_id: required_text(renderer, "/navigationEndpoint/browseEndpoint/browseId")?,
-        playlist_id: required_text(
+        playlist_id: optional_text_at(
             renderer,
             "/overlay/musicItemThumbnailOverlayRenderer/content/musicPlayButtonRenderer/playNavigationEndpoint/watchPlaylistEndpoint/playlistId",
-        )?,
+        ),
         title,
         type_label: required_text(metadata_parts[0], "/text")?,
-        year: Some(year),
+        year,
         duration: None,
         is_explicit: has_explicit_badge(renderer),
         artists: vec![parse_artist_ref(artist_run)?],
@@ -940,6 +949,156 @@ mod tests {
                     && result.video_id == "video-top-result-id"
                     && result.video_type.as_deref() == Some("MUSIC_VIDEO_TYPE_OMV")
                     && result.duration.as_deref() == Some("4:37")
+                    && result.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
+                        == vec!["Oasis"]
+        ));
+    }
+
+    #[test]
+    fn default_mixed_parses_album_top_result_cards() {
+        let parsed = parse_inline_default_mixed(vec![json!({
+            "musicCardShelfRenderer": {
+                "title": { "runs": [{ "text": "Definitely Maybe" }] },
+                "subtitle": {
+                    "runs": [
+                        { "text": "Album" },
+                        { "text": " • " },
+                        {
+                            "text": "Oasis",
+                            "navigationEndpoint": { "browseEndpoint": { "browseId": "UCmMUZbaYdNH0bEd1PAlAqsA" } }
+                        },
+                        { "text": " • " },
+                        { "text": "1994" }
+                    ]
+                },
+                "navigationEndpoint": { "browseEndpoint": { "browseId": "MPREb_album_top" } },
+                "thumbnail": {
+                    "musicThumbnailRenderer": {
+                        "thumbnail": {
+                            "thumbnails": [{ "url": "https://example.com/album-top.jpg", "width": 60, "height": 60 }]
+                        }
+                    }
+                }
+            }
+        })]);
+
+        assert!(matches!(
+            &parsed[0],
+            SearchResult::Album(result)
+                if result.category.as_deref() == Some("Top result")
+                    && result.title == "Definitely Maybe"
+                    && result.browse_id == "MPREb_album_top"
+                    && result.playlist_id.is_none()
+                    && result.type_label == "Album"
+                    && result.year.as_deref() == Some("1994")
+                    && result.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
+                        == vec!["Oasis"]
+        ));
+    }
+
+    #[test]
+    fn default_mixed_parses_playlist_top_result_cards() {
+        let parsed = parse_inline_default_mixed(vec![json!({
+            "musicCardShelfRenderer": {
+                "title": { "runs": [{ "text": "Best Of Oasis" }] },
+                "subtitle": {
+                    "runs": [
+                        { "text": "Playlist" },
+                        { "text": " • " },
+                        { "text": "YouTube Music" },
+                        { "text": " • " },
+                        { "text": "35 songs" }
+                    ]
+                },
+                "navigationEndpoint": { "browseEndpoint": { "browseId": "VLPL_top_playlist" } },
+                "thumbnail": {
+                    "musicThumbnailRenderer": {
+                        "thumbnail": {
+                            "thumbnails": [{ "url": "https://example.com/playlist-top.jpg", "width": 60, "height": 60 }]
+                        }
+                    }
+                }
+            }
+        })]);
+
+        assert!(matches!(
+            &parsed[0],
+            SearchResult::Playlist(result)
+                if result.category.as_deref() == Some("Top result")
+                    && result.title == "Best Of Oasis"
+                    && result.browse_id == "VLPL_top_playlist"
+                    && result.author.as_deref() == Some("YouTube Music")
+                    && result.item_count.as_deref() == Some("35")
+        ));
+    }
+
+    #[test]
+    fn filtered_album_rows_tolerate_missing_year_and_playlist_id() {
+        let parsed = parse_search_response(
+            &json!({
+                "contents": {
+                    "tabbedSearchResultsRenderer": {
+                        "tabs": [{
+                            "tabRenderer": {
+                                "content": {
+                                    "sectionListRenderer": {
+                                        "contents": [{
+                                            "musicShelfRenderer": {
+                                                "title": { "runs": [{ "text": "Albums" }] },
+                                                "contents": [{
+                                                    "musicResponsiveListItemRenderer": {
+                                                        "flexColumns": [
+                                                            {
+                                                                "musicResponsiveListItemFlexColumnRenderer": {
+                                                                    "text": { "runs": [{ "text": "Heathen Chemistry" }] }
+                                                                }
+                                                            },
+                                                            {
+                                                                "musicResponsiveListItemFlexColumnRenderer": {
+                                                                    "text": {
+                                                                        "runs": [
+                                                                            { "text": "Album" },
+                                                                            { "text": " • " },
+                                                                            {
+                                                                                "text": "Oasis",
+                                                                                "navigationEndpoint": { "browseEndpoint": { "browseId": "UCmMUZbaYdNH0bEd1PAlAqsA" } }
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            }
+                                                        ],
+                                                        "navigationEndpoint": { "browseEndpoint": { "browseId": "MPREb_album_row" } },
+                                                        "thumbnail": {
+                                                            "musicThumbnailRenderer": {
+                                                                "thumbnail": {
+                                                                    "thumbnails": [{ "url": "https://example.com/album-row.jpg", "width": 60, "height": 60 }]
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }]
+                                            }
+                                        }]
+                                    }
+                                }
+                            }
+                        }]
+                    }
+                }
+            }),
+            Some(SearchFilter::Albums),
+        )
+        .unwrap();
+
+        assert!(matches!(
+            &parsed[0],
+            SearchResult::Album(result)
+                if result.category.as_deref() == Some("Albums")
+                    && result.title == "Heathen Chemistry"
+                    && result.browse_id == "MPREb_album_row"
+                    && result.playlist_id.is_none()
+                    && result.year.is_none()
                     && result.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
                         == vec!["Oasis"]
         ));

@@ -68,3 +68,15 @@ fn zero_limit_is_rejected() {
     let result = SearchQuery::new("abba").with_limit(0).validate();
     assert!(matches!(result, Err(Error::InvalidInput(_))));
 }
+
+#[test]
+fn unsupported_filters_are_rejected_during_validation() {
+    for filter in [SearchFilter::Songs, SearchFilter::Videos] {
+        let result = SearchQuery::new("abba").with_filter(filter).validate();
+        assert!(matches!(
+            result,
+            Err(Error::UnsupportedFeature(message))
+                if message == "search parser currently supports only default mixed, albums, artists, and playlists responses"
+        ));
+    }
+}

@@ -102,7 +102,8 @@ pub struct AlbumResult {
     pub category: Option<String>,
     pub result_type: SearchResultType,
     pub browse_id: String,
-    pub playlist_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub playlist_id: Option<String>,
     pub title: String,
     #[serde(rename = "type")]
     pub type_label: String,
@@ -194,6 +195,16 @@ impl SearchQuery {
     pub fn validate(&self) -> Result<(), Error> {
         if self.query.trim().is_empty() {
             return Err(Error::InvalidInput("query must not be blank".to_owned()));
+        }
+
+        if matches!(
+            self.filter,
+            Some(SearchFilter::Songs | SearchFilter::Videos)
+        ) {
+            return Err(Error::UnsupportedFeature(
+                "search parser currently supports only default mixed, albums, artists, and playlists responses"
+                    .to_owned(),
+            ));
         }
 
         if self.limit == 0 {

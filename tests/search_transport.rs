@@ -354,31 +354,8 @@ async fn search_applies_query_limit_to_first_page_results() {
 }
 
 #[tokio::test]
-async fn unsupported_filtered_empty_successful_search_is_rejected() {
+async fn unsupported_filtered_queries_are_rejected_before_network() {
     let server = MockServer::start().await;
-
-    Mock::given(method("GET"))
-        .and(path("/"))
-        .respond_with(
-            ResponseTemplate::new(200).set_body_string(
-                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.07.00" });"#,
-            ),
-        )
-        .mount(&server)
-        .await;
-
-    Mock::given(method("POST"))
-        .and(path("/youtubei/v1/search"))
-        .and(query_param("alt", "json"))
-        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
-            "contents": {
-                "tabbedSearchResultsRenderer": {
-                    "tabs": []
-                }
-            }
-        })))
-        .mount(&server)
-        .await;
 
     let client = YtMusic::builder()
         .homepage_url(server.uri())
@@ -386,16 +363,24 @@ async fn unsupported_filtered_empty_successful_search_is_rejected() {
         .build()
         .unwrap();
 
-    let error = client
-        .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
-        .await
-        .unwrap_err();
+    for filter in [SearchFilter::Songs, SearchFilter::Videos] {
+        let error = client
+            .search(SearchQuery::new("abba").with_filter(filter))
+            .await
+            .unwrap_err();
 
-    assert!(matches!(
-        error,
-        Error::UnsupportedFeature(message)
-            if message == "search parser currently supports only default mixed, albums, artists, and playlists responses"
-    ));
+        assert!(matches!(
+            error,
+            Error::UnsupportedFeature(message)
+                if message == "search parser currently supports only default mixed, albums, artists, and playlists responses"
+        ));
+    }
+
+    let requests = server.received_requests().await.unwrap();
+    assert!(
+        requests.is_empty(),
+        "unsupported filters should not trigger bootstrap/search requests"
+    );
 }
 
 #[tokio::test]
