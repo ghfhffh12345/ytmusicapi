@@ -1,6 +1,6 @@
 use std::{
     collections::BTreeMap,
-    fs,
+    fmt, fs,
     path::Path,
     time::{SystemTime, UNIX_EPOCH},
 };
@@ -14,9 +14,22 @@ use sha1::{Digest, Sha1};
 
 use crate::Error;
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub(crate) struct BrowserAuthHeaders {
     pub(crate) headers: BTreeMap<String, String>,
+}
+
+impl fmt::Debug for BrowserAuthHeaders {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let redacted: BTreeMap<&str, &str> = self
+            .headers
+            .keys()
+            .map(|name| (name.as_str(), "<redacted>"))
+            .collect();
+        f.debug_struct("BrowserAuthHeaders")
+            .field("headers", &redacted)
+            .finish()
+    }
 }
 
 impl BrowserAuthHeaders {

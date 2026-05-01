@@ -1,4 +1,6 @@
 use std::fs;
+#[cfg(unix)]
+use std::os::unix::fs::PermissionsExt;
 
 use assert_cmd::Command;
 use tempfile::tempdir;
@@ -30,6 +32,22 @@ fn writes_browser_json_in_current_directory() {
     let output = fs::read_to_string(dir.path().join("browser.json")).unwrap();
     let value: serde_json::Value = serde_json::from_str(&output).unwrap();
     assert_eq!(value["x-goog-authuser"], "0");
+}
+
+#[cfg(unix)]
+#[test]
+fn writes_browser_json_with_owner_only_permissions_on_unix() {
+    let dir = tempdir().unwrap();
+
+    Command::cargo_bin("ytmusicapi-cli")
+        .unwrap()
+        .current_dir(dir.path())
+        .write_stdin(firefox_headers())
+        .assert()
+        .success();
+
+    let metadata = fs::metadata(dir.path().join("browser.json")).unwrap();
+    assert_eq!(metadata.permissions().mode() & 0o777, 0o600);
 }
 
 #[test]

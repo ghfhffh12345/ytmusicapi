@@ -72,6 +72,7 @@ fn parse_library_playlist(renderer: &Value) -> Result<LibraryPlaylist, Error> {
         .and_then(Value::as_array)
         .map(Vec::as_slice)
         .unwrap_or(&[]);
+    let (author_runs, count_runs) = split_subtitle_runs(subtitle_runs);
 
     Ok(LibraryPlaylist {
         playlist_id: browse_id
@@ -79,8 +80,8 @@ fn parse_library_playlist(renderer: &Value) -> Result<LibraryPlaylist, Error> {
             .unwrap_or(&browse_id)
             .to_owned(),
         title: optional_text(title_run, "/text"),
-        authors: parse_authors(subtitle_runs),
-        item_count: parse_item_count(subtitle_runs),
+        authors: parse_authors(author_runs),
+        item_count: parse_item_count(count_runs),
         thumbnails: parse_thumbnails(renderer)?,
     })
 }
@@ -101,6 +102,20 @@ fn parse_authors(runs: &[Value]) -> Vec<ArtistRef> {
             })
         })
         .collect()
+}
+
+fn split_subtitle_runs(runs: &[Value]) -> (&[Value], &[Value]) {
+    let Some(separator_index) = runs.iter().position(is_separator_run) else {
+        return (runs, runs);
+    };
+
+    (&runs[..separator_index], &runs[separator_index + 1..])
+}
+
+fn is_separator_run(run: &Value) -> bool {
+    optional_text(run, "/text")
+        .map(|text| text.trim() == "•")
+        .unwrap_or(false)
 }
 
 fn parse_item_count(runs: &[Value]) -> Option<u32> {
