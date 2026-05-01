@@ -1,8 +1,10 @@
+mod auth;
 mod client;
 mod error;
 mod model;
 pub(crate) mod search;
 
+pub use crate::auth::setup_browser_auth;
 pub use crate::client::{YtMusic, YtMusicBuilder};
 pub use crate::error::Error;
 pub use crate::model::common::{AlbumRef, ArtistRef, Thumbnail};

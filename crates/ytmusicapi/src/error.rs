@@ -4,6 +4,20 @@ use thiserror::Error;
 pub enum Error {
     #[error("invalid input: {0}")]
     InvalidInput(String),
+    #[error("failed to read browser auth file {path}: {source}")]
+    AuthFileRead {
+        path: String,
+        #[source]
+        source: std::io::Error,
+    },
+    #[error("failed to decode browser auth json in {path}: {source}")]
+    AuthFileDecode {
+        path: String,
+        #[source]
+        source: serde_json::Error,
+    },
+    #[error("invalid browser auth configuration: {0}")]
+    AuthValidation(String),
     #[error("http client build failed: {0}")]
     HttpClientBuild(#[source] reqwest::Error),
     #[error("http transport failed: {0}")]

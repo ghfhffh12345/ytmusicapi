@@ -17,6 +17,8 @@ pub struct YtMusic {
     pub(crate) base_url: String,
     pub(crate) homepage_url: String,
     pub(crate) bootstrap_config: Arc<OnceCell<BootstrapConfig>>,
+    #[allow(dead_code)]
+    pub(crate) browser_auth: Option<crate::auth::BrowserAuthHeaders>,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -24,6 +26,7 @@ pub struct YtMusicBuilder {
     http_client: Option<Client>,
     base_url: Option<String>,
     homepage_url: Option<String>,
+    browser_auth_path: Option<std::path::PathBuf>,
 }
 
 impl YtMusic {
@@ -33,6 +36,12 @@ impl YtMusic {
 
     pub fn builder() -> YtMusicBuilder {
         YtMusicBuilder::default()
+    }
+
+    pub fn from_browser_auth_file(path: impl AsRef<std::path::Path>) -> Result<Self, Error> {
+        Self::builder()
+            .browser_auth_path(path.as_ref().to_path_buf())
+            .build()
     }
 
     pub fn http_client(&self) -> &Client {
@@ -108,7 +117,16 @@ impl YtMusicBuilder {
         self
     }
 
+    pub fn browser_auth_path(mut self, path: impl Into<std::path::PathBuf>) -> Self {
+        self.browser_auth_path = Some(path.into());
+        self
+    }
+
     pub fn build(self) -> Result<YtMusic, Error> {
+        let browser_auth = match self.browser_auth_path {
+            Some(path) => Some(crate::auth::load_browser_auth_file(&path)?),
+            None => None,
+        };
         let http_client = match self.http_client {
             Some(client) => client,
             None => Client::builder().build().map_err(Error::HttpClientBuild)?,
@@ -123,6 +141,7 @@ impl YtMusicBuilder {
                 .homepage_url
                 .unwrap_or_else(|| "https://music.youtube.com".to_owned()),
             bootstrap_config: Arc::new(OnceCell::new()),
+            browser_auth,
         })
     }
 }
