@@ -99,7 +99,10 @@ impl YtMusic {
     }
 
     pub async fn get_library_playlists(&self) -> Result<serde_json::Value, Error> {
-        let _response = self.post_browse(build_library_playlists_body()).await?;
+        let bootstrap_config = self.bootstrap_config().await?;
+        let _response = self
+            .post_browse(build_library_playlists_body(bootstrap_config))
+            .await?;
         Err(Error::UnsupportedFeature(
             "get_library_playlists parsing not implemented".to_owned(),
         ))

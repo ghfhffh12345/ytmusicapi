@@ -10,6 +10,7 @@ use serde::{
     Deserialize,
     de::{self, MapAccess, Visitor},
 };
+use sha1::{Digest, Sha1};
 
 use crate::Error;
 
@@ -265,133 +266,13 @@ fn build_sapisidhash_authorization(sapisid: &str, origin: &str) -> String {
 }
 
 fn sha1_hex(bytes: &[u8]) -> String {
-    let mut hasher = Sha1::new();
-    hasher.update(bytes);
-    let digest = hasher.finalize();
-
+    let digest = Sha1::digest(bytes);
     let mut hex = String::with_capacity(digest.len() * 2);
     for byte in digest {
         use std::fmt::Write as _;
         let _ = write!(hex, "{byte:02x}");
     }
     hex
-}
-
-struct Sha1 {
-    state: [u32; 5],
-    buffer: [u8; 64],
-    buffer_len: usize,
-    message_len_bits: u64,
-}
-
-impl Sha1 {
-    fn new() -> Self {
-        Self {
-            state: [
-                0x6745_2301,
-                0xEFCD_AB89,
-                0x98BA_DCFE,
-                0x1032_5476,
-                0xC3D2_E1F0,
-            ],
-            buffer: [0; 64],
-            buffer_len: 0,
-            message_len_bits: 0,
-        }
-    }
-
-    fn update(&mut self, input: &[u8]) {
-        self.message_len_bits = self.message_len_bits.wrapping_add((input.len() as u64) * 8);
-
-        let mut remaining = input;
-        while !remaining.is_empty() {
-            let space = 64 - self.buffer_len;
-            let take = remaining.len().min(space);
-            self.buffer[self.buffer_len..self.buffer_len + take]
-                .copy_from_slice(&remaining[..take]);
-            self.buffer_len += take;
-            remaining = &remaining[take..];
-
-            if self.buffer_len == 64 {
-                let block = self.buffer;
-                self.process_block(&block);
-                self.buffer_len = 0;
-            }
-        }
-    }
-
-    fn finalize(mut self) -> [u8; 20] {
-        self.buffer[self.buffer_len] = 0x80;
-        self.buffer_len += 1;
-
-        if self.buffer_len > 56 {
-            for byte in &mut self.buffer[self.buffer_len..] {
-                *byte = 0;
-            }
-            let block = self.buffer;
-            self.process_block(&block);
-            self.buffer = [0; 64];
-            self.buffer_len = 0;
-        }
-
-        for byte in &mut self.buffer[self.buffer_len..56] {
-            *byte = 0;
-        }
-        self.buffer[56..].copy_from_slice(&self.message_len_bits.to_be_bytes());
-        let block = self.buffer;
-        self.process_block(&block);
-
-        let mut digest = [0u8; 20];
-        for (index, word) in self.state.iter().enumerate() {
-            digest[index * 4..(index + 1) * 4].copy_from_slice(&word.to_be_bytes());
-        }
-        digest
-    }
-
-    fn process_block(&mut self, block: &[u8; 64]) {
-        let mut words = [0u32; 80];
-        for (index, chunk) in block.chunks_exact(4).enumerate() {
-            words[index] = u32::from_be_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
-        }
-        for index in 16..80 {
-            words[index] =
-                (words[index - 3] ^ words[index - 8] ^ words[index - 14] ^ words[index - 16])
-                    .rotate_left(1);
-        }
-
-        let mut a = self.state[0];
-        let mut b = self.state[1];
-        let mut c = self.state[2];
-        let mut d = self.state[3];
-        let mut e = self.state[4];
-
-        for (index, word) in words.iter().enumerate() {
-            let (f, k) = match index {
-                0..=19 => ((b & c) | ((!b) & d), 0x5A82_7999),
-                20..=39 => (b ^ c ^ d, 0x6ED9_EBA1),
-                40..=59 => ((b & c) | (b & d) | (c & d), 0x8F1B_BCDC),
-                _ => (b ^ c ^ d, 0xCA62_C1D6),
-            };
-
-            let temp = a
-                .rotate_left(5)
-                .wrapping_add(f)
-                .wrapping_add(e)
-                .wrapping_add(k)
-                .wrapping_add(*word);
-            e = d;
-            d = c;
-            c = b.rotate_left(30);
-            b = a;
-            a = temp;
-        }
-
-        self.state[0] = self.state[0].wrapping_add(a);
-        self.state[1] = self.state[1].wrapping_add(b);
-        self.state[2] = self.state[2].wrapping_add(c);
-        self.state[3] = self.state[3].wrapping_add(d);
-        self.state[4] = self.state[4].wrapping_add(e);
-    }
 }
 
 #[cfg(test)]
