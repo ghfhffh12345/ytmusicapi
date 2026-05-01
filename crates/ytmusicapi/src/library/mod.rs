@@ -1,1 +1,4 @@
-pub(crate) mod parse;
+pub(crate) mod albums;
+pub(crate) mod artists;
+pub(crate) mod core;
+pub(crate) mod playlists;

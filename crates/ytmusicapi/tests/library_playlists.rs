@@ -800,8 +800,8 @@ async fn get_library_playlists_prefers_browser_auth_client_version_in_body() {
         .build()
         .unwrap();
 
-    let playlists = client.get_library_playlists().await.unwrap();
-    assert!(playlists.is_empty());
+    let error = client.get_library_playlists().await.unwrap_err();
+    assert!(matches!(error, ytmusicapi::Error::Parse(_)));
 
     let requests = server.received_requests().await.unwrap();
     let browse = requests
@@ -862,8 +862,8 @@ async fn get_library_playlists_falls_back_to_bootstrap_client_version_in_body() 
         .build()
         .unwrap();
 
-    let playlists = client.get_library_playlists().await.unwrap();
-    assert!(playlists.is_empty());
+    let error = client.get_library_playlists().await.unwrap_err();
+    assert!(matches!(error, ytmusicapi::Error::Parse(_)));
 
     let requests = server.received_requests().await.unwrap();
     let browse = requests
@@ -887,7 +887,7 @@ async fn get_library_playlists_requires_browser_auth() {
 }
 
 #[tokio::test]
-async fn get_library_playlists_ignores_grids_outside_selected_library_tab() {
+async fn get_library_playlists_errors_when_selected_library_tab_has_no_grid() {
     let server = MockServer::start().await;
 
     Mock::given(method("GET"))
@@ -953,8 +953,8 @@ async fn get_library_playlists_ignores_grids_outside_selected_library_tab() {
         .build()
         .unwrap();
 
-    let playlists = client.get_library_playlists().await.unwrap();
-    assert!(playlists.is_empty());
+    let error = client.get_library_playlists().await.unwrap_err();
+    assert!(matches!(error, ytmusicapi::Error::Parse(_)));
 }
 
 #[tokio::test]

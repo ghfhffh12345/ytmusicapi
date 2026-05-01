@@ -116,7 +116,7 @@ impl YtMusic {
         let body = build_library_playlists_body(&browse_config);
 
         let response = self.post_browse(body).await?;
-        crate::library::parse::parse_library_playlists_response(&response)
+        crate::library::playlists::parse_library_playlists_response(&response)
     }
 
     async fn bootstrap_config(&self) -> Result<&BootstrapConfig, Error> {
