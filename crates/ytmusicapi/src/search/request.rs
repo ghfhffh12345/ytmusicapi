@@ -55,6 +55,18 @@ pub fn build_search_body(query: &SearchQuery, bootstrap_config: &BootstrapConfig
     body
 }
 
+pub(crate) fn build_library_playlists_body(bootstrap_config: &BootstrapConfig) -> Value {
+    json!({
+        "browseId": "FEmusic_liked_playlists",
+        "context": {
+            "client": {
+                "clientName": "WEB_REMIX",
+                "clientVersion": bootstrap_config.client_version,
+            }
+        }
+    })
+}
+
 fn parse_bootstrap_config(body: &str) -> Result<BootstrapConfig, Error> {
     let mut missing_field = None;
 
@@ -149,4 +161,27 @@ fn extract_ytcfg_json(remainder: &str) -> Option<&str> {
     }
 
     None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{BootstrapConfig, build_library_playlists_body};
+
+    #[test]
+    fn build_library_playlists_body_includes_bootstrap_context() {
+        let bootstrap_config = BootstrapConfig {
+            visitor_id: "visitor-id-123".to_owned(),
+            innertube_api_key: "test-api-key".to_owned(),
+            client_version: "1.20250501.02.00".to_owned(),
+        };
+
+        let body = build_library_playlists_body(&bootstrap_config);
+
+        assert_eq!(body["browseId"], "FEmusic_liked_playlists");
+        assert_eq!(body["context"]["client"]["clientName"], "WEB_REMIX");
+        assert_eq!(
+            body["context"]["client"]["clientVersion"],
+            "1.20250501.02.00"
+        );
+    }
 }

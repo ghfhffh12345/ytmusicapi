@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{fmt, sync::Arc};
 
 use reqwest::{Client, header};
 use tokio::sync::OnceCell;
@@ -7,16 +7,20 @@ use crate::{
     Error, SearchQuery, SearchResult,
     search::{
         parse::parse_search_response,
-        request::{BootstrapConfig, USER_AGENT, bootstrap_config, build_search_body},
+        request::{
+            BootstrapConfig, USER_AGENT, bootstrap_config as fetch_bootstrap_config,
+            build_library_playlists_body, build_search_body,
+        },
     },
 };
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct YtMusic {
     pub(crate) http_client: Client,
     pub(crate) base_url: String,
     pub(crate) homepage_url: String,
     pub(crate) bootstrap_config: Arc<OnceCell<BootstrapConfig>>,
+    pub(crate) browser_auth: Option<crate::auth::BrowserAuthHeaders>,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -24,6 +28,7 @@ pub struct YtMusicBuilder {
     http_client: Option<Client>,
     base_url: Option<String>,
     homepage_url: Option<String>,
+    browser_auth_path: Option<std::path::PathBuf>,
 }
 
 impl YtMusic {
@@ -33,6 +38,12 @@ impl YtMusic {
 
     pub fn builder() -> YtMusicBuilder {
         YtMusicBuilder::default()
+    }
+
+    pub fn from_browser_auth_file(path: impl AsRef<std::path::Path>) -> Result<Self, Error> {
+        Self::builder()
+            .browser_auth_path(path.as_ref().to_path_buf())
+            .build()
     }
 
     pub fn http_client(&self) -> &Client {
@@ -50,12 +61,7 @@ impl YtMusic {
     pub async fn search(&self, query: SearchQuery) -> Result<Vec<SearchResult>, Error> {
         query.validate()?;
 
-        let bootstrap_config = self
-            .bootstrap_config
-            .get_or_try_init(|| async {
-                bootstrap_config(&self.http_client, &self.homepage_url).await
-            })
-            .await?;
+        let bootstrap_config = self.bootstrap_config().await?;
 
         let url = format!(
             "{}/search?alt=json&key={}",
@@ -90,6 +96,80 @@ impl YtMusic {
         results.truncate(query.limit);
         Ok(results)
     }
+
+    pub async fn get_library_playlists(&self) -> Result<Vec<crate::LibraryPlaylist>, Error> {
+        if self.browser_auth.is_none() {
+            return Err(Error::UnsupportedFeature(
+                "get_library_playlists requires browser authentication".to_owned(),
+            ));
+        }
+
+        let bootstrap_config = self.bootstrap_config().await?;
+        let client_version = self
+            .browser_auth
+            .as_ref()
+            .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
+            .map(String::as_str)
+            .unwrap_or(&bootstrap_config.client_version);
+        let mut browse_config = bootstrap_config.clone();
+        browse_config.client_version = client_version.to_owned();
+        let body = build_library_playlists_body(&browse_config);
+
+        let response = self.post_browse(body).await?;
+        crate::library::parse::parse_library_playlists_response(&response)
+    }
+
+    async fn bootstrap_config(&self) -> Result<&BootstrapConfig, Error> {
+        self.bootstrap_config
+            .get_or_try_init(|| async {
+                fetch_bootstrap_config(&self.http_client, &self.homepage_url).await
+            })
+            .await
+    }
+
+    async fn post_browse(&self, body: serde_json::Value) -> Result<serde_json::Value, Error> {
+        let bootstrap_config = self.bootstrap_config().await?;
+        let url = format!(
+            "{}/browse?alt=json&key={}",
+            self.base_url.trim_end_matches('/'),
+            bootstrap_config.innertube_api_key
+        );
+
+        let request = self.http_client.post(url).body(body.to_string());
+        let request = if let Some(browser_auth) = &self.browser_auth {
+            request.headers(browser_auth.to_header_map(Some(&bootstrap_config.visitor_id))?)
+        } else {
+            request
+                .header(header::CONTENT_TYPE, "application/json")
+                .header(header::USER_AGENT, USER_AGENT)
+                .header("x-goog-visitor-id", &bootstrap_config.visitor_id)
+        };
+
+        let response = request.send().await.map_err(Error::HttpTransport)?;
+        let status = response.status();
+        let response_body = response.text().await.map_err(Error::HttpTransport)?;
+
+        if !status.is_success() {
+            let message = extract_status_message(&response_body);
+            return Err(Error::HttpStatus { status, message });
+        }
+
+        serde_json::from_str(&response_body).map_err(Error::JsonDecode)
+    }
+}
+
+impl fmt::Debug for YtMusic {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let browser_auth = self.browser_auth.as_ref().map(|_| "<redacted>");
+
+        f.debug_struct("YtMusic")
+            .field("http_client", &self.http_client)
+            .field("base_url", &self.base_url)
+            .field("homepage_url", &self.homepage_url)
+            .field("bootstrap_config", &self.bootstrap_config)
+            .field("browser_auth", &browser_auth)
+            .finish()
+    }
 }
 
 impl YtMusicBuilder {
@@ -108,7 +188,16 @@ impl YtMusicBuilder {
         self
     }
 
+    pub fn browser_auth_path(mut self, path: impl Into<std::path::PathBuf>) -> Self {
+        self.browser_auth_path = Some(path.into());
+        self
+    }
+
     pub fn build(self) -> Result<YtMusic, Error> {
+        let browser_auth = match self.browser_auth_path {
+            Some(path) => Some(crate::auth::load_browser_auth_file(&path)?),
+            None => None,
+        };
         let http_client = match self.http_client {
             Some(client) => client,
             None => Client::builder().build().map_err(Error::HttpClientBuild)?,
@@ -123,6 +212,7 @@ impl YtMusicBuilder {
                 .homepage_url
                 .unwrap_or_else(|| "https://music.youtube.com".to_owned()),
             bootstrap_config: Arc::new(OnceCell::new()),
+            browser_auth,
         })
     }
 }
