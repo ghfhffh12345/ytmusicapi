@@ -58,9 +58,9 @@ fn parse_raw_headers(raw_headers: &str) -> Result<BrowserAuthHeaders, Error> {
         }
 
         let Some((name, value)) = line.split_once(": ") else {
-            return Err(Error::AuthValidation(format!(
-                "malformed browser auth header line: {line}"
-            )));
+            return Err(Error::AuthValidation(
+                "malformed browser auth header line".to_owned(),
+            ));
         };
 
         let name = normalize_header_name(name);

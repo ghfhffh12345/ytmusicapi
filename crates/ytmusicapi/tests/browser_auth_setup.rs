@@ -50,6 +50,21 @@ fn setup_browser_auth_rejects_missing_required_headers() {
 }
 
 #[test]
+fn setup_browser_auth_redacts_malformed_cookie_line_from_error_text() {
+    let error = setup_browser_auth(
+        "Cookie __Secure-3PAPISID=test-sapisid; VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D\nX-Goog-AuthUser: 0\n",
+    )
+    .unwrap_err();
+
+    let Error::AuthValidation(message) = error else {
+        panic!("expected auth validation error");
+    };
+
+    assert!(!message.contains("__Secure-3PAPISID=test-sapisid"));
+    assert!(!message.contains("VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D"));
+}
+
+#[test]
 fn setup_browser_auth_rejects_duplicate_header_names_after_normalization() {
     let error = setup_browser_auth(
         "Cookie: __Secure-3PAPISID=test-sapisid\ncookie: duplicate\nX-Goog-AuthUser: 0\n",
