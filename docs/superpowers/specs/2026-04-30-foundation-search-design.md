@@ -189,10 +189,23 @@ Fixture-based integration tests:
 
 - end-to-end `search` response parsing from captured `v1.12.0` fixtures
 - mixed-result default search cases
-- filtered search cases for `songs`, `videos`, `albums`, `artists`, and `playlists`
+- filtered search cases for stable anonymous baselines
 - failure cases for malformed or structurally incompatible fixtures
 
 Live-network tests may be added later, but they should be optional and kept out of the default deterministic test path because YouTube Music is an unstable private API.
+
+### Anonymous Fixture Baseline Note
+
+During implementation, anonymous upstream `v1.12.0` search responses proved unstable for some filtered searches in the current environment. In particular, anonymous `songs` searches consistently returned empty results, and anonymous `videos` searches returned low-quality or podcast-like results that were not suitable as primary golden fixtures.
+
+Because of that, fixture-driven parser acceptance in this slice is narrowed to the stable anonymous baselines:
+
+- default mixed search
+- albums
+- artists
+- playlists
+
+The public Rust API still models `songs` and `videos` filters, but parser acceptance for those result types is not required from anonymous `v1.12.0` golden fixtures in this slice. If stable provenance is needed later, that work should use either a documented non-anonymous capture environment or a separately approved fixture strategy.
 
 ## Implementation Constraints
 

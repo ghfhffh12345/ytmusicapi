@@ -1,0 +1,113 @@
+{
+  "contents": {
+    "tabbedSearchResultsRenderer": {
+      "tabs": [
+        {
+          "tabRenderer": {
+            "content": {
+              "sectionListRenderer": {
+                "contents": [
+                  {
+                    "itemSectionRenderer": {
+                      "contents": [
+                        {
+                          "messageRenderer": {
+                            "icon": {
+                              "iconType": "SEARCH"
+                            },
+                            "subtext": {
+                              "messageSubtextRenderer": {
+                                "text": {
+                                  "runs": [
+                                    {
+                                      "text": "Try different keywords"
+                                    }
+                                  ]
+                                }
+                              }
+                            },
+                            "text": {
+                              "runs": [
+                                {
+                                  "text": "No results for "
+                                },
+                                {
+                                  "bold": true,
+                                  "text": "ABBA"
+                                },
+                                {
+                                  "text": "."
+                                }
+                              ]
+                            },
+                            "trackingParams": "CAQQ-pUBGAAiEwjs5J-E_pWUAxXEuykDHTogL-U="
+                          }
+                        }
+                      ],
+                      "trackingParams": "CAMQuy8YACITCOzkn4T-lZQDFcS7KQMdOiAv5Q=="
+                    }
+                  }
+                ],
+                "trackingParams": "CAIQui8iEwjs5J-E_pWUAxXEuykDHTogL-U="
+              }
+            },
+            "selected": true,
+            "tabIdentifier": "music_search_catalog",
+            "title": "YT Music",
+            "trackingParams": "CAEQ8JMBGAAiEwjs5J-E_pWUAxXEuykDHTogL-U="
+          }
+        }
+      ]
+    }
+  },
+  "responseContext": {
+    "maxAgeSeconds": 120,
+    "responseId": "IhMI7OSfhP6VlAMVxLspAx06IC_l",
+    "serviceTrackingParams": [
+      {
+        "params": [
+          {
+            "key": "c",
+            "value": "WEB_REMIX"
+          },
+          {
+            "key": "cver",
+            "value": "1.20260430.01.00"
+          },
+          {
+            "key": "yt_li",
+            "value": "0"
+          },
+          {
+            "key": "GetSearch_rid",
+            "value": "0x166d250a0f5aa157"
+          }
+        ],
+        "service": "CSI"
+      },
+      {
+        "params": [
+          {
+            "key": "logged_in",
+            "value": "0"
+          }
+        ],
+        "service": "GFEEDBACK"
+      },
+      {
+        "params": [
+          {
+            "key": "client.version",
+            "value": "1.20000101"
+          },
+          {
+            "key": "client.name",
+            "value": "WEB_REMIX"
+          }
+        ],
+        "service": "ECATCHER"
+      }
+    ]
+  },
+  "trackingParams": "CAAQvGkiEwjs5J-E_pWUAxXEuykDHTogL-XKAQRT3k93"
+}

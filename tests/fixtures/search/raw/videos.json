@@ -1,0 +1,1160 @@
+{
+  "contents": {
+    "tabbedSearchResultsRenderer": {
+      "tabs": [
+        {
+          "tabRenderer": {
+            "content": {
+              "sectionListRenderer": {
+                "contents": [
+                  {
+                    "musicShelfRenderer": {
+                      "contents": [
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "MUSIC_RESPONSIVE_LIST_ITEM_FLEX_COLUMN_DISPLAY_STYLE_TWO_LINE_STACK",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "MUSIC_RESPONSIVE_LIST_ITEM_COLUMN_DISPLAY_PRIORITY_HIGH",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "navigationEndpoint": {
+                                          "browseEndpoint": {
+                                            "browseEndpointContextSupportedConfigs": {
+                                              "browseEndpointContextMusicConfig": {
+                                                "pageType": "MUSIC_PAGE_TYPE_NON_MUSIC_AUDIO_TRACK_PAGE"
+                                              }
+                                            },
+                                            "browseId": "MPEDo9mLyHtSLjk"
+                                          },
+                                          "clickTrackingParams": "CBoQ7eAIGAAiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93"
+                                        },
+                                        "text": "BTS (\ubc29\ud0c4\uc18c\ub144\ub2e8) 'Butter''"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "MUSIC_RESPONSIVE_LIST_ITEM_COLUMN_DISPLAY_PRIORITY_HIGH",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "May 25, 2021 \u2022 BTS - Topic"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "May 25, 2021"
+                                      },
+                                      {
+                                        "text": " \u2022 "
+                                      },
+                                      {
+                                        "navigationEndpoint": {
+                                          "browseEndpoint": {
+                                            "browseEndpointContextSupportedConfigs": {
+                                              "browseEndpointContextMusicConfig": {
+                                                "pageType": "MUSIC_PAGE_TYPE_USER_CHANNEL"
+                                              }
+                                            },
+                                            "browseId": "UCe2EYcyDLjnjXs5eIR7wdPA"
+                                          },
+                                          "clickTrackingParams": "CBoQ7eAIGAAiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93"
+                                        },
+                                        "text": "BTS - Topic"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "MUSIC_RESPONSIVE_LIST_ITEM_HEIGHT_TALL",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "Action menu"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuServiceItemRenderer": {
+                                      "icon": {
+                                        "iconType": "QUEUE_PLAY_NEXT"
+                                      },
+                                      "serviceEndpoint": {
+                                        "clickTrackingParams": "CCQQvu4FGAAiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                        "queueAddEndpoint": {
+                                          "commands": [
+                                            {
+                                              "addToToastAction": {
+                                                "item": {
+                                                  "notificationTextRenderer": {
+                                                    "successResponseText": {
+                                                      "runs": [
+                                                        {
+                                                          "text": "Episode will play next"
+                                                        }
+                                                      ]
+                                                    },
+                                                    "trackingParams": "CCUQyscDIhMI9eO3hP6VlAMV6IamAx3uDzUf"
+                                                  }
+                                                }
+                                              },
+                                              "clickTrackingParams": "CCQQvu4FGAAiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93"
+                                            }
+                                          ],
+                                          "queueInsertPosition": "INSERT_AFTER_CURRENT_VIDEO",
+                                          "queueTarget": {
+                                            "onEmptyQueue": {
+                                              "clickTrackingParams": "CCQQvu4FGAAiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                              "watchEndpoint": {
+                                                "videoId": "o9mLyHtSLjk"
+                                              }
+                                            },
+                                            "videoId": "o9mLyHtSLjk"
+                                          }
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "Play next"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "CCQQvu4FGAAiEwj147eE_pWUAxXohqYDHe4PNR8="
+                                    }
+                                  },
+                                  {
+                                    "menuServiceItemRenderer": {
+                                      "icon": {
+                                        "iconType": "ADD_TO_REMOTE_QUEUE"
+                                      },
+                                      "serviceEndpoint": {
+                                        "clickTrackingParams": "CCIQ--8FGAEiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                        "queueAddEndpoint": {
+                                          "commands": [
+                                            {
+                                              "addToToastAction": {
+                                                "item": {
+                                                  "notificationTextRenderer": {
+                                                    "successResponseText": {
+                                                      "runs": [
+                                                        {
+                                                          "text": "Episode added to queue"
+                                                        }
+                                                      ]
+                                                    },
+                                                    "trackingParams": "CCMQyscDIhMI9eO3hP6VlAMV6IamAx3uDzUf"
+                                                  }
+                                                }
+                                              },
+                                              "clickTrackingParams": "CCIQ--8FGAEiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93"
+                                            }
+                                          ],
+                                          "queueInsertPosition": "INSERT_AT_END",
+                                          "queueTarget": {
+                                            "onEmptyQueue": {
+                                              "clickTrackingParams": "CCIQ--8FGAEiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                              "watchEndpoint": {
+                                                "videoId": "o9mLyHtSLjk"
+                                              }
+                                            },
+                                            "videoId": "o9mLyHtSLjk"
+                                          }
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "Add to queue"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "CCIQ--8FGAEiEwj147eE_pWUAxXohqYDHe4PNR8="
+                                    }
+                                  },
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "ADD_TO_PLAYLIST"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "CCAQw5QGGAIiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                        "modalEndpoint": {
+                                          "modal": {
+                                            "modalWithTitleAndButtonRenderer": {
+                                              "button": {
+                                                "buttonRenderer": {
+                                                  "isDisabled": false,
+                                                  "navigationEndpoint": {
+                                                    "clickTrackingParams": "CCEQ8FsiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                                    "signInEndpoint": {
+                                                      "hack": true
+                                                    }
+                                                  },
+                                                  "style": "STYLE_BLUE_TEXT",
+                                                  "text": {
+                                                    "runs": [
+                                                      {
+                                                        "text": "Sign in"
+                                                      }
+                                                    ]
+                                                  },
+                                                  "trackingParams": "CCEQ8FsiEwj147eE_pWUAxXohqYDHe4PNR8="
+                                                }
+                                              },
+                                              "content": {
+                                                "runs": [
+                                                  {
+                                                    "text": "Make playlists and share them after signing in"
+                                                  }
+                                                ]
+                                              },
+                                              "title": {
+                                                "runs": [
+                                                  {
+                                                    "text": "Save this for later"
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "Save to playlist"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "CCAQw5QGGAIiEwj147eE_pWUAxXohqYDHe4PNR8="
+                                    }
+                                  },
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "SHARE"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "CB8QkfsFGAMiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "CgtvOW1MeUh0U0xqaw%3D%3D",
+                                          "sharePanelType": "SHARE_PANEL_TYPE_UNIFIED_SHARE_PANEL"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "Share"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "CB8QkfsFGAMiEwj147eE_pWUAxXohqYDHe4PNR8="
+                                    }
+                                  }
+                                ],
+                                "topLevelButtons": [
+                                  {
+                                    "likeButtonRenderer": {
+                                      "dislikeNavigationEndpoint": {
+                                        "clickTrackingParams": "CBwQpUEYBCITCPXjt4T-lZQDFeiGpgMd7g81H8oBBFPeT3c=",
+                                        "modalEndpoint": {
+                                          "modal": {
+                                            "modalWithTitleAndButtonRenderer": {
+                                              "button": {
+                                                "buttonRenderer": {
+                                                  "isDisabled": false,
+                                                  "navigationEndpoint": {
+                                                    "clickTrackingParams": "CB4Q8FsiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                                    "signInEndpoint": {
+                                                      "hack": true
+                                                    }
+                                                  },
+                                                  "style": "STYLE_BLUE_TEXT",
+                                                  "text": {
+                                                    "runs": [
+                                                      {
+                                                        "text": "Sign in"
+                                                      }
+                                                    ]
+                                                  },
+                                                  "trackingParams": "CB4Q8FsiEwj147eE_pWUAxXohqYDHe4PNR8="
+                                                }
+                                              },
+                                              "content": {
+                                                "runs": [
+                                                  {
+                                                    "text": "Improve your recommendations after signing in"
+                                                  }
+                                                ]
+                                              },
+                                              "title": {
+                                                "runs": [
+                                                  {
+                                                    "text": "Not a fan?"
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "likeCommand": {
+                                        "clickTrackingParams": "CBwQpUEYBCITCPXjt4T-lZQDFeiGpgMd7g81H8oBBFPeT3c=",
+                                        "modalEndpoint": {
+                                          "modal": {
+                                            "modalWithTitleAndButtonRenderer": {
+                                              "button": {
+                                                "buttonRenderer": {
+                                                  "isDisabled": false,
+                                                  "navigationEndpoint": {
+                                                    "clickTrackingParams": "CB0Q8FsiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                                    "signInEndpoint": {
+                                                      "hack": true
+                                                    }
+                                                  },
+                                                  "style": "STYLE_BLUE_TEXT",
+                                                  "text": {
+                                                    "runs": [
+                                                      {
+                                                        "text": "Sign in"
+                                                      }
+                                                    ]
+                                                  },
+                                                  "trackingParams": "CB0Q8FsiEwj147eE_pWUAxXohqYDHe4PNR8="
+                                                }
+                                              },
+                                              "content": {
+                                                "runs": [
+                                                  {
+                                                    "text": "Improve recommendations and save music after signing in"
+                                                  }
+                                                ]
+                                              },
+                                              "title": {
+                                                "runs": [
+                                                  {
+                                                    "text": "Like this song"
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "likeStatus": "INDIFFERENT",
+                                      "likesAllowed": true,
+                                      "target": {
+                                        "videoId": "o9mLyHtSLjk"
+                                      },
+                                      "trackingParams": "CBwQpUEYBCITCPXjt4T-lZQDFeiGpgMd7g81Hw=="
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "CBsQpzsiEwj147eE_pWUAxXohqYDHe4PNR8="
+                              }
+                            },
+                            "overlay": {
+                              "musicItemThumbnailOverlayRenderer": {
+                                "background": {
+                                  "verticalGradient": {
+                                    "gradientLayerColors": [
+                                      "3422552064",
+                                      "3422552064"
+                                    ]
+                                  }
+                                },
+                                "content": {
+                                  "musicPlayButtonRenderer": {
+                                    "accessibilityPauseData": {
+                                      "accessibilityData": {
+                                        "label": "Pause BTS (\ubc29\ud0c4\uc18c\ub144\ub2e8) 'Butter'' - BTS - Topic"
+                                      }
+                                    },
+                                    "accessibilityPlayData": {
+                                      "accessibilityData": {
+                                        "label": "Play BTS (\ubc29\ud0c4\uc18c\ub144\ub2e8) 'Butter'' - BTS - Topic"
+                                      }
+                                    },
+                                    "activeBackgroundColor": 0,
+                                    "activeScaleFactor": 1,
+                                    "backgroundColor": 0,
+                                    "buttonSize": "MUSIC_PLAY_BUTTON_SIZE_SMALL",
+                                    "iconColor": 4294967295,
+                                    "iconLoadingColor": 0,
+                                    "loadingIndicatorColor": 14745645,
+                                    "pauseIcon": {
+                                      "iconType": "PAUSE"
+                                    },
+                                    "playIcon": {
+                                      "iconType": "PLAY_ARROW"
+                                    },
+                                    "playNavigationEndpoint": {
+                                      "clickTrackingParams": "CCYQyN4CIhMI9eO3hP6VlAMV6IamAx3uDzUfygEEU95Pdw==",
+                                      "watchEndpoint": {
+                                        "params": "8gEDmAEI",
+                                        "videoId": "o9mLyHtSLjk",
+                                        "watchEndpointMusicSupportedConfigs": {
+                                          "watchEndpointMusicConfig": {
+                                            "musicVideoType": "MUSIC_VIDEO_TYPE_PODCAST_EPISODE"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "playingIcon": {
+                                      "iconType": "VOLUME_UP"
+                                    },
+                                    "rippleTarget": "MUSIC_PLAY_BUTTON_RIPPLE_TARGET_SELF",
+                                    "trackingParams": "CCYQyN4CIhMI9eO3hP6VlAMV6IamAx3uDzUf"
+                                  }
+                                },
+                                "contentPosition": "MUSIC_ITEM_THUMBNAIL_OVERLAY_CONTENT_POSITION_CENTERED",
+                                "displayStyle": "MUSIC_ITEM_THUMBNAIL_OVERLAY_DISPLAY_STYLE_PERSISTENT"
+                              }
+                            },
+                            "playlistItemData": {
+                              "videoId": "o9mLyHtSLjk"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 225,
+                                      "url": "https://i.ytimg.com/vi/o9mLyHtSLjk/sddefault.jpg?sqp=-oaymwEWCJADEOEBIAQqCghqEJQEGHgg6AJIWg&rs=AMzJL3n0qYJGzKs5KAF0M0AxCBEq2_Ueog",
+                                      "width": 400
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "MUSIC_THUMBNAIL_CROP_UNSPECIFIED",
+                                "thumbnailScale": "MUSIC_THUMBNAIL_SCALE_ASPECT_FIT",
+                                "trackingParams": "CCcQhL8CIhMI9eO3hP6VlAMV6IamAx3uDzUf"
+                              }
+                            },
+                            "trackingParams": "CBoQ7eAIGAAiEwj147eE_pWUAxXohqYDHe4PNR8="
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "MUSIC_RESPONSIVE_LIST_ITEM_FLEX_COLUMN_DISPLAY_STYLE_TWO_LINE_STACK",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "MUSIC_RESPONSIVE_LIST_ITEM_COLUMN_DISPLAY_PRIORITY_HIGH",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "navigationEndpoint": {
+                                          "browseEndpoint": {
+                                            "browseEndpointContextSupportedConfigs": {
+                                              "browseEndpointContextMusicConfig": {
+                                                "pageType": "MUSIC_PAGE_TYPE_NON_MUSIC_AUDIO_TRACK_PAGE"
+                                              }
+                                            },
+                                            "browseId": "MPED6G1CDqvbE4s"
+                                          },
+                                          "clickTrackingParams": "CAwQ7eAIGAEiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93"
+                                        },
+                                        "text": "butter - bts // audio edit"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "MUSIC_RESPONSIVE_LIST_ITEM_COLUMN_DISPLAY_PRIORITY_HIGH",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "May 21, 2021 \u2022 andrian."
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "May 21, 2021"
+                                      },
+                                      {
+                                        "text": " \u2022 "
+                                      },
+                                      {
+                                        "navigationEndpoint": {
+                                          "browseEndpoint": {
+                                            "browseEndpointContextSupportedConfigs": {
+                                              "browseEndpointContextMusicConfig": {
+                                                "pageType": "MUSIC_PAGE_TYPE_USER_CHANNEL"
+                                              }
+                                            },
+                                            "browseId": "UCA7BCwjtFeNlMtz5jxQTnpw"
+                                          },
+                                          "clickTrackingParams": "CAwQ7eAIGAEiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93"
+                                        },
+                                        "text": "andrian."
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "MUSIC_RESPONSIVE_LIST_ITEM_HEIGHT_TALL",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "Action menu"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuServiceItemRenderer": {
+                                      "icon": {
+                                        "iconType": "QUEUE_PLAY_NEXT"
+                                      },
+                                      "serviceEndpoint": {
+                                        "clickTrackingParams": "CBYQvu4FGAAiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                        "queueAddEndpoint": {
+                                          "commands": [
+                                            {
+                                              "addToToastAction": {
+                                                "item": {
+                                                  "notificationTextRenderer": {
+                                                    "successResponseText": {
+                                                      "runs": [
+                                                        {
+                                                          "text": "Episode will play next"
+                                                        }
+                                                      ]
+                                                    },
+                                                    "trackingParams": "CBcQyscDIhMI9eO3hP6VlAMV6IamAx3uDzUf"
+                                                  }
+                                                }
+                                              },
+                                              "clickTrackingParams": "CBYQvu4FGAAiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93"
+                                            }
+                                          ],
+                                          "queueInsertPosition": "INSERT_AFTER_CURRENT_VIDEO",
+                                          "queueTarget": {
+                                            "onEmptyQueue": {
+                                              "clickTrackingParams": "CBYQvu4FGAAiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                              "watchEndpoint": {
+                                                "videoId": "6G1CDqvbE4s"
+                                              }
+                                            },
+                                            "videoId": "6G1CDqvbE4s"
+                                          }
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "Play next"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "CBYQvu4FGAAiEwj147eE_pWUAxXohqYDHe4PNR8="
+                                    }
+                                  },
+                                  {
+                                    "menuServiceItemRenderer": {
+                                      "icon": {
+                                        "iconType": "ADD_TO_REMOTE_QUEUE"
+                                      },
+                                      "serviceEndpoint": {
+                                        "clickTrackingParams": "CBQQ--8FGAEiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                        "queueAddEndpoint": {
+                                          "commands": [
+                                            {
+                                              "addToToastAction": {
+                                                "item": {
+                                                  "notificationTextRenderer": {
+                                                    "successResponseText": {
+                                                      "runs": [
+                                                        {
+                                                          "text": "Episode added to queue"
+                                                        }
+                                                      ]
+                                                    },
+                                                    "trackingParams": "CBUQyscDIhMI9eO3hP6VlAMV6IamAx3uDzUf"
+                                                  }
+                                                }
+                                              },
+                                              "clickTrackingParams": "CBQQ--8FGAEiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93"
+                                            }
+                                          ],
+                                          "queueInsertPosition": "INSERT_AT_END",
+                                          "queueTarget": {
+                                            "onEmptyQueue": {
+                                              "clickTrackingParams": "CBQQ--8FGAEiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                              "watchEndpoint": {
+                                                "videoId": "6G1CDqvbE4s"
+                                              }
+                                            },
+                                            "videoId": "6G1CDqvbE4s"
+                                          }
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "Add to queue"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "CBQQ--8FGAEiEwj147eE_pWUAxXohqYDHe4PNR8="
+                                    }
+                                  },
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "ADD_TO_PLAYLIST"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "CBIQw5QGGAIiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                        "modalEndpoint": {
+                                          "modal": {
+                                            "modalWithTitleAndButtonRenderer": {
+                                              "button": {
+                                                "buttonRenderer": {
+                                                  "isDisabled": false,
+                                                  "navigationEndpoint": {
+                                                    "clickTrackingParams": "CBMQ8FsiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                                    "signInEndpoint": {
+                                                      "hack": true
+                                                    }
+                                                  },
+                                                  "style": "STYLE_BLUE_TEXT",
+                                                  "text": {
+                                                    "runs": [
+                                                      {
+                                                        "text": "Sign in"
+                                                      }
+                                                    ]
+                                                  },
+                                                  "trackingParams": "CBMQ8FsiEwj147eE_pWUAxXohqYDHe4PNR8="
+                                                }
+                                              },
+                                              "content": {
+                                                "runs": [
+                                                  {
+                                                    "text": "Make playlists and share them after signing in"
+                                                  }
+                                                ]
+                                              },
+                                              "title": {
+                                                "runs": [
+                                                  {
+                                                    "text": "Save this for later"
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "Save to playlist"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "CBIQw5QGGAIiEwj147eE_pWUAxXohqYDHe4PNR8="
+                                    }
+                                  },
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "SHARE"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "CBEQkfsFGAMiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "Cgs2RzFDRHF2YkU0cw%3D%3D",
+                                          "sharePanelType": "SHARE_PANEL_TYPE_UNIFIED_SHARE_PANEL"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "Share"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "CBEQkfsFGAMiEwj147eE_pWUAxXohqYDHe4PNR8="
+                                    }
+                                  }
+                                ],
+                                "topLevelButtons": [
+                                  {
+                                    "likeButtonRenderer": {
+                                      "dislikeNavigationEndpoint": {
+                                        "clickTrackingParams": "CA4QpUEYBCITCPXjt4T-lZQDFeiGpgMd7g81H8oBBFPeT3c=",
+                                        "modalEndpoint": {
+                                          "modal": {
+                                            "modalWithTitleAndButtonRenderer": {
+                                              "button": {
+                                                "buttonRenderer": {
+                                                  "isDisabled": false,
+                                                  "navigationEndpoint": {
+                                                    "clickTrackingParams": "CBAQ8FsiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                                    "signInEndpoint": {
+                                                      "hack": true
+                                                    }
+                                                  },
+                                                  "style": "STYLE_BLUE_TEXT",
+                                                  "text": {
+                                                    "runs": [
+                                                      {
+                                                        "text": "Sign in"
+                                                      }
+                                                    ]
+                                                  },
+                                                  "trackingParams": "CBAQ8FsiEwj147eE_pWUAxXohqYDHe4PNR8="
+                                                }
+                                              },
+                                              "content": {
+                                                "runs": [
+                                                  {
+                                                    "text": "Improve your recommendations after signing in"
+                                                  }
+                                                ]
+                                              },
+                                              "title": {
+                                                "runs": [
+                                                  {
+                                                    "text": "Not a fan?"
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "likeCommand": {
+                                        "clickTrackingParams": "CA4QpUEYBCITCPXjt4T-lZQDFeiGpgMd7g81H8oBBFPeT3c=",
+                                        "modalEndpoint": {
+                                          "modal": {
+                                            "modalWithTitleAndButtonRenderer": {
+                                              "button": {
+                                                "buttonRenderer": {
+                                                  "isDisabled": false,
+                                                  "navigationEndpoint": {
+                                                    "clickTrackingParams": "CA8Q8FsiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93",
+                                                    "signInEndpoint": {
+                                                      "hack": true
+                                                    }
+                                                  },
+                                                  "style": "STYLE_BLUE_TEXT",
+                                                  "text": {
+                                                    "runs": [
+                                                      {
+                                                        "text": "Sign in"
+                                                      }
+                                                    ]
+                                                  },
+                                                  "trackingParams": "CA8Q8FsiEwj147eE_pWUAxXohqYDHe4PNR8="
+                                                }
+                                              },
+                                              "content": {
+                                                "runs": [
+                                                  {
+                                                    "text": "Improve recommendations and save music after signing in"
+                                                  }
+                                                ]
+                                              },
+                                              "title": {
+                                                "runs": [
+                                                  {
+                                                    "text": "Like this song"
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "likeStatus": "INDIFFERENT",
+                                      "likesAllowed": true,
+                                      "target": {
+                                        "videoId": "6G1CDqvbE4s"
+                                      },
+                                      "trackingParams": "CA4QpUEYBCITCPXjt4T-lZQDFeiGpgMd7g81Hw=="
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "CA0QpzsiEwj147eE_pWUAxXohqYDHe4PNR8="
+                              }
+                            },
+                            "overlay": {
+                              "musicItemThumbnailOverlayRenderer": {
+                                "background": {
+                                  "verticalGradient": {
+                                    "gradientLayerColors": [
+                                      "3422552064",
+                                      "3422552064"
+                                    ]
+                                  }
+                                },
+                                "content": {
+                                  "musicPlayButtonRenderer": {
+                                    "accessibilityPauseData": {
+                                      "accessibilityData": {
+                                        "label": "Pause butter - bts // audio edit - andrian."
+                                      }
+                                    },
+                                    "accessibilityPlayData": {
+                                      "accessibilityData": {
+                                        "label": "Play butter - bts // audio edit - andrian."
+                                      }
+                                    },
+                                    "activeBackgroundColor": 0,
+                                    "activeScaleFactor": 1,
+                                    "backgroundColor": 0,
+                                    "buttonSize": "MUSIC_PLAY_BUTTON_SIZE_SMALL",
+                                    "iconColor": 4294967295,
+                                    "iconLoadingColor": 0,
+                                    "loadingIndicatorColor": 14745645,
+                                    "pauseIcon": {
+                                      "iconType": "PAUSE"
+                                    },
+                                    "playIcon": {
+                                      "iconType": "PLAY_ARROW"
+                                    },
+                                    "playNavigationEndpoint": {
+                                      "clickTrackingParams": "CBgQyN4CIhMI9eO3hP6VlAMV6IamAx3uDzUfygEEU95Pdw==",
+                                      "watchEndpoint": {
+                                        "params": "8gEDmAEI",
+                                        "videoId": "6G1CDqvbE4s",
+                                        "watchEndpointMusicSupportedConfigs": {
+                                          "watchEndpointMusicConfig": {
+                                            "musicVideoType": "MUSIC_VIDEO_TYPE_PODCAST_EPISODE"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "playingIcon": {
+                                      "iconType": "VOLUME_UP"
+                                    },
+                                    "rippleTarget": "MUSIC_PLAY_BUTTON_RIPPLE_TARGET_SELF",
+                                    "trackingParams": "CBgQyN4CIhMI9eO3hP6VlAMV6IamAx3uDzUf"
+                                  }
+                                },
+                                "contentPosition": "MUSIC_ITEM_THUMBNAIL_OVERLAY_CONTENT_POSITION_CENTERED",
+                                "displayStyle": "MUSIC_ITEM_THUMBNAIL_OVERLAY_DISPLAY_STYLE_PERSISTENT"
+                              }
+                            },
+                            "playlistItemData": {
+                              "videoId": "6G1CDqvbE4s"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 225,
+                                      "url": "https://i.ytimg.com/vi/6G1CDqvbE4s/sddefault.jpg?sqp=-oaymwEWCJADEOEBIAQqCghqEJQEGHgg6AJIWg&rs=AMzJL3n1YC11DkRaAyAnQtm6vCQ5RKVltg",
+                                      "width": 400
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "MUSIC_THUMBNAIL_CROP_UNSPECIFIED",
+                                "thumbnailScale": "MUSIC_THUMBNAIL_SCALE_ASPECT_FIT",
+                                "trackingParams": "CBkQhL8CIhMI9eO3hP6VlAMV6IamAx3uDzUf"
+                              }
+                            },
+                            "trackingParams": "CAwQ7eAIGAEiEwj147eE_pWUAxXohqYDHe4PNR8="
+                          }
+                        }
+                      ],
+                      "shelfDivider": {
+                        "musicShelfDividerRenderer": {
+                          "hidden": true
+                        }
+                      },
+                      "title": {
+                        "runs": [
+                          {
+                            "text": "Videos"
+                          }
+                        ]
+                      },
+                      "trackingParams": "CAsQ-V4YACITCPXjt4T-lZQDFeiGpgMd7g81Hw=="
+                    }
+                  }
+                ],
+                "header": {
+                  "chipCloudRenderer": {
+                    "chips": [
+                      {
+                        "chipCloudChipRenderer": {
+                          "accessibilityData": {
+                            "accessibilityData": {
+                              "label": "Clear filters"
+                            }
+                          },
+                          "icon": {
+                            "iconType": "CLOSE"
+                          },
+                          "isSelected": false,
+                          "navigationEndpoint": {
+                            "clickTrackingParams": "CAoQ_V0YACITCPXjt4T-lZQDFeiGpgMd7g81H8oBBFPeT3c=",
+                            "searchEndpoint": {
+                              "query": "butter bts topic"
+                            }
+                          },
+                          "style": {
+                            "styleType": "STYLE_SECONDARY"
+                          },
+                          "trackingParams": "CAoQ_V0YACITCPXjt4T-lZQDFeiGpgMd7g81Hw=="
+                        }
+                      },
+                      {
+                        "chipCloudChipRenderer": {
+                          "accessibilityData": {
+                            "accessibilityData": {
+                              "label": "Show featured playlist results"
+                            }
+                          },
+                          "isSelected": false,
+                          "navigationEndpoint": {
+                            "clickTrackingParams": "CAkQ_V0YASITCPXjt4T-lZQDFeiGpgMd7g81H8oBBFPeT3c=",
+                            "searchEndpoint": {
+                              "params": "EgeKAQQoADgBagwQDhAKEAMQBBAJEAU%3D",
+                              "query": "butter bts topic"
+                            }
+                          },
+                          "style": {
+                            "styleType": "STYLE_DEFAULT"
+                          },
+                          "text": {
+                            "runs": [
+                              {
+                                "text": "Featured playlists"
+                              }
+                            ]
+                          },
+                          "trackingParams": "CAkQ_V0YASITCPXjt4T-lZQDFeiGpgMd7g81Hw==",
+                          "uniqueId": "Featured playlists"
+                        }
+                      },
+                      {
+                        "chipCloudChipRenderer": {
+                          "accessibilityData": {
+                            "accessibilityData": {
+                              "label": "Show community playlist results"
+                            }
+                          },
+                          "isSelected": false,
+                          "navigationEndpoint": {
+                            "clickTrackingParams": "CAgQ_V0YAiITCPXjt4T-lZQDFeiGpgMd7g81H8oBBFPeT3c=",
+                            "searchEndpoint": {
+                              "params": "EgeKAQQoAEABagwQDhAKEAMQBBAJEAU%3D",
+                              "query": "butter bts topic"
+                            }
+                          },
+                          "style": {
+                            "styleType": "STYLE_DEFAULT"
+                          },
+                          "text": {
+                            "runs": [
+                              {
+                                "text": "Community playlists"
+                              }
+                            ]
+                          },
+                          "trackingParams": "CAgQ_V0YAiITCPXjt4T-lZQDFeiGpgMd7g81Hw==",
+                          "uniqueId": "Community playlists"
+                        }
+                      },
+                      {
+                        "chipCloudChipRenderer": {
+                          "accessibilityData": {
+                            "accessibilityData": {
+                              "label": "Show song results"
+                            }
+                          },
+                          "isSelected": false,
+                          "navigationEndpoint": {
+                            "clickTrackingParams": "CAcQ_V0YAyITCPXjt4T-lZQDFeiGpgMd7g81H8oBBFPeT3c=",
+                            "searchEndpoint": {
+                              "params": "EgWKAQIIAWoMEA4QChADEAQQCRAF",
+                              "query": "butter bts topic"
+                            }
+                          },
+                          "style": {
+                            "styleType": "STYLE_DEFAULT"
+                          },
+                          "text": {
+                            "runs": [
+                              {
+                                "text": "Songs"
+                              }
+                            ]
+                          },
+                          "trackingParams": "CAcQ_V0YAyITCPXjt4T-lZQDFeiGpgMd7g81Hw==",
+                          "uniqueId": "Songs"
+                        }
+                      },
+                      {
+                        "chipCloudChipRenderer": {
+                          "accessibilityData": {
+                            "accessibilityData": {
+                              "label": "Show video results selected"
+                            }
+                          },
+                          "isSelected": true,
+                          "navigationEndpoint": {
+                            "clickTrackingParams": "CAYQ_V0YBCITCPXjt4T-lZQDFeiGpgMd7g81H8oBBFPeT3c=",
+                            "searchEndpoint": {
+                              "params": "EgWKAQIQAWoMEA4QChADEAQQCRAF",
+                              "query": "butter bts topic"
+                            }
+                          },
+                          "style": {
+                            "styleType": "STYLE_PRIMARY"
+                          },
+                          "text": {
+                            "runs": [
+                              {
+                                "text": "Videos"
+                              }
+                            ]
+                          },
+                          "trackingParams": "CAYQ_V0YBCITCPXjt4T-lZQDFeiGpgMd7g81Hw==",
+                          "uniqueId": "Videos"
+                        }
+                      },
+                      {
+                        "chipCloudChipRenderer": {
+                          "accessibilityData": {
+                            "accessibilityData": {
+                              "label": "Show album results"
+                            }
+                          },
+                          "isSelected": false,
+                          "navigationEndpoint": {
+                            "clickTrackingParams": "CAUQ_V0YBSITCPXjt4T-lZQDFeiGpgMd7g81H8oBBFPeT3c=",
+                            "searchEndpoint": {
+                              "params": "EgWKAQIYAWoMEA4QChADEAQQCRAF",
+                              "query": "butter bts topic"
+                            }
+                          },
+                          "style": {
+                            "styleType": "STYLE_DEFAULT"
+                          },
+                          "text": {
+                            "runs": [
+                              {
+                                "text": "Albums"
+                              }
+                            ]
+                          },
+                          "trackingParams": "CAUQ_V0YBSITCPXjt4T-lZQDFeiGpgMd7g81Hw==",
+                          "uniqueId": "Albums"
+                        }
+                      },
+                      {
+                        "chipCloudChipRenderer": {
+                          "accessibilityData": {
+                            "accessibilityData": {
+                              "label": "Show artist results"
+                            }
+                          },
+                          "isSelected": false,
+                          "navigationEndpoint": {
+                            "clickTrackingParams": "CAQQ_V0YBiITCPXjt4T-lZQDFeiGpgMd7g81H8oBBFPeT3c=",
+                            "searchEndpoint": {
+                              "params": "EgWKAQIgAWoMEA4QChADEAQQCRAF",
+                              "query": "butter bts topic"
+                            }
+                          },
+                          "style": {
+                            "styleType": "STYLE_DEFAULT"
+                          },
+                          "text": {
+                            "runs": [
+                              {
+                                "text": "Artists"
+                              }
+                            ]
+                          },
+                          "trackingParams": "CAQQ_V0YBiITCPXjt4T-lZQDFeiGpgMd7g81Hw==",
+                          "uniqueId": "Artists"
+                        }
+                      }
+                    ],
+                    "collapsedRowCount": 1,
+                    "horizontalScrollable": true,
+                    "trackingParams": "CAMQ_F0iEwj147eE_pWUAxXohqYDHe4PNR8="
+                  }
+                },
+                "trackingParams": "CAIQui8iEwj147eE_pWUAxXohqYDHe4PNR8="
+              }
+            },
+            "selected": true,
+            "tabIdentifier": "music_search_catalog",
+            "title": "YT Music",
+            "trackingParams": "CAEQ8JMBGAAiEwj147eE_pWUAxXohqYDHe4PNR8="
+          }
+        }
+      ]
+    }
+  },
+  "responseContext": {
+    "maxAgeSeconds": 120,
+    "responseId": "IhMI9eO3hP6VlAMV6IamAx3uDzUf",
+    "serviceTrackingParams": [
+      {
+        "params": [
+          {
+            "key": "c",
+            "value": "WEB_REMIX"
+          },
+          {
+            "key": "cver",
+            "value": "1.20260430.01.00"
+          },
+          {
+            "key": "yt_li",
+            "value": "0"
+          },
+          {
+            "key": "GetSearch_rid",
+            "value": "0xb299022b22df75a1"
+          }
+        ],
+        "service": "CSI"
+      },
+      {
+        "params": [
+          {
+            "key": "logged_in",
+            "value": "0"
+          }
+        ],
+        "service": "GFEEDBACK"
+      },
+      {
+        "params": [
+          {
+            "key": "client.version",
+            "value": "1.20000101"
+          },
+          {
+            "key": "client.name",
+            "value": "WEB_REMIX"
+          }
+        ],
+        "service": "ECATCHER"
+      }
+    ]
+  },
+  "trackingParams": "CAAQvGkiEwj147eE_pWUAxXohqYDHe4PNR_KAQRT3k93"
+}

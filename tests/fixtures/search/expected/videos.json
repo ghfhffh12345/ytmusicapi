@@ -1,0 +1,46 @@
+[
+  {
+    "artists": [
+      {
+        "id": "UCe2EYcyDLjnjXs5eIR7wdPA",
+        "name": "BTS - Topic"
+      }
+    ],
+    "category": "Videos",
+    "duration": null,
+    "resultType": "video",
+    "thumbnails": [
+      {
+        "height": 225,
+        "url": "https://i.ytimg.com/vi/o9mLyHtSLjk/sddefault.jpg?sqp=-oaymwEWCJADEOEBIAQqCghqEJQEGHgg6AJIWg&rs=AMzJL3n0qYJGzKs5KAF0M0AxCBEq2_Ueog",
+        "width": 400
+      }
+    ],
+    "title": "BTS (\ubc29\ud0c4\uc18c\ub144\ub2e8) 'Butter''",
+    "videoId": "o9mLyHtSLjk",
+    "videoType": "MUSIC_VIDEO_TYPE_PODCAST_EPISODE",
+    "year": null
+  },
+  {
+    "artists": [
+      {
+        "id": "UCA7BCwjtFeNlMtz5jxQTnpw",
+        "name": "andrian."
+      }
+    ],
+    "category": "Videos",
+    "duration": null,
+    "resultType": "video",
+    "thumbnails": [
+      {
+        "height": 225,
+        "url": "https://i.ytimg.com/vi/6G1CDqvbE4s/sddefault.jpg?sqp=-oaymwEWCJADEOEBIAQqCghqEJQEGHgg6AJIWg&rs=AMzJL3n1YC11DkRaAyAnQtm6vCQ5RKVltg",
+        "width": 400
+      }
+    ],
+    "title": "butter - bts // audio edit",
+    "videoId": "6G1CDqvbE4s",
+    "videoType": "MUSIC_VIDEO_TYPE_PODCAST_EPISODE",
+    "year": null
+  }
+]
