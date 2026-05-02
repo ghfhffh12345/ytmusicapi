@@ -159,8 +159,13 @@ fn take_title_index(unknown_indexes: &mut Vec<usize>, layout: &ColumnLayout) -> 
         return unknown_indexes.pop();
     }
 
-    let boundary = layout.artist_index.or(layout.album_index)?;
-    take_unique_matching(unknown_indexes, |index| index < boundary)
+    if let Some(boundary) = layout.artist_index.or(layout.album_index) {
+        if let Some(index) = take_unique_matching(unknown_indexes, |index| index < boundary) {
+            return Some(index);
+        }
+    }
+
+    take_first_index(unknown_indexes)
 }
 
 fn take_artist_index(unknown_indexes: &mut Vec<usize>, layout: &ColumnLayout) -> Option<usize> {
@@ -169,10 +174,14 @@ fn take_artist_index(unknown_indexes: &mut Vec<usize>, layout: &ColumnLayout) ->
     }
 
     if let Some(album_index) = layout.album_index {
-        return take_unique_matching(unknown_indexes, |index| index < album_index);
+        if let Some(index) = take_unique_matching(unknown_indexes, |index| index < album_index) {
+            return Some(index);
+        }
     }
 
-    None
+    layout
+        .title_index
+        .and_then(|_| take_first_index(unknown_indexes))
 }
 
 fn take_album_index(unknown_indexes: &mut Vec<usize>, layout: &ColumnLayout) -> Option<usize> {
@@ -181,10 +190,15 @@ fn take_album_index(unknown_indexes: &mut Vec<usize>, layout: &ColumnLayout) -> 
     }
 
     if let Some(artist_index) = layout.artist_index {
-        return take_unique_matching(unknown_indexes, |index| index > artist_index);
+        if let Some(index) = take_unique_matching(unknown_indexes, |index| index > artist_index) {
+            return Some(index);
+        }
     }
 
-    None
+    match (layout.title_index, layout.artist_index) {
+        (Some(_), Some(_)) => take_first_index(unknown_indexes),
+        _ => None,
+    }
 }
 
 fn take_unique_matching(
@@ -207,6 +221,10 @@ fn take_unique_matching(
 
 fn remove_index(indexes: &mut Vec<usize>, target: usize) {
     indexes.retain(|index| *index != target);
+}
+
+fn take_first_index(indexes: &mut Vec<usize>) -> Option<usize> {
+    (!indexes.is_empty()).then(|| indexes.remove(0))
 }
 
 struct ParsedSongMetadata {

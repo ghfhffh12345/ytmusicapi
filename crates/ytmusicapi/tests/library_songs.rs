@@ -617,6 +617,76 @@ async fn get_library_songs_parses_title_when_metadata_column_precedes_it() {
 }
 
 #[tokio::test]
+async fn get_library_songs_parses_all_plain_text_columns() {
+    let server = MockServer::start().await;
+    let mut response = library_songs_response();
+    response["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]
+        ["sectionListRenderer"]["contents"][0]["musicShelfRenderer"]["contents"][2]["musicResponsiveListItemRenderer"]
+        ["flexColumns"] = json!([
+        {
+            "musicResponsiveListItemFlexColumnRenderer": {
+                "text": { "runs": [{ "text": "Archangel" }] }
+            }
+        },
+        {
+            "musicResponsiveListItemFlexColumnRenderer": {
+                "text": { "runs": [{ "text": "Burial" }] }
+            }
+        },
+        {
+            "musicResponsiveListItemFlexColumnRenderer": {
+                "text": { "runs": [{ "text": "Untrue" }] }
+            }
+        }
+    ]);
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "9.99999999.99.99" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(response))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let songs = client.get_library_songs().await.unwrap();
+    assert_eq!(
+        songs[1],
+        LibrarySong {
+            video_id: "song-2".to_owned(),
+            title: "Archangel".to_owned(),
+            artists: vec![ArtistRef {
+                id: String::new(),
+                name: "Burial".to_owned(),
+            }],
+            album: Some(AlbumRef {
+                id: String::new(),
+                name: "Untrue".to_owned(),
+            }),
+            duration: None,
+            thumbnails: vec![],
+            like_status: None,
+        }
+    );
+}
+
+#[tokio::test]
 async fn get_library_songs_returns_empty_results_for_empty_library_message() {
     let server = MockServer::start().await;
 
