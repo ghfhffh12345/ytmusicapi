@@ -33,7 +33,7 @@ async fn authenticated_search_uses_browser_auth_headers_when_available() {
         .and(path("/"))
         .respond_with(
             ResponseTemplate::new(200).set_body_string(
-                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250502.01.00" });"#,
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
             ),
         )
         .mount(&server)
