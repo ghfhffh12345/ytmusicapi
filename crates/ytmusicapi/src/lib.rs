@@ -9,7 +9,9 @@ pub use crate::auth::setup_browser_auth;
 pub use crate::client::{YtMusic, YtMusicBuilder};
 pub use crate::error::Error;
 pub use crate::model::common::{AlbumRef, ArtistRef, Thumbnail};
-pub use crate::model::library::{LibraryAlbum, LibraryArtist, LibraryPlaylist};
+pub use crate::model::library::{
+    LibraryAlbum, LibraryArtist, LibraryLikeStatus, LibraryPlaylist, LibrarySong,
+};
 pub use crate::model::search::{
     AlbumResult, ArtistResult, PlaylistResult, ProfileResult, SearchFilter, SearchQuery,
     SearchResult, SearchResultType, SongResult, VideoResult,
