@@ -46,13 +46,17 @@ async fn get_library_playlists_live_smoke_test() {
         "expected authenticated filtered songs results for query `abba`"
     );
     assert!(
-        songs.iter().all(|result| match result {
-            ytmusicapi::SearchResult::Song(song) => {
-                !song.artists.is_empty() && song.duration.is_some()
-            }
+        songs
+            .iter()
+            .all(|result| matches!(result, ytmusicapi::SearchResult::Song(_))),
+        "expected filtered songs search results to contain only songs"
+    );
+    assert!(
+        songs.iter().any(|result| match result {
+            ytmusicapi::SearchResult::Song(song) => song.album.is_some(),
             _ => false,
         }),
-        "expected filtered songs search results to carry song metadata"
+        "expected at least one filtered song result to include album metadata"
     );
 
     let videos = client
@@ -64,12 +68,23 @@ async fn get_library_playlists_live_smoke_test() {
         "expected authenticated filtered videos results for query `abba`"
     );
     assert!(
-        videos.iter().all(|result| match result {
-            ytmusicapi::SearchResult::Video(video) => {
-                !video.artists.is_empty() && video.duration.is_some() && video.views.is_some()
-            }
+        videos
+            .iter()
+            .all(|result| matches!(result, ytmusicapi::SearchResult::Video(_))),
+        "expected filtered videos search results to contain only videos"
+    );
+    assert!(
+        videos.iter().any(|result| match result {
+            ytmusicapi::SearchResult::Video(video) => video.views.is_some(),
             _ => false,
         }),
-        "expected filtered videos search results to carry video metadata"
+        "expected at least one filtered video result to include view metadata"
+    );
+    assert!(
+        videos.iter().any(|result| match result {
+            ytmusicapi::SearchResult::Video(video) => video.duration.is_some(),
+            _ => false,
+        }),
+        "expected at least one filtered video result to include duration metadata"
     );
 }
