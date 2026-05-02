@@ -852,10 +852,12 @@ mod tests {
         let SearchResult::Song(first_song) = &results[0] else {
             panic!("expected first authenticated songs result to be a song");
         };
-        assert!(!first_song.video_id.is_empty());
-        assert!(!first_song.title.is_empty());
-        assert!(!first_song.artists.is_empty());
-        assert!(!first_song.thumbnails.is_empty());
+        assert_eq!(first_song.artists[0].name, "ABBA");
+        assert_eq!(
+            first_song.album.as_ref().map(|album| album.name.as_str()),
+            Some("The Visitors")
+        );
+        assert_eq!(first_song.duration.as_deref(), Some("3:56"));
     }
 
     #[test]
@@ -871,12 +873,9 @@ mod tests {
         let SearchResult::Video(first_video) = &results[0] else {
             panic!("expected first authenticated videos result to be a video");
         };
-        assert!(!first_video.video_id.is_empty());
-        assert!(!first_video.title.is_empty());
-        assert!(!first_video.thumbnails.is_empty());
-        assert!(!first_video.artists.is_empty());
-        assert!(first_video.views.as_deref().is_some());
-        assert!(first_video.duration.as_deref().is_some());
+        assert_eq!(first_video.artists[0].name, "Laugh Zone");
+        assert_eq!(first_video.views.as_deref(), Some("233K views"));
+        assert_eq!(first_video.duration.as_deref(), Some("1:09:21"));
     }
 
     #[test]
