@@ -20,16 +20,15 @@ fn parse_library_song(item: &Value) -> Result<LibrarySong, Error> {
                 .to_owned(),
         )
     })?;
+    let (title_column_index, title) = parse_title(renderer)?;
+    let metadata = parse_song_metadata(renderer, title_column_index);
 
     Ok(LibrarySong {
         video_id: required_text(renderer, "/playlistItemData/videoId")?,
-        title: required_text(
-            renderer,
-            "/flexColumns/0/musicResponsiveListItemFlexColumnRenderer/text/runs/0/text",
-        )?,
-        artists: parse_artists(renderer),
-        album: parse_album(renderer),
-        duration: parse_duration(renderer),
+        title,
+        artists: metadata.artists,
+        album: metadata.album,
+        duration: parse_fixed_duration(renderer).or(metadata.duration),
         thumbnails: parse_thumbnails(renderer)?,
         like_status: parse_like_status(renderer),
     })
@@ -46,44 +45,127 @@ fn is_leading_random_mix_tile(item: &Value) -> bool {
         })
 }
 
-fn parse_artists(renderer: &Value) -> Vec<ArtistRef> {
-    renderer
-        .pointer("/flexColumns/1/musicResponsiveListItemFlexColumnRenderer/text/runs")
-        .and_then(Value::as_array)
-        .map(Vec::as_slice)
-        .unwrap_or(&[])
+fn parse_title(renderer: &Value) -> Result<(usize, String), Error> {
+    flex_columns(renderer)
         .iter()
-        .filter_map(|run| {
-            let text = optional_text(run, "/text")?;
+        .enumerate()
+        .find_map(|(index, column)| first_column_text(column).map(|text| (index, text)))
+        .ok_or_else(|| Error::Parse("library response missing song title".to_owned()))
+}
+
+struct ParsedSongMetadata {
+    artists: Vec<ArtistRef>,
+    album: Option<AlbumRef>,
+    duration: Option<String>,
+}
+
+fn parse_song_metadata(renderer: &Value, title_column_index: usize) -> ParsedSongMetadata {
+    let mut parsed = ParsedSongMetadata {
+        artists: Vec::new(),
+        album: None,
+        duration: None,
+    };
+
+    for (index, column) in flex_columns(renderer).iter().enumerate() {
+        if index == title_column_index {
+            continue;
+        }
+
+        for run in flex_column_runs(column) {
+            let Some(text) = optional_text(run, "/text") else {
+                continue;
+            };
             let trimmed = text.trim();
             if trimmed.is_empty() || trimmed == "•" {
-                return None;
+                continue;
             }
 
-            Some(ArtistRef {
-                id: optional_text(run, "/navigationEndpoint/browseEndpoint/browseId")
-                    .unwrap_or_default(),
-                name: text,
-            })
-        })
-        .collect()
+            if let Some(browse_id) =
+                optional_text(run, "/navigationEndpoint/browseEndpoint/browseId")
+            {
+                if parsed.album.is_none() && is_album_run(run, &browse_id) {
+                    parsed.album = Some(AlbumRef {
+                        id: browse_id,
+                        name: text,
+                    });
+                } else {
+                    parsed.artists.push(ArtistRef {
+                        id: browse_id,
+                        name: text,
+                    });
+                }
+                continue;
+            }
+
+            if parsed.duration.is_none() && looks_like_duration(trimmed) {
+                parsed.duration = Some(trimmed.to_owned());
+            }
+        }
+    }
+
+    parsed
 }
 
-fn parse_album(renderer: &Value) -> Option<AlbumRef> {
-    let run =
-        renderer.pointer("/flexColumns/2/musicResponsiveListItemFlexColumnRenderer/text/runs/0")?;
-
-    Some(AlbumRef {
-        id: optional_text(run, "/navigationEndpoint/browseEndpoint/browseId").unwrap_or_default(),
-        name: optional_text(run, "/text")?,
-    })
-}
-
-fn parse_duration(renderer: &Value) -> Option<String> {
+fn parse_fixed_duration(renderer: &Value) -> Option<String> {
     optional_text(
         renderer,
         "/fixedColumns/0/musicResponsiveListItemFixedColumnRenderer/text/runs/0/text",
     )
+}
+
+fn flex_columns(renderer: &Value) -> &[Value] {
+    renderer
+        .pointer("/flexColumns")
+        .and_then(Value::as_array)
+        .map(Vec::as_slice)
+        .unwrap_or(&[])
+}
+
+fn first_column_text(column: &Value) -> Option<String> {
+    optional_text(
+        column,
+        "/musicResponsiveListItemFlexColumnRenderer/text/runs/0/text",
+    )
+}
+
+fn flex_column_runs(column: &Value) -> &[Value] {
+    column
+        .pointer("/musicResponsiveListItemFlexColumnRenderer/text/runs")
+        .and_then(Value::as_array)
+        .map(Vec::as_slice)
+        .unwrap_or(&[])
+}
+
+fn is_album_run(run: &Value, browse_id: &str) -> bool {
+    matches!(
+        optional_text(
+            run,
+            "/navigationEndpoint/browseEndpoint/browseEndpointContextSupportedConfigs/browseEndpointContextMusicConfig/pageType",
+        )
+        .as_deref(),
+        Some("MUSIC_PAGE_TYPE_ALBUM") | Some("MUSIC_PAGE_TYPE_AUDIOBOOK")
+    ) || browse_id.starts_with("MPRE")
+        || browse_id.contains("release_detail")
+}
+
+fn looks_like_duration(value: &str) -> bool {
+    let mut parts = value.split(':');
+    let Some(first) = parts.next() else {
+        return false;
+    };
+    if first.is_empty() || !first.chars().all(|ch| ch.is_ascii_digit()) {
+        return false;
+    }
+
+    let mut count = 1;
+    for part in parts {
+        if part.is_empty() || !part.chars().all(|ch| ch.is_ascii_digit()) {
+            return false;
+        }
+        count += 1;
+    }
+
+    count >= 2
 }
 
 fn parse_like_status(renderer: &Value) -> Option<LibraryLikeStatus> {
