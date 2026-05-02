@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use ytmusicapi::YtMusic;
+use ytmusicapi::{SearchFilter, SearchQuery, YtMusic};
 
 #[tokio::test]
 #[ignore = "requires local browser.json generated from browser.txt and live network access"]
@@ -36,4 +36,55 @@ async fn get_library_playlists_live_smoke_test() {
     if albums.is_empty() {
         eprintln!("library albums returned 0 items for this account; verified empty-state parsing");
     }
+
+    let songs = client
+        .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
+        .await
+        .unwrap();
+    assert!(
+        !songs.is_empty(),
+        "expected authenticated filtered songs results for query `abba`"
+    );
+    assert!(
+        songs
+            .iter()
+            .all(|result| matches!(result, ytmusicapi::SearchResult::Song(_))),
+        "expected filtered songs search results to contain only songs"
+    );
+    assert!(
+        songs.iter().any(|result| match result {
+            ytmusicapi::SearchResult::Song(song) => song.album.is_some(),
+            _ => false,
+        }),
+        "expected at least one filtered song result to include album metadata"
+    );
+
+    let videos = client
+        .search(SearchQuery::new("abba").with_filter(SearchFilter::Videos))
+        .await
+        .unwrap();
+    assert!(
+        !videos.is_empty(),
+        "expected authenticated filtered videos results for query `abba`"
+    );
+    assert!(
+        videos
+            .iter()
+            .all(|result| matches!(result, ytmusicapi::SearchResult::Video(_))),
+        "expected filtered videos search results to contain only videos"
+    );
+    assert!(
+        videos.iter().any(|result| match result {
+            ytmusicapi::SearchResult::Video(video) => video.views.is_some(),
+            _ => false,
+        }),
+        "expected at least one filtered video result to include view metadata"
+    );
+    assert!(
+        videos.iter().any(|result| match result {
+            ytmusicapi::SearchResult::Video(video) => video.duration.is_some(),
+            _ => false,
+        }),
+        "expected at least one filtered video result to include duration metadata"
+    );
 }

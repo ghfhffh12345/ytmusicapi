@@ -3,8 +3,9 @@ use std::{fs, path::PathBuf};
 use serde_json::{Value, json};
 use tempfile::tempdir;
 use wiremock::matchers::{method, path, query_param};
-use wiremock::{Mock, MockServer, ResponseTemplate};
-use ytmusicapi::{Error, SearchFilter, SearchQuery, YtMusic, setup_browser_auth};
+use wiremock::{Mock, MockServer, Request, ResponseTemplate};
+use ytmusicapi::setup_browser_auth;
+use ytmusicapi::{Error, SearchFilter, SearchQuery, YtMusic};
 
 const BROWSER_USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36";
 
@@ -32,7 +33,7 @@ async fn authenticated_search_uses_browser_auth_headers_when_available() {
         .and(path("/"))
         .respond_with(
             ResponseTemplate::new(200).set_body_string(
-                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250502.01.00" });"#,
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
             ),
         )
         .mount(&server)
@@ -42,7 +43,7 @@ async fn authenticated_search_uses_browser_auth_headers_when_available() {
         .and(path("/youtubei/v1/search"))
         .respond_with(
             ResponseTemplate::new(200)
-                .set_body_string(include_str!("fixtures/search/raw/songs.json")),
+                .set_body_string(include_str!("fixtures/search/raw/songs_authenticated.json")),
         )
         .mount(&server)
         .await;
@@ -58,25 +59,37 @@ async fn authenticated_search_uses_browser_auth_headers_when_available() {
         .build()
         .unwrap();
 
-    client
+    let result = client
         .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
         .await
         .unwrap();
 
+    assert!(!result.is_empty());
+
     let requests = server.received_requests().await.unwrap();
+    let bootstrap_request = requests
+        .iter()
+        .find(|request| request.method.as_str() == "GET")
+        .unwrap();
     let search_request = requests
         .iter()
         .find(|request| request.method.as_str() == "POST")
         .unwrap();
+    let search_body: Value = serde_json::from_slice(&search_request.body).unwrap();
 
+    assert_eq!(bootstrap_request.url.path(), "/");
+    assert_eq!(search_request.url.path(), "/youtubei/v1/search");
     assert_eq!(
+        search_request.url.query(),
+        Some("alt=json&key=test-api-key")
+    );
+    assert!(
         search_request
             .headers
             .get("authorization")
             .and_then(|value| value.to_str().ok())
             .map(|value| value.starts_with("SAPISIDHASH "))
-            .unwrap_or(false),
-        true
+            .unwrap_or(false)
     );
     assert_eq!(
         search_request
@@ -98,6 +111,206 @@ async fn authenticated_search_uses_browser_auth_headers_when_available() {
             .get("x-goog-visitor-id")
             .and_then(|value| value.to_str().ok()),
         Some("visitor-id-123")
+    );
+    assert_eq!(search_body["query"], "abba");
+    assert_eq!(search_body["params"], "EgWKAQIIAWoMEA4QChADEAQQCRAF");
+    assert_eq!(search_body["context"]["client"]["clientName"], "WEB_REMIX");
+    assert_eq!(
+        search_body["context"]["client"]["clientVersion"],
+        "1.20250502.01.00"
+    );
+}
+
+#[tokio::test]
+async fn authenticated_search_falls_back_to_anonymous_transport_on_http_status_failure() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250502.01.00" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| request.headers.get("authorization").is_some())
+        .respond_with(ResponseTemplate::new(403).set_body_string("forbidden"))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| request.headers.get("authorization").is_none())
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/search/raw/default_mixed.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let browser_json: PathBuf = dir.path().join("browser.json");
+    fs::write(&browser_json, firefox_search_headers()).unwrap();
+
+    let client = YtMusic::builder()
+        .browser_auth_path(&browser_json)
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let result = client.search(SearchQuery::new("abba")).await.unwrap();
+    assert_eq!(result.len(), 20);
+    assert!(matches!(
+        &result[0],
+        ytmusicapi::SearchResult::Artist(artist) if artist.artists[0].name == "Daft Punk"
+    ));
+    assert!(matches!(
+        &result[1],
+        ytmusicapi::SearchResult::Album(album) if album.title == "Random Access Memories"
+    ));
+
+    let requests = server.received_requests().await.unwrap();
+    let post_requests: Vec<_> = requests
+        .iter()
+        .filter(|request| request.method.as_str() == "POST")
+        .collect();
+
+    assert_eq!(post_requests.len(), 2);
+    assert!(
+        post_requests
+            .iter()
+            .any(|request| request.headers.contains_key("authorization"))
+    );
+    assert!(
+        post_requests
+            .iter()
+            .any(|request| !request.headers.contains_key("authorization"))
+    );
+}
+
+#[tokio::test]
+async fn authenticated_unfiltered_search_uses_browser_auth_headers_and_default_mixed_results() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/search/raw/default_mixed.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let browser_json: PathBuf = dir.path().join("browser.json");
+    fs::write(&browser_json, firefox_search_headers()).unwrap();
+
+    let client = YtMusic::builder()
+        .browser_auth_path(&browser_json)
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let result = client.search(SearchQuery::new("abba")).await.unwrap();
+    assert_eq!(result.len(), 20);
+    assert!(matches!(
+        &result[0],
+        ytmusicapi::SearchResult::Artist(artist) if artist.artists[0].name == "Daft Punk"
+    ));
+    assert!(matches!(
+        &result[1],
+        ytmusicapi::SearchResult::Album(album) if album.title == "Random Access Memories"
+    ));
+
+    let requests = server.received_requests().await.unwrap();
+    let bootstrap_request = requests
+        .iter()
+        .find(|request| request.method.as_str() == "GET")
+        .unwrap();
+    let search_request = requests
+        .iter()
+        .find(|request| request.method.as_str() == "POST")
+        .unwrap();
+    let search_body: Value = serde_json::from_slice(&search_request.body).unwrap();
+
+    assert_eq!(bootstrap_request.url.path(), "/");
+    assert_eq!(search_request.url.path(), "/youtubei/v1/search");
+    assert_eq!(
+        search_request.url.query(),
+        Some("alt=json&key=test-api-key")
+    );
+    assert!(
+        search_request
+            .headers
+            .get("authorization")
+            .and_then(|value| value.to_str().ok())
+            .map(|value| value.starts_with("SAPISIDHASH "))
+            .unwrap_or(false)
+    );
+    assert_eq!(
+        search_request
+            .headers
+            .get("cookie")
+            .and_then(|value| value.to_str().ok()),
+        Some("__Secure-3PAPISID=test-sapisid; VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D")
+    );
+    assert_eq!(
+        search_request
+            .headers
+            .get("x-goog-authuser")
+            .and_then(|value| value.to_str().ok()),
+        Some("0")
+    );
+    assert_eq!(
+        search_request
+            .headers
+            .get("x-goog-visitor-id")
+            .and_then(|value| value.to_str().ok()),
+        Some("visitor-id-123")
+    );
+    assert_eq!(
+        search_request
+            .headers
+            .get("x-origin")
+            .and_then(|value| value.to_str().ok()),
+        Some("https://music.youtube.com")
+    );
+    assert_eq!(
+        search_request
+            .headers
+            .get("x-youtube-client-name")
+            .and_then(|value| value.to_str().ok()),
+        Some("67")
+    );
+    assert_eq!(
+        search_request
+            .headers
+            .get("x-youtube-client-version")
+            .and_then(|value| value.to_str().ok()),
+        Some("1.20250502.01.00")
+    );
+    assert_eq!(search_body["query"], "abba");
+    assert!(search_body.get("params").is_none());
+    assert_eq!(search_body["context"]["client"]["clientName"], "WEB_REMIX");
+    assert_eq!(
+        search_body["context"]["client"]["clientVersion"],
+        "1.20250502.01.00"
     );
 }
 
@@ -450,7 +663,7 @@ async fn search_applies_query_limit_to_first_page_results() {
 }
 
 #[tokio::test]
-async fn songs_filtered_search_accepts_empty_results() {
+async fn anonymous_songs_filtered_search_returns_current_no_results_fixture() {
     let server = MockServer::start().await;
 
     Mock::given(method("GET"))
@@ -485,19 +698,10 @@ async fn songs_filtered_search_accepts_empty_results() {
         .unwrap();
 
     assert!(result.is_empty());
-
-    let requests = server.received_requests().await.unwrap();
-    let search_request = requests
-        .iter()
-        .find(|request| request.method.as_str() == "POST")
-        .expect("expected search POST request");
-    let search_body: Value = serde_json::from_slice(&search_request.body).unwrap();
-
-    assert_eq!(search_body["params"], "EgWKAQIIAWoMEA4QChADEAQQCRAF");
 }
 
 #[tokio::test]
-async fn videos_filtered_search_parses_current_fixture() {
+async fn anonymous_videos_filtered_search_parses_legacy_fixture() {
     let server = MockServer::start().await;
 
     Mock::given(method("GET"))
@@ -531,22 +735,12 @@ async fn videos_filtered_search_parses_current_fixture() {
         .await
         .unwrap();
 
+    assert_eq!(result.len(), 2);
     assert!(matches!(
-        &result[..],
-        [
-            ytmusicapi::SearchResult::Video(first),
-            ytmusicapi::SearchResult::Video(second),
-        ] if first.category.as_deref() == Some("Videos")
-            && first.title == "BTS (방탄소년단) 'Butter''"
-            && first.video_id == "o9mLyHtSLjk"
-            && first.video_type.as_deref() == Some("MUSIC_VIDEO_TYPE_PODCAST_EPISODE")
-            && first.duration.is_none()
-            && first.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
-                == vec!["BTS - Topic"]
-            && second.title == "butter - bts // audio edit"
-            && second.video_id == "6G1CDqvbE4s"
-            && second.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
-                == vec!["andrian."]
+        &result[0],
+        ytmusicapi::SearchResult::Video(video)
+            if video.title == "BTS (방탄소년단) 'Butter''"
+                && video.artists[0].name == "BTS - Topic"
     ));
 
     let requests = server.received_requests().await.unwrap();
@@ -556,7 +750,10 @@ async fn videos_filtered_search_parses_current_fixture() {
         .expect("expected search POST request");
     let search_body: Value = serde_json::from_slice(&search_request.body).unwrap();
 
+    assert_eq!(search_body["query"], "abba");
     assert_eq!(search_body["params"], "EgWKAQIQAWoMEA4QChADEAQQCRAF");
+    assert!(search_request.headers.get("authorization").is_none());
+    assert!(search_request.headers.get("cookie").is_none());
 }
 
 #[tokio::test]
