@@ -45,6 +45,10 @@ async fn get_library_playlists_live_smoke_test() {
         !songs.is_empty(),
         "expected authenticated filtered songs results for query `abba`"
     );
+    assert!(
+        matches!(songs.first(), Some(ytmusicapi::SearchResult::Song(_))),
+        "expected filtered songs search to return song results"
+    );
 
     let videos = client
         .search(SearchQuery::new("abba").with_filter(SearchFilter::Videos))
@@ -53,5 +57,9 @@ async fn get_library_playlists_live_smoke_test() {
     assert!(
         !videos.is_empty(),
         "expected authenticated filtered videos results for query `abba`"
+    );
+    assert!(
+        matches!(videos.first(), Some(ytmusicapi::SearchResult::Video(_))),
+        "expected filtered videos search to return video results"
     );
 }
