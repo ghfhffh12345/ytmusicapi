@@ -46,7 +46,40 @@ async fn authenticated_client_posts_browse_with_browser_headers() {
                             "selected": true,
                             "content": {
                                 "sectionListRenderer": {
-                                    "contents": []
+                                    "contents": [{
+                                        "gridRenderer": {
+                                            "items": [{
+                                                "musicTwoRowItemRenderer": {
+                                                    "title": {
+                                                        "runs": [{
+                                                            "text": "Transport Playlist",
+                                                            "navigationEndpoint": {
+                                                                "browseEndpoint": {
+                                                                    "browseId": "VLPLTRANSPORT"
+                                                                }
+                                                            }
+                                                        }]
+                                                    },
+                                                    "subtitle": {
+                                                        "runs": [{
+                                                            "text": "OpenAI"
+                                                        }, {
+                                                            "text": " • "
+                                                        }, {
+                                                            "text": "1 song"
+                                                        }]
+                                                    },
+                                                    "thumbnailRenderer": {
+                                                        "musicThumbnailRenderer": {
+                                                            "thumbnail": {
+                                                                "thumbnails": []
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }]
+                                        }
+                                    }]
                                 }
                             }
                         }
@@ -68,7 +101,7 @@ async fn authenticated_client_posts_browse_with_browser_headers() {
         .build()
         .unwrap();
 
-    let _ = client.get_library_playlists().await.unwrap();
+    let _playlists = client.get_library_playlists().await.unwrap();
 
     let requests = server.received_requests().await.unwrap();
     let browse = requests

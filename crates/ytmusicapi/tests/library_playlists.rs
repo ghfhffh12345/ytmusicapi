@@ -37,6 +37,46 @@ Cookie: __Secure-3PAPISID=test-sapisid\n",
     .unwrap()
 }
 
+fn empty_library_playlists_response() -> serde_json::Value {
+    json!({
+        "contents": {
+            "singleColumnBrowseResultsRenderer": {
+                "tabs": [{
+                    "tabRenderer": {
+                        "selected": true,
+                        "content": {
+                            "sectionListRenderer": {
+                                "contents": [{
+                                    "itemSectionRenderer": {
+                                        "contents": [{
+                                            "messageRenderer": {
+                                                "text": {
+                                                    "runs": [{
+                                                        "text": "No playlists saved yet"
+                                                    }]
+                                                },
+                                                "subtext": {
+                                                    "messageSubtextRenderer": {
+                                                        "text": {
+                                                            "runs": [{
+                                                                "text": "Your saved playlists will show up here"
+                                                            }]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }]
+                                    }
+                                }]
+                            }
+                        }
+                    }
+                }]
+            }
+        }
+    })
+}
+
 #[tokio::test]
 async fn get_library_playlists_returns_first_page_results() {
     let server = MockServer::start().await;
@@ -210,6 +250,39 @@ async fn get_library_playlists_skips_leading_grid_item() {
             thumbnails: vec![],
         }]
     );
+}
+
+#[tokio::test]
+async fn get_library_playlists_returns_empty_results_for_empty_library_message() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(empty_library_playlists_response()))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let playlists = client.get_library_playlists().await.unwrap();
+    assert!(playlists.is_empty());
 }
 
 #[tokio::test]
@@ -800,8 +873,8 @@ async fn get_library_playlists_prefers_browser_auth_client_version_in_body() {
         .build()
         .unwrap();
 
-    let playlists = client.get_library_playlists().await.unwrap();
-    assert!(playlists.is_empty());
+    let error = client.get_library_playlists().await.unwrap_err();
+    assert!(matches!(error, ytmusicapi::Error::Parse(_)));
 
     let requests = server.received_requests().await.unwrap();
     let browse = requests
@@ -862,8 +935,8 @@ async fn get_library_playlists_falls_back_to_bootstrap_client_version_in_body() 
         .build()
         .unwrap();
 
-    let playlists = client.get_library_playlists().await.unwrap();
-    assert!(playlists.is_empty());
+    let error = client.get_library_playlists().await.unwrap_err();
+    assert!(matches!(error, ytmusicapi::Error::Parse(_)));
 
     let requests = server.received_requests().await.unwrap();
     let browse = requests
@@ -887,7 +960,7 @@ async fn get_library_playlists_requires_browser_auth() {
 }
 
 #[tokio::test]
-async fn get_library_playlists_ignores_grids_outside_selected_library_tab() {
+async fn get_library_playlists_errors_when_selected_library_tab_has_no_grid() {
     let server = MockServer::start().await;
 
     Mock::given(method("GET"))
@@ -953,8 +1026,8 @@ async fn get_library_playlists_ignores_grids_outside_selected_library_tab() {
         .build()
         .unwrap();
 
-    let playlists = client.get_library_playlists().await.unwrap();
-    assert!(playlists.is_empty());
+    let error = client.get_library_playlists().await.unwrap_err();
+    assert!(matches!(error, ytmusicapi::Error::Parse(_)));
 }
 
 #[tokio::test]

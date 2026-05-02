@@ -24,4 +24,16 @@ async fn get_library_playlists_live_smoke_test() {
         !playlists.is_empty(),
         "expected at least one library playlist from the authenticated account"
     );
+
+    let artists = client.get_library_artists().await.unwrap();
+    if artists.is_empty() {
+        eprintln!(
+            "library artists returned 0 items for this account; verified empty-state parsing"
+        );
+    }
+
+    let albums = client.get_library_albums().await.unwrap();
+    if albums.is_empty() {
+        eprintln!("library albums returned 0 items for this account; verified empty-state parsing");
+    }
 }
