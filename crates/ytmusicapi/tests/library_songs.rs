@@ -444,6 +444,13 @@ async fn get_library_songs_preserves_plain_text_artist_metadata() {
     let mut response = library_songs_response();
     response["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]
         ["sectionListRenderer"]["contents"][0]["musicShelfRenderer"]["contents"][2]["musicResponsiveListItemRenderer"]
+        ["flexColumns"][0]["musicResponsiveListItemFlexColumnRenderer"]["text"]["runs"][0]["navigationEndpoint"] = json!({
+        "watchEndpoint": {
+            "videoId": "song-2"
+        }
+    });
+    response["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]
+        ["sectionListRenderer"]["contents"][0]["musicShelfRenderer"]["contents"][2]["musicResponsiveListItemRenderer"]
         ["flexColumns"][1]["musicResponsiveListItemFlexColumnRenderer"]["text"]["runs"] = json!([
         { "text": "Burial" }
     ]);
@@ -478,6 +485,132 @@ async fn get_library_songs_preserves_plain_text_artist_metadata() {
         songs[1].artists,
         vec![ArtistRef {
             id: String::new(),
+            name: "Burial".to_owned(),
+        }]
+    );
+}
+
+#[tokio::test]
+async fn get_library_songs_preserves_plain_text_album_metadata() {
+    let server = MockServer::start().await;
+    let mut response = library_songs_response();
+    response["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]
+        ["sectionListRenderer"]["contents"][0]["musicShelfRenderer"]["contents"][1]["musicResponsiveListItemRenderer"]
+        ["flexColumns"][0]["musicResponsiveListItemFlexColumnRenderer"]["text"]["runs"][0]["navigationEndpoint"] = json!({
+        "watchEndpoint": {
+            "videoId": "song-1"
+        }
+    });
+    response["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]
+        ["sectionListRenderer"]["contents"][0]["musicShelfRenderer"]["contents"][1]["musicResponsiveListItemRenderer"]
+        ["flexColumns"][2]["musicResponsiveListItemFlexColumnRenderer"]["text"]["runs"] = json!([
+        { "text": "Music Has the Right to Children" }
+    ]);
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "9.99999999.99.99" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(response))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let songs = client.get_library_songs().await.unwrap();
+    assert_eq!(
+        songs[0].album,
+        Some(AlbumRef {
+            id: String::new(),
+            name: "Music Has the Right to Children".to_owned(),
+        })
+    );
+}
+
+#[tokio::test]
+async fn get_library_songs_parses_title_when_metadata_column_precedes_it() {
+    let server = MockServer::start().await;
+    let mut response = library_songs_response();
+    response["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]
+        ["sectionListRenderer"]["contents"][0]["musicShelfRenderer"]["contents"][2]["musicResponsiveListItemRenderer"]
+        ["flexColumns"] = json!([
+        {
+            "musicResponsiveListItemFlexColumnRenderer": {
+                "text": { "runs": [{
+                    "text": "Burial",
+                    "navigationEndpoint": {
+                        "browseEndpoint": {
+                            "browseId": "UCBRL",
+                            "browseEndpointContextSupportedConfigs": {
+                                "browseEndpointContextMusicConfig": {
+                                    "pageType": "MUSIC_PAGE_TYPE_ARTIST"
+                                }
+                            }
+                        }
+                    }
+                }] }
+            }
+        },
+        {
+            "musicResponsiveListItemFlexColumnRenderer": {
+                "text": { "runs": [{
+                    "text": "Archangel",
+                    "navigationEndpoint": {
+                        "watchEndpoint": {
+                            "videoId": "song-2"
+                        }
+                    }
+                }] }
+            }
+        }
+    ]);
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "9.99999999.99.99" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(response))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let songs = client.get_library_songs().await.unwrap();
+    assert_eq!(songs[1].title, "Archangel");
+    assert_eq!(
+        songs[1].artists,
+        vec![ArtistRef {
+            id: "UCBRL".to_owned(),
             name: "Burial".to_owned(),
         }]
     );
