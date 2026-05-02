@@ -874,6 +874,9 @@ mod tests {
         assert!(!first_video.video_id.is_empty());
         assert!(!first_video.title.is_empty());
         assert!(!first_video.thumbnails.is_empty());
+        assert!(!first_video.artists.is_empty());
+        assert!(first_video.views.as_deref().is_some());
+        assert!(first_video.duration.as_deref().is_some());
     }
 
     #[test]

@@ -551,6 +551,7 @@ async fn videos_filtered_search_parses_current_fixture() {
         .expect("expected search POST request");
     let search_body: Value = serde_json::from_slice(&search_request.body).unwrap();
 
+    assert_eq!(search_body["query"], "abba");
     assert_eq!(search_body["params"], "EgWKAQIQAWoMEA4QChADEAQQCRAF");
 }
 
