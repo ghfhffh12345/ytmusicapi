@@ -143,6 +143,46 @@ fn library_albums_response() -> serde_json::Value {
     })
 }
 
+fn empty_library_albums_response() -> serde_json::Value {
+    json!({
+        "contents": {
+            "singleColumnBrowseResultsRenderer": {
+                "tabs": [{
+                    "tabRenderer": {
+                        "selected": true,
+                        "content": {
+                            "sectionListRenderer": {
+                                "contents": [{
+                                    "itemSectionRenderer": {
+                                        "contents": [{
+                                            "messageRenderer": {
+                                                "text": {
+                                                    "runs": [{
+                                                        "text": "No albums yet"
+                                                    }]
+                                                },
+                                                "subtext": {
+                                                    "messageSubtextRenderer": {
+                                                        "text": {
+                                                            "runs": [{
+                                                                "text": "Albums you save to your library will show here"
+                                                            }]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }]
+                                    }
+                                }]
+                            }
+                        }
+                    }
+                }]
+            }
+        }
+    })
+}
+
 #[tokio::test]
 async fn get_library_albums_returns_first_page_results() {
     let server = MockServer::start().await;
@@ -299,6 +339,39 @@ async fn get_library_albums_preserves_linked_artist_names_that_match_the_year() 
         }]
     );
     assert_eq!(albums[0].year, Some("2015".to_owned()));
+}
+
+#[tokio::test]
+async fn get_library_albums_returns_empty_results_for_empty_library_message() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(empty_library_albums_response()))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let albums = client.get_library_albums().await.unwrap();
+    assert!(albums.is_empty());
 }
 
 #[tokio::test]

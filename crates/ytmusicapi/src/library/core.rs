@@ -2,7 +2,7 @@ use serde_json::Value;
 
 use crate::{Error, Thumbnail};
 
-pub(crate) fn selected_library_tab<'a>(response: &'a Value) -> Result<&'a Value, Error> {
+pub(crate) fn selected_library_tab(response: &Value) -> Result<&Value, Error> {
     let tabs = required_array_at(response, "/contents/singleColumnBrowseResultsRenderer/tabs")?;
 
     tabs.iter()
@@ -11,17 +11,24 @@ pub(crate) fn selected_library_tab<'a>(response: &'a Value) -> Result<&'a Value,
         .ok_or_else(|| Error::Parse("library response missing selected library tab".to_owned()))
 }
 
-pub(crate) fn library_grid_items<'a>(response: &'a Value) -> Result<&'a [Value], Error> {
+pub(crate) fn library_grid_items(response: &Value) -> Result<&[Value], Error> {
     let library_tab = selected_library_tab(response)?;
     let sections = required_array_at(
         library_tab,
         "/tabRenderer/content/sectionListRenderer/contents",
     )?;
+    let mut saw_empty_library_message = false;
 
     for section in sections {
         if let Some(items) = section_grid_items(section)? {
             return Ok(items);
         }
+
+        saw_empty_library_message |= section_empty_library_message(section);
+    }
+
+    if saw_empty_library_message {
+        return Ok(&[]);
     }
 
     Err(Error::Parse(
@@ -29,17 +36,24 @@ pub(crate) fn library_grid_items<'a>(response: &'a Value) -> Result<&'a [Value],
     ))
 }
 
-pub(crate) fn library_shelf_contents<'a>(response: &'a Value) -> Result<&'a [Value], Error> {
+pub(crate) fn library_shelf_contents(response: &Value) -> Result<&[Value], Error> {
     let library_tab = selected_library_tab(response)?;
     let sections = required_array_at(
         library_tab,
         "/tabRenderer/content/sectionListRenderer/contents",
     )?;
+    let mut saw_empty_library_message = false;
 
     for section in sections {
         if let Some(contents) = section_shelf_contents(section)? {
             return Ok(contents);
         }
+
+        saw_empty_library_message |= section_empty_library_message(section);
+    }
+
+    if saw_empty_library_message {
+        return Ok(&[]);
     }
 
     Err(Error::Parse(
@@ -122,7 +136,7 @@ fn legacy_library_tab(tabs: &[Value]) -> Option<&Value> {
     tabs.get(library_tab_index)
 }
 
-fn section_grid_items<'a>(section: &'a Value) -> Result<Option<&'a [Value]>, Error> {
+fn section_grid_items(section: &Value) -> Result<Option<&[Value]>, Error> {
     if section.get("gridRenderer").is_some() {
         return required_array_at(section, "/gridRenderer/items").map(Some);
     }
@@ -143,7 +157,7 @@ fn section_grid_items<'a>(section: &'a Value) -> Result<Option<&'a [Value]>, Err
     Ok(None)
 }
 
-fn section_shelf_contents<'a>(section: &'a Value) -> Result<Option<&'a [Value]>, Error> {
+fn section_shelf_contents(section: &Value) -> Result<Option<&[Value]>, Error> {
     if section.get("musicShelfRenderer").is_some() {
         return required_array_at(section, "/musicShelfRenderer/contents").map(Some);
     }
@@ -162,6 +176,20 @@ fn section_shelf_contents<'a>(section: &'a Value) -> Result<Option<&'a [Value]>,
     }
 
     Ok(None)
+}
+
+fn section_empty_library_message(section: &Value) -> bool {
+    let Some(contents) = section
+        .pointer("/itemSectionRenderer/contents")
+        .and_then(Value::as_array)
+    else {
+        return false;
+    };
+
+    !contents.is_empty()
+        && contents
+            .iter()
+            .all(|content| content.get("messageRenderer").is_some())
 }
 
 fn required_array_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a [Value], Error> {
@@ -344,5 +372,84 @@ mod tests {
         let contents = library_shelf_contents(&response).unwrap();
 
         assert_eq!(contents.len(), 1);
+    }
+
+    #[test]
+    fn library_shelf_contents_returns_empty_for_message_only_section() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "itemSectionRenderer": {
+                                            "contents": [{
+                                                "messageRenderer": {
+                                                    "text": {
+                                                        "runs": [{
+                                                            "text": "Something went wrong"
+                                                        }]
+                                                    },
+                                                    "subtext": {
+                                                        "messageSubtextRenderer": {
+                                                            "text": {
+                                                                "runs": [{
+                                                                    "text": "Try again later"
+                                                                }]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let contents = library_shelf_contents(&response).unwrap();
+        assert!(contents.is_empty());
+    }
+
+    #[test]
+    fn library_grid_items_returns_empty_for_message_only_section() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "itemSectionRenderer": {
+                                            "contents": [{
+                                                "messageRenderer": {
+                                                    "text": {
+                                                        "runs": [{
+                                                            "text": "No playlists yet"
+                                                        }]
+                                                    }
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let items = library_grid_items(&response).unwrap();
+        assert!(items.is_empty());
     }
 }
