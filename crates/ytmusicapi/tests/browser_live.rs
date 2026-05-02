@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use ytmusicapi::YtMusic;
+use ytmusicapi::{SearchFilter, SearchQuery, YtMusic};
 
 #[tokio::test]
 #[ignore = "requires local browser.json generated from browser.txt and live network access"]
@@ -36,4 +36,22 @@ async fn get_library_playlists_live_smoke_test() {
     if albums.is_empty() {
         eprintln!("library albums returned 0 items for this account; verified empty-state parsing");
     }
+
+    let songs = client
+        .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
+        .await
+        .unwrap();
+    assert!(
+        !songs.is_empty(),
+        "expected authenticated filtered songs results for query `abba`"
+    );
+
+    let videos = client
+        .search(SearchQuery::new("abba").with_filter(SearchFilter::Videos))
+        .await
+        .unwrap();
+    assert!(
+        !videos.is_empty(),
+        "expected authenticated filtered videos results for query `abba`"
+    );
 }
