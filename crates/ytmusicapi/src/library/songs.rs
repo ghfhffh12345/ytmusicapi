@@ -159,10 +159,10 @@ fn take_title_index(unknown_indexes: &mut Vec<usize>, layout: &ColumnLayout) -> 
         return unknown_indexes.pop();
     }
 
-    if let Some(boundary) = layout.artist_index.or(layout.album_index) {
-        if let Some(index) = take_unique_matching(unknown_indexes, |index| index < boundary) {
-            return Some(index);
-        }
+    if let Some(boundary) = layout.artist_index.or(layout.album_index)
+        && let Some(index) = take_unique_matching(unknown_indexes, |index| index < boundary)
+    {
+        return Some(index);
     }
 
     take_first_index(unknown_indexes)
@@ -173,10 +173,10 @@ fn take_artist_index(unknown_indexes: &mut Vec<usize>, layout: &ColumnLayout) ->
         return unknown_indexes.pop();
     }
 
-    if let Some(album_index) = layout.album_index {
-        if let Some(index) = take_unique_matching(unknown_indexes, |index| index < album_index) {
-            return Some(index);
-        }
+    if let Some(album_index) = layout.album_index
+        && let Some(index) = take_unique_matching(unknown_indexes, |index| index < album_index)
+    {
+        return Some(index);
     }
 
     layout
@@ -189,10 +189,10 @@ fn take_album_index(unknown_indexes: &mut Vec<usize>, layout: &ColumnLayout) -> 
         return unknown_indexes.pop();
     }
 
-    if let Some(artist_index) = layout.artist_index {
-        if let Some(index) = take_unique_matching(unknown_indexes, |index| index > artist_index) {
-            return Some(index);
-        }
+    if let Some(artist_index) = layout.artist_index
+        && let Some(index) = take_unique_matching(unknown_indexes, |index| index > artist_index)
+    {
+        return Some(index);
     }
 
     match (layout.title_index, layout.artist_index) {
@@ -281,13 +281,14 @@ fn parse_song_metadata(renderer: &Value, layout: &ColumnLayout) -> ParsedSongMet
             }
         }
 
-        if parsed.album.is_none() && Some(index) == layout.album_index {
-            if let Some(name) = column_text(column) {
-                parsed.album = Some(AlbumRef {
-                    id: String::new(),
-                    name,
-                });
-            }
+        if parsed.album.is_none()
+            && Some(index) == layout.album_index
+            && let Some(name) = column_text(column)
+        {
+            parsed.album = Some(AlbumRef {
+                id: String::new(),
+                name,
+            });
         }
     }
 

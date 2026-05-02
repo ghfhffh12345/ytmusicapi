@@ -37,6 +37,18 @@ async fn get_library_playlists_live_smoke_test() {
         eprintln!("library albums returned 0 items for this account; verified empty-state parsing");
     }
 
+    let songs = client.get_library_songs().await.unwrap();
+    if songs.is_empty() {
+        eprintln!("library songs returned 0 items for this account; verified empty-state parsing");
+    } else {
+        assert!(
+            songs
+                .iter()
+                .all(|song| !song.video_id.is_empty() && !song.title.is_empty()),
+            "expected each live library song to include stable identity fields"
+        );
+    }
+
     let songs = client
         .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
         .await
