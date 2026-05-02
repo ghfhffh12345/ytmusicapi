@@ -46,10 +46,13 @@ async fn get_library_playlists_live_smoke_test() {
         "expected authenticated filtered songs results for query `abba`"
     );
     assert!(
-        songs
-            .iter()
-            .all(|result| matches!(result, ytmusicapi::SearchResult::Song(_))),
-        "expected filtered songs search to return only song results"
+        songs.iter().all(|result| match result {
+            ytmusicapi::SearchResult::Song(song) => {
+                !song.artists.is_empty() && song.duration.is_some()
+            }
+            _ => false,
+        }),
+        "expected filtered songs search results to carry song metadata"
     );
 
     let videos = client
@@ -61,9 +64,12 @@ async fn get_library_playlists_live_smoke_test() {
         "expected authenticated filtered videos results for query `abba`"
     );
     assert!(
-        videos
-            .iter()
-            .all(|result| matches!(result, ytmusicapi::SearchResult::Video(_))),
-        "expected filtered videos search to return only video results"
+        videos.iter().all(|result| match result {
+            ytmusicapi::SearchResult::Video(video) => {
+                !video.artists.is_empty() && video.duration.is_some() && video.views.is_some()
+            }
+            _ => false,
+        }),
+        "expected filtered videos search results to carry video metadata"
     );
 }
