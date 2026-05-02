@@ -5,12 +5,18 @@ use ytmusicapi::{SearchFilter, SearchQuery, YtMusic};
 #[tokio::test]
 #[ignore = "requires local browser.json generated from browser.txt and live network access"]
 async fn get_library_playlists_live_smoke_test() {
-    let repo_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+    let worktree_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .unwrap()
         .parent()
         .unwrap()
         .to_path_buf();
+    let repo_root = worktree_root
+        .parent()
+        .filter(|parent| parent.file_name().is_some_and(|name| name == ".worktrees"))
+        .and_then(|worktrees_dir| worktrees_dir.parent())
+        .map(|shared_root| shared_root.to_path_buf())
+        .unwrap_or(worktree_root);
     let browser_json = repo_root.join("browser.json");
 
     assert!(
@@ -35,6 +41,18 @@ async fn get_library_playlists_live_smoke_test() {
     let albums = client.get_library_albums().await.unwrap();
     if albums.is_empty() {
         eprintln!("library albums returned 0 items for this account; verified empty-state parsing");
+    }
+
+    let songs = client.get_library_songs().await.unwrap();
+    if songs.is_empty() {
+        eprintln!("library songs returned 0 items for this account; verified empty-state parsing");
+    } else {
+        assert!(
+            songs
+                .iter()
+                .all(|song| !song.video_id.is_empty() && !song.title.is_empty()),
+            "expected each live library song to include stable identity fields"
+        );
     }
 
     let songs = client

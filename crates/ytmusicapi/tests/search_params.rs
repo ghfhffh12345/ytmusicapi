@@ -1,9 +1,16 @@
 use ytmusicapi::{Error, SearchFilter, SearchQuery};
 
 #[test]
-fn default_query_omits_params() {
+fn default_query_omits_params_and_has_no_limit_knob() {
     let query = SearchQuery::new("oasis wonderwall");
-    assert_eq!(query.limit, 20);
+    assert_eq!(
+        query,
+        SearchQuery {
+            query: "oasis wonderwall".to_owned(),
+            filter: None,
+            ignore_spelling: false,
+        }
+    );
     assert_eq!(query.encoded_params().as_deref(), None);
 }
 
@@ -60,12 +67,6 @@ fn filter_encodings_match_upstream() {
 #[test]
 fn blank_query_is_rejected() {
     let result = SearchQuery::new("   ").validate();
-    assert!(matches!(result, Err(Error::InvalidInput(_))));
-}
-
-#[test]
-fn zero_limit_is_rejected() {
-    let result = SearchQuery::new("abba").with_limit(0).validate();
     assert!(matches!(result, Err(Error::InvalidInput(_))));
 }
 

@@ -10,7 +10,7 @@ use crate::{
         request::{
             BootstrapConfig, USER_AGENT, bootstrap_config as fetch_bootstrap_config,
             build_library_albums_body, build_library_artists_body, build_library_playlists_body,
-            build_search_body,
+            build_library_songs_body, build_search_body,
         },
     },
 };
@@ -129,8 +129,7 @@ impl YtMusic {
             serde_json::from_str(&response_body).map_err(Error::JsonDecode)?;
         validate_search_response_structure(&response_json)?;
 
-        let mut results = parse_search_response(&response_json, query.filter)?;
-        results.truncate(query.limit);
+        let results = parse_search_response(&response_json, query.filter)?;
         Ok(results)
     }
 
@@ -198,6 +197,28 @@ impl YtMusic {
 
         let response = self.post_browse(body).await?;
         crate::library::albums::parse_library_albums_response(&response)
+    }
+
+    pub async fn get_library_songs(&self) -> Result<Vec<crate::LibrarySong>, Error> {
+        if self.browser_auth.is_none() {
+            return Err(Error::UnsupportedFeature(
+                "get_library_songs requires browser authentication".to_owned(),
+            ));
+        }
+
+        let bootstrap_config = self.bootstrap_config().await?;
+        let client_version = self
+            .browser_auth
+            .as_ref()
+            .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
+            .map(String::as_str)
+            .unwrap_or(&bootstrap_config.client_version);
+        let mut browse_config = bootstrap_config.clone();
+        browse_config.client_version = client_version.to_owned();
+        let body = build_library_songs_body(&browse_config);
+
+        let response = self.post_browse(body).await?;
+        crate::library::songs::parse_library_songs_response(&response)
     }
 
     async fn bootstrap_config(&self) -> Result<&BootstrapConfig, Error> {

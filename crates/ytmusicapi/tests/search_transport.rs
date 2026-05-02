@@ -164,7 +164,7 @@ async fn authenticated_search_falls_back_to_anonymous_transport_on_http_status_f
         .unwrap();
 
     let result = client.search(SearchQuery::new("abba")).await.unwrap();
-    assert_eq!(result.len(), 20);
+    assert_eq!(result.len(), 24);
     assert!(matches!(
         &result[0],
         ytmusicapi::SearchResult::Artist(artist) if artist.artists[0].name == "Daft Punk"
@@ -228,7 +228,7 @@ async fn authenticated_unfiltered_search_uses_browser_auth_headers_and_default_m
         .unwrap();
 
     let result = client.search(SearchQuery::new("abba")).await.unwrap();
-    assert_eq!(result.len(), 20);
+    assert_eq!(result.len(), 24);
     assert!(matches!(
         &result[0],
         ytmusicapi::SearchResult::Artist(artist) if artist.artists[0].name == "Daft Punk"
@@ -443,8 +443,8 @@ async fn search_reuses_bootstrapped_visitor_id_across_requests() {
     let first = client.search(SearchQuery::new("first")).await.unwrap();
     let second = client.search(SearchQuery::new("second")).await.unwrap();
 
-    assert_eq!(first.len(), 20);
-    assert_eq!(second.len(), 20);
+    assert_eq!(first.len(), 24);
+    assert_eq!(second.len(), 24);
 
     let requests = server.received_requests().await.unwrap();
     let bootstrap_requests: Vec<_> = requests
@@ -625,7 +625,7 @@ async fn empty_successful_search_response_returns_empty_results() {
 }
 
 #[tokio::test]
-async fn search_applies_query_limit_to_first_page_results() {
+async fn search_returns_full_first_page_results() {
     let server = MockServer::start().await;
 
     Mock::given(method("GET"))
@@ -654,12 +654,9 @@ async fn search_applies_query_limit_to_first_page_results() {
         .build()
         .unwrap();
 
-    let result = client
-        .search(SearchQuery::new("abba").with_limit(3))
-        .await
-        .unwrap();
+    let result = client.search(SearchQuery::new("abba")).await.unwrap();
 
-    assert_eq!(result.len(), 3);
+    assert_eq!(result.len(), 24);
 }
 
 #[tokio::test]
