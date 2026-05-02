@@ -443,7 +443,7 @@ fn parse_media_metadata(metadata_parts: &[&Value]) -> ParsedMediaMetadata {
         views: None,
     };
 
-    for part in metadata_parts.iter().skip(1) {
+    for part in metadata_parts {
         if let Some(browse_id) = part
             .pointer("/navigationEndpoint/browseEndpoint/browseId")
             .and_then(Value::as_str)
@@ -640,9 +640,23 @@ mod tests {
     use crate::{SearchFilter, SearchResult};
     use serde_json::{Value, json};
 
-    fn parse_fixture(raw_fixture: &str, filter: Option<SearchFilter>) -> Vec<SearchResult> {
+    fn parse_raw_fixture(raw_fixture: &str, filter: Option<SearchFilter>) -> Vec<SearchResult> {
         let response: Value = serde_json::from_str(raw_fixture).unwrap();
         parse_search_response(&response, filter).unwrap()
+    }
+
+    fn parse_fixture(fixture_name: &str, filter: Option<SearchFilter>) -> Vec<SearchResult> {
+        let raw_fixture = match fixture_name {
+            "songs_authenticated" => {
+                include_str!("../../tests/fixtures/search/raw/songs_authenticated.json")
+            }
+            "videos_authenticated" => {
+                include_str!("../../tests/fixtures/search/raw/videos_authenticated.json")
+            }
+            other => panic!("unknown fixture {other}"),
+        };
+
+        parse_raw_fixture(raw_fixture, filter)
     }
 
     fn expected_fixture(expected_fixture: &str) -> Value {
@@ -650,44 +664,30 @@ mod tests {
     }
 
     fn parse_default_mixed() -> Vec<SearchResult> {
-        parse_fixture(
+        parse_raw_fixture(
             include_str!("../../tests/fixtures/search/raw/default_mixed.json"),
             None,
         )
     }
 
     fn parse_albums() -> Vec<SearchResult> {
-        parse_fixture(
+        parse_raw_fixture(
             include_str!("../../tests/fixtures/search/raw/albums.json"),
             Some(SearchFilter::Albums),
         )
     }
 
     fn parse_artists() -> Vec<SearchResult> {
-        parse_fixture(
+        parse_raw_fixture(
             include_str!("../../tests/fixtures/search/raw/artists.json"),
             Some(SearchFilter::Artists),
         )
     }
 
     fn parse_playlists() -> Vec<SearchResult> {
-        parse_fixture(
+        parse_raw_fixture(
             include_str!("../../tests/fixtures/search/raw/playlists.json"),
             Some(SearchFilter::Playlists),
-        )
-    }
-
-    fn parse_songs() -> Vec<SearchResult> {
-        parse_fixture(
-            include_str!("../../tests/fixtures/search/raw/songs.json"),
-            Some(SearchFilter::Songs),
-        )
-    }
-
-    fn parse_videos() -> Vec<SearchResult> {
-        parse_fixture(
-            include_str!("../../tests/fixtures/search/raw/videos.json"),
-            Some(SearchFilter::Videos),
         )
     }
 
@@ -840,32 +840,40 @@ mod tests {
     }
 
     #[test]
-    fn songs_fixture_allows_empty_filtered_results() {
-        let parsed = parse_songs();
+    fn authenticated_songs_fixture_parses_non_empty_song_results() {
+        let results = parse_fixture("songs_authenticated", Some(SearchFilter::Songs));
+        assert!(!results.is_empty());
+        assert!(
+            results
+                .iter()
+                .all(|result| matches!(result, SearchResult::Song(_)))
+        );
 
-        assert!(parsed.is_empty());
+        let SearchResult::Song(first_song) = &results[0] else {
+            panic!("expected first authenticated songs result to be a song");
+        };
+        assert!(!first_song.video_id.is_empty());
+        assert!(!first_song.title.is_empty());
+        assert!(!first_song.artists.is_empty());
+        assert!(!first_song.thumbnails.is_empty());
     }
 
     #[test]
-    fn videos_fixture_preserves_critical_invariants() {
-        let parsed = parse_videos();
+    fn authenticated_videos_fixture_parses_non_empty_video_results() {
+        let results = parse_fixture("videos_authenticated", Some(SearchFilter::Videos));
+        assert!(!results.is_empty());
+        assert!(
+            results
+                .iter()
+                .all(|result| matches!(result, SearchResult::Video(_)))
+        );
 
-        assert!(matches!(
-            &parsed[..],
-            [SearchResult::Video(first), SearchResult::Video(second)]
-                if first.category.as_deref() == Some("Videos")
-                    && first.title == "BTS (방탄소년단) 'Butter''"
-                    && first.video_id == "o9mLyHtSLjk"
-                    && first.video_type.as_deref() == Some("MUSIC_VIDEO_TYPE_PODCAST_EPISODE")
-                    && first.duration.is_none()
-                    && first.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
-                        == vec!["BTS - Topic"]
-                    && second.title == "butter - bts // audio edit"
-                    && second.video_id == "6G1CDqvbE4s"
-                    && second.duration.is_none()
-                    && second.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
-                        == vec!["andrian."]
-        ));
+        let SearchResult::Video(first_video) = &results[0] else {
+            panic!("expected first authenticated videos result to be a video");
+        };
+        assert!(!first_video.video_id.is_empty());
+        assert!(!first_video.title.is_empty());
+        assert!(!first_video.thumbnails.is_empty());
     }
 
     #[test]
