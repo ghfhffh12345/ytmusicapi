@@ -63,12 +63,39 @@ impl YtMusic {
         query.validate()?;
 
         let bootstrap_config = self.bootstrap_config().await?;
-        let client_version = self
-            .browser_auth
-            .as_ref()
-            .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
-            .map(String::as_str)
-            .unwrap_or(&bootstrap_config.client_version);
+        if self.browser_auth.is_some() {
+            match self
+                .search_with_transport(&query, bootstrap_config, true)
+                .await
+            {
+                Ok(results) => Ok(results),
+                Err(Error::HttpTransport(_)) | Err(Error::HttpStatus { .. }) => {
+                    self.search_with_transport(&query, bootstrap_config, false)
+                        .await
+                }
+                Err(error) => Err(error),
+            }
+        } else {
+            self.search_with_transport(&query, bootstrap_config, false)
+                .await
+        }
+    }
+
+    async fn search_with_transport(
+        &self,
+        query: &SearchQuery,
+        bootstrap_config: &BootstrapConfig,
+        authenticated: bool,
+    ) -> Result<Vec<SearchResult>, Error> {
+        let client_version = if authenticated {
+            self.browser_auth
+                .as_ref()
+                .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
+                .map(String::as_str)
+                .unwrap_or(&bootstrap_config.client_version)
+        } else {
+            &bootstrap_config.client_version
+        };
         let mut search_config = bootstrap_config.clone();
         search_config.client_version = client_version.to_owned();
 
@@ -77,9 +104,10 @@ impl YtMusic {
             self.base_url.trim_end_matches('/'),
             bootstrap_config.innertube_api_key
         );
-        let body = build_search_body(&query, &search_config).to_string();
+        let body = build_search_body(query, &search_config).to_string();
         let request = self.http_client.post(url).body(body);
-        let request = if let Some(browser_auth) = &self.browser_auth {
+        let request = if authenticated {
+            let browser_auth = self.browser_auth.as_ref().unwrap();
             request.headers(browser_auth.to_header_map(Some(&bootstrap_config.visitor_id))?)
         } else {
             request
