@@ -38,13 +38,11 @@ fn parse_library_song(item: &Value) -> Result<LibrarySong, Error> {
 fn is_leading_random_mix_tile(item: &Value) -> bool {
     item.get("musicResponsiveListItemRenderer")
         .is_some_and(|renderer| {
-            optional_text(renderer, "/playlistItemData/videoId").is_none()
-                && optional_text(
-                    renderer,
-                    "/flexColumns/0/musicResponsiveListItemFlexColumnRenderer/text/runs/0/text",
-                )
-                .as_deref()
-                    == Some("Shuffle all")
+            renderer.get("playlistItemData").is_none()
+                && renderer
+                    .pointer("/flexColumns")
+                    .and_then(Value::as_array)
+                    .is_some_and(|columns| columns.len() == 1)
         })
 }
 
