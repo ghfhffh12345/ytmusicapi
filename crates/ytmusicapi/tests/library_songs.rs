@@ -398,6 +398,92 @@ async fn get_library_songs_parses_shifted_combined_metadata_columns() {
 }
 
 #[tokio::test]
+async fn get_library_songs_parses_title_after_leading_badge_and_multi_run_text() {
+    let server = MockServer::start().await;
+    let mut response = library_songs_response();
+    response["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]
+        ["sectionListRenderer"]["contents"][0]["musicShelfRenderer"]["contents"][2]["musicResponsiveListItemRenderer"]
+        ["flexColumns"][0]["musicResponsiveListItemFlexColumnRenderer"]["text"]["runs"] = json!([
+        { "text": "E" },
+        { "text": "Arch" },
+        { "text": "angel" }
+    ]);
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "9.99999999.99.99" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(response))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let songs = client.get_library_songs().await.unwrap();
+    assert_eq!(songs[1].title, "Archangel");
+}
+
+#[tokio::test]
+async fn get_library_songs_preserves_plain_text_artist_metadata() {
+    let server = MockServer::start().await;
+    let mut response = library_songs_response();
+    response["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]
+        ["sectionListRenderer"]["contents"][0]["musicShelfRenderer"]["contents"][2]["musicResponsiveListItemRenderer"]
+        ["flexColumns"][1]["musicResponsiveListItemFlexColumnRenderer"]["text"]["runs"] = json!([
+        { "text": "Burial" }
+    ]);
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "9.99999999.99.99" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(response))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let songs = client.get_library_songs().await.unwrap();
+    assert_eq!(
+        songs[1].artists,
+        vec![ArtistRef {
+            id: String::new(),
+            name: "Burial".to_owned(),
+        }]
+    );
+}
+
+#[tokio::test]
 async fn get_library_songs_returns_empty_results_for_empty_library_message() {
     let server = MockServer::start().await;
 

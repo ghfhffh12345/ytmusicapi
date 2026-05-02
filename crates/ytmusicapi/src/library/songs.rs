@@ -49,7 +49,7 @@ fn parse_title(renderer: &Value) -> Result<(usize, String), Error> {
     flex_columns(renderer)
         .iter()
         .enumerate()
-        .find_map(|(index, column)| first_column_text(column).map(|text| (index, text)))
+        .find_map(|(index, column)| column_title_text(column).map(|text| (index, text)))
         .ok_or_else(|| Error::Parse("library response missing song title".to_owned()))
 }
 
@@ -99,6 +99,11 @@ fn parse_song_metadata(renderer: &Value, title_column_index: usize) -> ParsedSon
 
             if parsed.duration.is_none() && looks_like_duration(trimmed) {
                 parsed.duration = Some(trimmed.to_owned());
+            } else {
+                parsed.artists.push(ArtistRef {
+                    id: String::new(),
+                    name: text,
+                });
             }
         }
     }
@@ -121,11 +126,23 @@ fn flex_columns(renderer: &Value) -> &[Value] {
         .unwrap_or(&[])
 }
 
-fn first_column_text(column: &Value) -> Option<String> {
-    optional_text(
-        column,
-        "/musicResponsiveListItemFlexColumnRenderer/text/runs/0/text",
-    )
+fn column_title_text(column: &Value) -> Option<String> {
+    let mut parts: Vec<String> = flex_column_runs(column)
+        .iter()
+        .filter_map(|run| optional_text(run, "/text"))
+        .filter(|text| {
+            let trimmed = text.trim();
+            !trimmed.is_empty() && trimmed != "•"
+        })
+        .collect();
+
+    while parts.len() > 1 && looks_like_title_badge(parts[0].trim()) {
+        parts.remove(0);
+    }
+
+    let title = parts.concat();
+    let trimmed = title.trim();
+    (!trimmed.is_empty()).then(|| trimmed.to_owned())
 }
 
 fn flex_column_runs(column: &Value) -> &[Value] {
@@ -146,6 +163,10 @@ fn is_album_run(run: &Value, browse_id: &str) -> bool {
         Some("MUSIC_PAGE_TYPE_ALBUM") | Some("MUSIC_PAGE_TYPE_AUDIOBOOK")
     ) || browse_id.starts_with("MPRE")
         || browse_id.contains("release_detail")
+}
+
+fn looks_like_title_badge(value: &str) -> bool {
+    matches!(value, "E" | "Explicit" | "EXPLICIT")
 }
 
 fn looks_like_duration(value: &str) -> bool {
