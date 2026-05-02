@@ -7,9 +7,8 @@ use super::core::{library_shelf_contents, optional_text, parse_thumbnails, requi
 pub(crate) fn parse_library_songs_response(response: &Value) -> Result<Vec<LibrarySong>, Error> {
     library_shelf_contents(response)?
         .iter()
-        .enumerate()
-        .filter(|(index, item)| !(*index == 0 && is_leading_random_mix_tile(item)))
-        .map(|(_, item)| parse_library_song(item))
+        .skip_while(|item| is_leading_non_song_control_row(item))
+        .map(parse_library_song)
         .collect()
 }
 
@@ -39,14 +38,24 @@ fn parse_library_song(item: &Value) -> Result<LibrarySong, Error> {
     })
 }
 
-fn is_leading_random_mix_tile(item: &Value) -> bool {
+fn is_leading_non_song_control_row(item: &Value) -> bool {
     item.get("musicResponsiveListItemRenderer")
         .is_some_and(|renderer| {
-            renderer.get("playlistItemData").is_none()
-                && renderer
-                    .pointer("/flexColumns")
-                    .and_then(Value::as_array)
-                    .is_some_and(|columns| columns.len() == 1)
+            renderer.get("playlistItemData").is_none() && !looks_like_song_row(renderer)
+        })
+}
+
+fn looks_like_song_row(renderer: &Value) -> bool {
+    renderer.get("thumbnail").is_some()
+        || renderer.get("menu").is_some()
+        || renderer.get("fixedColumns").is_some()
+        || flex_columns(renderer).iter().any(|column| {
+            flex_column_runs(column).iter().any(|run| {
+                run.pointer("/navigationEndpoint/watchEndpoint").is_some()
+                    || optional_text(run, "/navigationEndpoint/browseEndpoint/browseId").is_some()
+                    || optional_text(run, "/text")
+                        .is_some_and(|text| looks_like_duration(text.trim()))
+            })
         })
 }
 
