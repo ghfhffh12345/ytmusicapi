@@ -1,9 +1,108 @@
+use std::{fs, path::PathBuf};
+
 use serde_json::{Value, json};
+use tempfile::tempdir;
 use wiremock::matchers::{method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
+use ytmusicapi::setup_browser_auth;
 use ytmusicapi::{Error, SearchFilter, SearchQuery, YtMusic};
 
 const BROWSER_USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36";
+
+fn firefox_search_headers() -> String {
+    setup_browser_auth(
+        "POST /youtubei/v1/search HTTP/3\n\
+Host: music.youtube.com\n\
+User-Agent: Mozilla/5.0\n\
+Accept: */*\n\
+Content-Type: application/json\n\
+X-Goog-AuthUser: 0\n\
+X-Origin: https://music.youtube.com\n\
+X-Youtube-Client-Name: 67\n\
+X-Youtube-Client-Version: 1.20250502.01.00\n\
+Cookie: __Secure-3PAPISID=test-sapisid; VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D\n",
+    )
+    .unwrap()
+}
+
+#[tokio::test]
+async fn authenticated_search_uses_browser_auth_headers_when_available() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250502.01.00" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/search/raw/songs_authenticated.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let browser_json: PathBuf = dir.path().join("browser.json");
+    fs::write(&browser_json, firefox_search_headers()).unwrap();
+
+    let client = YtMusic::builder()
+        .browser_auth_path(&browser_json)
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let result = client
+        .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
+        .await
+        .unwrap();
+
+    assert!(!result.is_empty());
+
+    let requests = server.received_requests().await.unwrap();
+    let search_request = requests
+        .iter()
+        .find(|request| request.method.as_str() == "POST")
+        .unwrap();
+
+    assert_eq!(
+        search_request
+            .headers
+            .get("authorization")
+            .and_then(|value| value.to_str().ok())
+            .map(|value| value.starts_with("SAPISIDHASH "))
+            .unwrap_or(false),
+        true
+    );
+    assert_eq!(
+        search_request
+            .headers
+            .get("cookie")
+            .and_then(|value| value.to_str().ok()),
+        Some("__Secure-3PAPISID=test-sapisid; VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D")
+    );
+    assert_eq!(
+        search_request
+            .headers
+            .get("x-goog-authuser")
+            .and_then(|value| value.to_str().ok()),
+        Some("0")
+    );
+    assert_eq!(
+        search_request
+            .headers
+            .get("x-goog-visitor-id")
+            .and_then(|value| value.to_str().ok()),
+        Some("visitor-id-123")
+    );
+}
 
 #[tokio::test]
 async fn search_bootstraps_visitor_id_and_posts_search_request() {

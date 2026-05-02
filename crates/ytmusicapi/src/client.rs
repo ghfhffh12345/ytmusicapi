@@ -70,16 +70,16 @@ impl YtMusic {
             bootstrap_config.innertube_api_key
         );
         let body = build_search_body(&query, bootstrap_config).to_string();
-        let response = self
-            .http_client
-            .post(url)
-            .header(header::CONTENT_TYPE, "application/json")
-            .header(header::USER_AGENT, USER_AGENT)
-            .header("x-goog-visitor-id", &bootstrap_config.visitor_id)
-            .body(body)
-            .send()
-            .await
-            .map_err(Error::HttpTransport)?;
+        let request = self.http_client.post(url).body(body);
+        let request = if let Some(browser_auth) = &self.browser_auth {
+            request.headers(browser_auth.to_header_map(Some(&bootstrap_config.visitor_id))?)
+        } else {
+            request
+                .header(header::CONTENT_TYPE, "application/json")
+                .header(header::USER_AGENT, USER_AGENT)
+                .header("x-goog-visitor-id", &bootstrap_config.visitor_id)
+        };
+        let response = request.send().await.map_err(Error::HttpTransport)?;
 
         let status = response.status();
         let response_body = response.text().await.map_err(Error::HttpTransport)?;
