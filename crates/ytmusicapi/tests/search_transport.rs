@@ -67,19 +67,26 @@ async fn authenticated_search_uses_browser_auth_headers_when_available() {
     assert!(!result.is_empty());
 
     let requests = server.received_requests().await.unwrap();
+    let bootstrap_request = requests
+        .iter()
+        .find(|request| request.method.as_str() == "GET")
+        .unwrap();
     let search_request = requests
         .iter()
         .find(|request| request.method.as_str() == "POST")
         .unwrap();
+    let search_body: Value = serde_json::from_slice(&search_request.body).unwrap();
 
-    assert_eq!(
+    assert_eq!(bootstrap_request.url.path(), "/");
+    assert_eq!(search_request.url.path(), "/youtubei/v1/search");
+    assert_eq!(search_request.url.query(), Some("alt=json&key=test-api-key"));
+    assert!(
         search_request
             .headers
             .get("authorization")
             .and_then(|value| value.to_str().ok())
             .map(|value| value.starts_with("SAPISIDHASH "))
-            .unwrap_or(false),
-        true
+            .unwrap_or(false)
     );
     assert_eq!(
         search_request
@@ -101,6 +108,13 @@ async fn authenticated_search_uses_browser_auth_headers_when_available() {
             .get("x-goog-visitor-id")
             .and_then(|value| value.to_str().ok()),
         Some("visitor-id-123")
+    );
+    assert_eq!(search_body["query"], "abba");
+    assert_eq!(search_body["params"], "EgWKAQIIAWoMEA4QChADEAQQCRAF");
+    assert_eq!(search_body["context"]["client"]["clientName"], "WEB_REMIX");
+    assert_eq!(
+        search_body["context"]["client"]["clientVersion"],
+        "1.20250502.01.00"
     );
 }
 
