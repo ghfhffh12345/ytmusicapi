@@ -625,7 +625,7 @@ async fn empty_successful_search_response_returns_empty_results() {
 }
 
 #[tokio::test]
-async fn search_applies_query_limit_to_first_page_results() {
+async fn search_returns_full_first_page_results() {
     let server = MockServer::start().await;
 
     Mock::given(method("GET"))
@@ -654,12 +654,9 @@ async fn search_applies_query_limit_to_first_page_results() {
         .build()
         .unwrap();
 
-    let result = client
-        .search(SearchQuery::new("abba").with_limit(3))
-        .await
-        .unwrap();
+    let result = client.search(SearchQuery::new("abba")).await.unwrap();
 
-    assert_eq!(result.len(), 3);
+    assert_eq!(result.len(), 24);
 }
 
 #[tokio::test]
