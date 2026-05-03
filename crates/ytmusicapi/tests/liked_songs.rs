@@ -218,6 +218,43 @@ fn empty_liked_songs_response() -> serde_json::Value {
     })
 }
 
+fn header_only_empty_liked_songs_response() -> serde_json::Value {
+    json!({
+        "contents": {
+            "twoColumnBrowseResultsRenderer": {
+                "tabs": [{
+                    "tabRenderer": {
+                        "content": {
+                            "sectionListRenderer": {
+                                "contents": [{
+                                    "musicResponsiveHeaderRenderer": {
+                                        "title": {
+                                            "runs": [{
+                                                "text": "Liked Songs"
+                                            }]
+                                        },
+                                        "thumbnail": {
+                                            "musicThumbnailRenderer": {
+                                                "thumbnail": {
+                                                    "thumbnails": [{
+                                                        "url": "https://example.com/liked-songs.jpg",
+                                                        "width": 512,
+                                                        "height": 512
+                                                    }]
+                                                }
+                                            }
+                                        }
+                                    }
+                                }]
+                            }
+                        }
+                    }
+                }]
+            }
+        }
+    })
+}
+
 fn generic_error_liked_songs_response() -> serde_json::Value {
     json!({
         "contents": {
@@ -478,6 +515,53 @@ async fn get_liked_songs_returns_empty_wrapper_for_empty_library_message() {
     Mock::given(method("POST"))
         .and(path("/youtubei/v1/browse"))
         .respond_with(ResponseTemplate::new(200).set_body_json(empty_liked_songs_response()))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let liked_songs = client.get_liked_songs().await.unwrap();
+    assert_eq!(
+        liked_songs,
+        LikedSongs {
+            playlist_id: "LM".to_owned(),
+            title: "Liked Songs".to_owned(),
+            items: vec![],
+            thumbnails: vec![Thumbnail {
+                url: "https://example.com/liked-songs.jpg".to_owned(),
+                width: 512,
+                height: 512,
+            }],
+        }
+    );
+}
+
+#[tokio::test]
+async fn get_liked_songs_returns_empty_wrapper_for_header_only_page() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "9.99999999.99.99" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_json(header_only_empty_liked_songs_response()),
+        )
         .mount(&server)
         .await;
 

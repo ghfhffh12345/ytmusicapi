@@ -35,6 +35,7 @@ fn shelf_contents_or_empty<'a>(
     missing_message: &str,
 ) -> Result<&'a [Value], Error> {
     let mut saw_message_only_section = false;
+    let mut saw_non_header_section = false;
 
     for section in sections {
         if let Some(contents) = section
@@ -44,10 +45,16 @@ fn shelf_contents_or_empty<'a>(
             return Ok(contents.as_slice());
         }
 
+        let is_header_section = section.get("musicResponsiveHeaderRenderer").is_some();
+        saw_non_header_section |= !is_header_section;
         saw_message_only_section |= section_empty_liked_songs_message(section);
     }
 
     if saw_message_only_section {
+        return Ok(&[]);
+    }
+
+    if !saw_non_header_section {
         return Ok(&[]);
     }
 
