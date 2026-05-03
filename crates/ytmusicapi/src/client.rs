@@ -164,8 +164,24 @@ impl YtMusic {
             ));
         }
 
+        let bootstrap_config = self.bootstrap_config().await?;
+        let client_version = self
+            .browser_auth
+            .as_ref()
+            .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
+            .map(String::as_str)
+            .unwrap_or(&bootstrap_config.client_version);
+        let body = serde_json::json!({
+            "context": {
+                "client": {
+                    "clientName": "WEB_REMIX",
+                    "clientVersion": client_version,
+                }
+            }
+        });
+
         let response = self
-            .post_authenticated_json("account/account_menu", serde_json::json!({}))
+            .post_authenticated_json("account/account_menu", body)
             .await?;
         crate::library::account::parse_account_info_response(&response)
     }

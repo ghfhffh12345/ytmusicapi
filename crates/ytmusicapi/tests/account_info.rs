@@ -78,7 +78,14 @@ async fn get_account_info_returns_typed_account_info() {
         .and(path("/youtubei/v1/account/account_menu"))
         .and(query_param("alt", "json"))
         .and(query_param("key", "test-api-key"))
-        .and(body_json(json!({})))
+        .and(body_json(json!({
+            "context": {
+                "client": {
+                    "clientName": "WEB_REMIX",
+                    "clientVersion": "1.20250501.01.00"
+                }
+            }
+        })))
         .respond_with(ResponseTemplate::new(200).set_body_json(account_menu_response()))
         .mount(&server)
         .await;
