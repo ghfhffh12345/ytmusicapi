@@ -3,7 +3,9 @@ use serde_json::Value;
 use crate::{Error, SavedEpisodeItem, SavedEpisodes};
 
 use super::{
-    core::{optional_text, parse_thumbnails, required_runs_text, required_text},
+    core::{
+        optional_runs_text, optional_text, parse_thumbnails, required_runs_text, required_text,
+    },
     songs::{column_title_text, flex_column_runs, looks_like_duration},
 };
 
@@ -44,7 +46,7 @@ fn shelf_contents_or_empty<'a>(
             return Ok(contents.as_slice());
         }
 
-        saw_message_only_section |= section_message_only(section);
+        saw_message_only_section |= section_empty_saved_episodes_message(section);
     }
 
     if saw_message_only_section {
@@ -141,7 +143,7 @@ fn flex_columns(renderer: &Value) -> &[Value] {
         .unwrap_or(&[])
 }
 
-fn section_message_only(section: &Value) -> bool {
+fn section_empty_saved_episodes_message(section: &Value) -> bool {
     let Some(contents) = section
         .pointer("/itemSectionRenderer/contents")
         .and_then(Value::as_array)
@@ -150,7 +152,10 @@ fn section_message_only(section: &Value) -> bool {
     };
 
     !contents.is_empty()
-        && contents
-            .iter()
-            .all(|content| content.get("messageRenderer").is_some())
+        && contents.iter().all(|content| {
+            content.get("messageRenderer").is_some()
+                && optional_runs_text(content, "/messageRenderer/text/runs")
+                    .as_deref()
+                    .is_some_and(|text| text.trim() == "No saved episodes yet")
+        })
 }
