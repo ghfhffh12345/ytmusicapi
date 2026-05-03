@@ -12,6 +12,15 @@ pub enum LibraryLikeStatus {
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct AccountInfo {
+    pub account_name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub channel_handle: Option<String>,
+    pub account_photo_url: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct LibraryAlbum {
     pub browse_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]

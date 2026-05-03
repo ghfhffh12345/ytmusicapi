@@ -157,6 +157,19 @@ impl YtMusic {
         crate::library::playlists::parse_library_playlists_response(&response)
     }
 
+    pub async fn get_account_info(&self) -> Result<crate::AccountInfo, Error> {
+        if self.browser_auth.is_none() {
+            return Err(Error::UnsupportedFeature(
+                "get_account_info requires browser authentication".to_owned(),
+            ));
+        }
+
+        let response = self
+            .post_authenticated_json("account/account_menu", serde_json::json!({}))
+            .await?;
+        crate::library::account::parse_account_info_response(&response)
+    }
+
     pub async fn get_library_artists(&self) -> Result<Vec<crate::LibraryArtist>, Error> {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
@@ -344,10 +357,19 @@ impl YtMusic {
     }
 
     async fn post_browse(&self, body: serde_json::Value) -> Result<serde_json::Value, Error> {
+        self.post_authenticated_json("browse", body).await
+    }
+
+    async fn post_authenticated_json(
+        &self,
+        endpoint: &str,
+        body: serde_json::Value,
+    ) -> Result<serde_json::Value, Error> {
         let bootstrap_config = self.bootstrap_config().await?;
         let url = format!(
-            "{}/browse?alt=json&key={}",
+            "{}/{}?alt=json&key={}",
             self.base_url.trim_end_matches('/'),
+            endpoint.trim_start_matches('/'),
             bootstrap_config.innertube_api_key
         );
 

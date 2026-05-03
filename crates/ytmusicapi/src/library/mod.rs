@@ -1,3 +1,4 @@
+pub(crate) mod account;
 pub(crate) mod albums;
 pub(crate) mod artists;
 pub(crate) mod channels;

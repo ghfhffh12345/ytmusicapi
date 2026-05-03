@@ -10,7 +10,7 @@ pub use crate::client::{YtMusic, YtMusicBuilder};
 pub use crate::error::Error;
 pub use crate::model::common::{AlbumRef, ArtistRef, Thumbnail};
 pub use crate::model::library::{
-    LibraryAlbum, LibraryArtist, LibraryChannel, LibraryLikeStatus, LibraryPlaylist,
+    AccountInfo, LibraryAlbum, LibraryArtist, LibraryChannel, LibraryLikeStatus, LibraryPlaylist,
     LibraryPodcast, LibraryPodcastChannel, LibrarySong, LibrarySubscription, LikedSongItem,
     LikedSongs, SavedEpisodeItem, SavedEpisodes,
 };
