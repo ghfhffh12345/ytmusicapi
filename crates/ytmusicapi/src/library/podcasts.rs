@@ -1,13 +1,32 @@
 use serde_json::Value;
 
-use crate::{Error, LibraryPodcast, LibraryPodcastChannel};
+use crate::{Error, LibraryPodcast, LibraryPodcastChannel, Page};
 
-use super::core::{library_grid_items, optional_text, parse_thumbnails, required_text};
+use super::core::{
+    continuation_grid, continuation_grid_items, extract_continuation_token,
+    library_grid_continuation, library_grid_items, optional_text, parse_thumbnails, required_text,
+};
 
 pub(crate) fn parse_library_podcasts_response(
     response: &Value,
-) -> Result<Vec<LibraryPodcast>, Error> {
-    library_grid_items(response)?
+) -> Result<Page<LibraryPodcast>, Error> {
+    Ok(Page {
+        items: parse_podcast_items(library_grid_items(response)?)?,
+        continuation: library_grid_continuation(response)?,
+    })
+}
+
+pub(crate) fn parse_library_podcasts_continuation(
+    response: &Value,
+) -> Result<Page<LibraryPodcast>, Error> {
+    Ok(Page {
+        items: parse_podcast_items(continuation_grid_items(response)?)?,
+        continuation: extract_continuation_token(continuation_grid(response)?)?,
+    })
+}
+
+fn parse_podcast_items(items: &[Value]) -> Result<Vec<LibraryPodcast>, Error> {
+    items
         .iter()
         .enumerate()
         .filter(|(index, item)| !(*index == 0 && is_leading_add_podcasts_tile(item)))

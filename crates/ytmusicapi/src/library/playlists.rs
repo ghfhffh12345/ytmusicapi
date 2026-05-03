@@ -1,14 +1,37 @@
 use serde_json::Value;
 
-use crate::{ArtistRef, Error, LibraryPlaylist};
+use crate::{ArtistRef, Error, LibraryPlaylist, Page};
 
-use super::core::{optional_text, parse_thumbnails};
+use super::core::{
+    continuation_grid, continuation_grid_items, extract_continuation_token,
+    library_grid_continuation, optional_text, parse_thumbnails,
+};
 
 pub(crate) fn parse_library_playlists_response(
     response: &Value,
-) -> Result<Vec<LibraryPlaylist>, Error> {
+) -> Result<Page<LibraryPlaylist>, Error> {
     let items = super::core::library_grid_items(response)?;
+    let continuation = library_grid_continuation(response)?;
 
+    Ok(Page {
+        items: parse_playlist_items(items)?,
+        continuation,
+    })
+}
+
+pub(crate) fn parse_library_playlists_continuation(
+    response: &Value,
+) -> Result<Page<LibraryPlaylist>, Error> {
+    let items = continuation_grid_items(response)?;
+    let continuation = extract_continuation_token(continuation_grid(response)?)?;
+
+    Ok(Page {
+        items: parse_playlist_items(items)?,
+        continuation,
+    })
+}
+
+fn parse_playlist_items(items: &[Value]) -> Result<Vec<LibraryPlaylist>, Error> {
     items
         .iter()
         .enumerate()

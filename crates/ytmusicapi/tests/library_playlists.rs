@@ -183,6 +183,94 @@ async fn get_library_playlists_returns_page_and_continuation() {
 }
 
 #[tokio::test]
+async fn get_library_playlists_continuation_returns_page_and_posts_token_body() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "continuationContents": {
+                "gridContinuation": {
+                    "items": [{
+                        "musicTwoRowItemRenderer": {
+                            "title": { "runs": [{ "text": "Focus Flow", "navigationEndpoint": { "browseEndpoint": { "browseId": "VLPL222" } } }] },
+                            "subtitle": { "runs": [{ "text": "OpenAI" }, { "text": " • " }, { "text": "22 songs" }] },
+                            "thumbnailRenderer": { "musicThumbnailRenderer": { "thumbnail": { "thumbnails": [{ "url": "https://example.com/2.jpg", "width": 300, "height": 300 }] } } }
+                        }
+                    }],
+                    "continuations": [{ "nextContinuationData": { "continuation": "playlist-token-2" } }]
+                }
+            }
+        })))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let playlists = client
+        .get_library_playlists_continuation(ContinuationToken::new("playlist-token-1").unwrap())
+        .await
+        .unwrap();
+    assert_eq!(
+        playlists,
+        Page {
+            items: vec![LibraryPlaylist {
+                playlist_id: "PL222".to_owned(),
+                title: Some("Focus Flow".to_owned()),
+                authors: vec![ArtistRef {
+                    id: String::new(),
+                    name: "OpenAI".to_owned(),
+                }],
+                item_count: Some(22),
+                thumbnails: vec![Thumbnail {
+                    url: "https://example.com/2.jpg".to_owned(),
+                    width: 300,
+                    height: 300,
+                }],
+            }],
+            continuation: Some(ContinuationToken::new("playlist-token-2").unwrap()),
+        }
+    );
+
+    let requests = server.received_requests().await.unwrap();
+    let browse = requests
+        .iter()
+        .find(|request| request.method.as_str() == "POST")
+        .unwrap();
+    let body: serde_json::Value = serde_json::from_slice(&browse.body).unwrap();
+
+    assert_eq!(
+        body,
+        json!({
+            "continuation": "playlist-token-1",
+            "context": {
+                "client": {
+                    "clientName": "WEB_REMIX",
+                    "clientVersion": "1.20250501.01.00"
+                }
+            }
+        })
+    );
+}
+
+#[tokio::test]
 async fn get_library_playlists_skips_leading_grid_item() {
     let server = MockServer::start().await;
 

@@ -4,7 +4,7 @@ use serde_json::json;
 use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
-use ytmusicapi::{Error, LibraryArtist, Thumbnail, YtMusic, setup_browser_auth};
+use ytmusicapi::{ContinuationToken, Error, LibraryArtist, Thumbnail, YtMusic, setup_browser_auth};
 
 fn browser_auth_json() -> String {
     setup_browser_auth(
@@ -92,6 +92,11 @@ fn shelf_artist_response() -> serde_json::Value {
                                                         }
                                                     }
                                                 }
+                                            }
+                                        }],
+                                        "continuations": [{
+                                            "nextContinuationData": {
+                                                "continuation": "artist-token-1"
                                             }
                                         }]
                                     }
@@ -204,6 +209,10 @@ async fn get_library_artists_returns_first_page_results() {
                 thumbnails: vec![],
             }
         ]
+    );
+    assert_eq!(
+        artists.continuation,
+        Some(ContinuationToken::new("artist-token-1").unwrap())
     );
 
     let requests = server.received_requests().await.unwrap();

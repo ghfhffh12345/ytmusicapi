@@ -1,14 +1,32 @@
 use serde_json::Value;
 
-use crate::{ArtistRef, Error, LibraryAlbum};
+use crate::{ArtistRef, Error, LibraryAlbum, Page};
 
-use super::core::{library_grid_items, optional_text, parse_thumbnails, required_text};
+use super::core::{
+    continuation_grid, continuation_grid_items, extract_continuation_token,
+    library_grid_continuation, library_grid_items, optional_text, parse_thumbnails, required_text,
+};
 
-pub(crate) fn parse_library_albums_response(response: &Value) -> Result<Vec<LibraryAlbum>, Error> {
-    library_grid_items(response)?
-        .iter()
-        .map(parse_library_album)
-        .collect()
+pub(crate) fn parse_library_albums_response(response: &Value) -> Result<Page<LibraryAlbum>, Error> {
+    Ok(Page {
+        items: library_grid_items(response)?
+            .iter()
+            .map(parse_library_album)
+            .collect::<Result<Vec<_>, _>>()?,
+        continuation: library_grid_continuation(response)?,
+    })
+}
+
+pub(crate) fn parse_library_albums_continuation(
+    response: &Value,
+) -> Result<Page<LibraryAlbum>, Error> {
+    Ok(Page {
+        items: continuation_grid_items(response)?
+            .iter()
+            .map(parse_library_album)
+            .collect::<Result<Vec<_>, _>>()?,
+        continuation: extract_continuation_token(continuation_grid(response)?)?,
+    })
 }
 
 fn parse_library_album(item: &Value) -> Result<LibraryAlbum, Error> {

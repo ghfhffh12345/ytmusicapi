@@ -67,6 +67,21 @@ pub(crate) fn build_library_body(browse_id: &str, bootstrap_config: &BootstrapCo
     })
 }
 
+pub(crate) fn build_continuation_body(
+    continuation: &crate::ContinuationToken,
+    client_version: &str,
+) -> Value {
+    json!({
+        "continuation": continuation.as_str(),
+        "context": {
+            "client": {
+                "clientName": "WEB_REMIX",
+                "clientVersion": client_version,
+            }
+        }
+    })
+}
+
 pub(crate) fn build_library_playlists_body(bootstrap_config: &BootstrapConfig) -> Value {
     build_library_body("FEmusic_liked_playlists", bootstrap_config)
 }
@@ -205,11 +220,12 @@ fn extract_ytcfg_json(remainder: &str) -> Option<&str> {
 #[cfg(test)]
 mod tests {
     use super::{
-        BootstrapConfig, build_library_albums_body, build_library_artists_body,
-        build_library_channels_body, build_library_playlists_body, build_library_podcasts_body,
-        build_library_songs_body, build_library_subscriptions_body, build_liked_songs_body,
-        build_saved_episodes_body,
+        BootstrapConfig, build_continuation_body, build_library_albums_body,
+        build_library_artists_body, build_library_channels_body, build_library_playlists_body,
+        build_library_podcasts_body, build_library_songs_body, build_library_subscriptions_body,
+        build_liked_songs_body, build_saved_episodes_body,
     };
+    use crate::ContinuationToken;
 
     #[test]
     fn build_library_playlists_body_includes_bootstrap_context() {
@@ -226,6 +242,27 @@ mod tests {
         assert_eq!(
             body["context"]["client"]["clientVersion"],
             "1.20250501.02.00"
+        );
+    }
+
+    #[test]
+    fn build_continuation_body_includes_token_and_context() {
+        let body = build_continuation_body(
+            &ContinuationToken::new("next-page-token").unwrap(),
+            "1.20250501.02.00",
+        );
+
+        assert_eq!(
+            body,
+            serde_json::json!({
+                "continuation": "next-page-token",
+                "context": {
+                    "client": {
+                        "clientName": "WEB_REMIX",
+                        "clientVersion": "1.20250501.02.00",
+                    }
+                }
+            })
         );
     }
 
