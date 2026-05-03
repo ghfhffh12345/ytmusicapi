@@ -90,6 +90,10 @@ pub(crate) fn build_library_channels_body(bootstrap_config: &BootstrapConfig) ->
     )
 }
 
+pub(crate) fn build_library_podcasts_body(bootstrap_config: &BootstrapConfig) -> Value {
+    build_library_body("FEmusic_library_non_music_audio_list", bootstrap_config)
+}
+
 pub(crate) fn build_library_songs_body(bootstrap_config: &BootstrapConfig) -> Value {
     build_library_body("FEmusic_liked_videos", bootstrap_config)
 }
@@ -284,6 +288,24 @@ mod tests {
             body["browseId"],
             "FEmusic_library_non_music_audio_channels_list"
         );
+        assert_eq!(body["context"]["client"]["clientName"], "WEB_REMIX");
+        assert_eq!(
+            body["context"]["client"]["clientVersion"],
+            "1.20250501.02.00"
+        );
+    }
+
+    #[test]
+    fn build_library_podcasts_body_includes_podcasts_browse_id() {
+        let bootstrap_config = BootstrapConfig {
+            visitor_id: "visitor-id-123".to_owned(),
+            innertube_api_key: "test-api-key".to_owned(),
+            client_version: "1.20250501.02.00".to_owned(),
+        };
+
+        let body = build_library_podcasts_body(&bootstrap_config);
+
+        assert_eq!(body["browseId"], "FEmusic_library_non_music_audio_list");
         assert_eq!(body["context"]["client"]["clientName"], "WEB_REMIX");
         assert_eq!(
             body["context"]["client"]["clientVersion"],

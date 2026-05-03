@@ -58,6 +58,24 @@ pub struct LibraryChannel {
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct LibraryPodcastChannel {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    pub name: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LibraryPodcast {
+    pub title: String,
+    pub browse_id: String,
+    pub podcast_id: String,
+    pub channel: LibraryPodcastChannel,
+    pub thumbnails: Vec<Thumbnail>,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct LibraryPlaylist {
     pub playlist_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
