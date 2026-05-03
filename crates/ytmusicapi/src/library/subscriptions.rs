@@ -2,7 +2,7 @@ use serde_json::Value;
 
 use crate::{Error, LibrarySubscription};
 
-use super::{artists::parse_artist_like_row, core::library_shelf_contents};
+use super::core::{library_shelf_contents, parse_artist_like_row};
 
 pub(crate) fn parse_library_subscriptions_response(
     response: &Value,

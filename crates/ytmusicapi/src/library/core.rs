@@ -2,6 +2,13 @@ use serde_json::Value;
 
 use crate::{Error, Thumbnail};
 
+pub(crate) struct ArtistLikeRow {
+    pub(crate) browse_id: String,
+    pub(crate) name: String,
+    pub(crate) subscribers: Option<String>,
+    pub(crate) thumbnails: Vec<Thumbnail>,
+}
+
 pub(crate) fn selected_library_tab(response: &Value) -> Result<&Value, Error> {
     let tabs = required_array_at(response, "/contents/singleColumnBrowseResultsRenderer/tabs")?;
 
@@ -111,6 +118,35 @@ pub(crate) fn optional_runs_text(value: &Value, pointer: &str) -> Option<String>
 pub(crate) fn required_runs_text(value: &Value, pointer: &str) -> Result<String, Error> {
     optional_runs_text(value, pointer)
         .ok_or_else(|| Error::Parse(format!("library response missing {pointer}")))
+}
+
+pub(crate) fn parse_artist_like_row(
+    item: &Value,
+    item_label: &str,
+) -> Result<ArtistLikeRow, Error> {
+    let renderer = item.get("musicResponsiveListItemRenderer").ok_or_else(|| {
+        Error::Parse(format!(
+            "library response missing musicResponsiveListItemRenderer in {item_label}"
+        ))
+    })?;
+
+    Ok(ArtistLikeRow {
+        browse_id: required_text(renderer, "/navigationEndpoint/browseEndpoint/browseId")?,
+        name: required_runs_text(
+            renderer,
+            "/flexColumns/0/musicResponsiveListItemFlexColumnRenderer/text/runs",
+        )?,
+        subscribers: optional_runs_text(
+            renderer,
+            "/flexColumns/1/musicResponsiveListItemFlexColumnRenderer/text/runs",
+        )
+        .and_then(first_token),
+        thumbnails: parse_thumbnails(renderer)?,
+    })
+}
+
+pub(crate) fn first_token(value: String) -> Option<String> {
+    value.split(' ').next().map(str::to_owned)
 }
 
 fn is_selected_tab(tab: &Value) -> bool {
