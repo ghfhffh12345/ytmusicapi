@@ -222,10 +222,31 @@ pub(crate) fn section_empty_library_message(section: &Value) -> bool {
         return false;
     };
 
-    !contents.is_empty()
-        && contents
-            .iter()
-            .all(|content| content.get("messageRenderer").is_some())
+    !contents.is_empty() && contents.iter().all(is_known_empty_library_message_renderer)
+}
+
+fn is_known_empty_library_message_renderer(content: &Value) -> bool {
+    let Some(message_renderer) = content.get("messageRenderer") else {
+        return false;
+    };
+
+    let primary_text = optional_runs_text(message_renderer, "/text/runs");
+    let subtext = optional_runs_text(
+        message_renderer,
+        "/subtext/messageSubtextRenderer/text/runs",
+    );
+
+    !is_generic_error_message(primary_text.as_deref(), subtext.as_deref())
+}
+
+fn is_generic_error_message(primary_text: Option<&str>, subtext: Option<&str>) -> bool {
+    primary_text.is_some_and(contains_generic_error_phrase)
+        || subtext.is_some_and(contains_generic_error_phrase)
+}
+
+fn contains_generic_error_phrase(text: &str) -> bool {
+    let normalized = text.trim().to_ascii_lowercase();
+    normalized.contains("something went wrong") || normalized.contains("try again later")
 }
 
 fn required_array_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a [Value], Error> {
@@ -411,7 +432,7 @@ mod tests {
     }
 
     #[test]
-    fn library_shelf_contents_returns_empty_for_message_only_section() {
+    fn library_shelf_contents_errors_for_generic_message_only_section() {
         let response = json!({
             "contents": {
                 "singleColumnBrowseResultsRenderer": {
@@ -450,12 +471,12 @@ mod tests {
             }
         });
 
-        let contents = library_shelf_contents(&response).unwrap();
-        assert!(contents.is_empty());
+        let error = library_shelf_contents(&response).unwrap_err();
+        assert!(matches!(error, crate::Error::Parse(_)));
     }
 
     #[test]
-    fn library_grid_items_returns_empty_for_message_only_section() {
+    fn library_grid_items_returns_empty_for_known_empty_library_message() {
         let response = json!({
             "contents": {
                 "singleColumnBrowseResultsRenderer": {
@@ -487,5 +508,49 @@ mod tests {
 
         let items = library_grid_items(&response).unwrap();
         assert!(items.is_empty());
+    }
+
+    #[test]
+    fn library_grid_items_errors_for_generic_message_only_section() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "itemSectionRenderer": {
+                                            "contents": [{
+                                                "messageRenderer": {
+                                                    "text": {
+                                                        "runs": [{
+                                                            "text": "Something went wrong"
+                                                        }]
+                                                    },
+                                                    "subtext": {
+                                                        "messageSubtextRenderer": {
+                                                            "text": {
+                                                                "runs": [{
+                                                                    "text": "Try again later"
+                                                                }]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let error = library_grid_items(&response).unwrap_err();
+        assert!(matches!(error, crate::Error::Parse(_)));
     }
 }
