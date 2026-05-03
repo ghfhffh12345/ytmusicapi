@@ -214,7 +214,7 @@ async fn get_library_songs_returns_first_page_results() {
 
     let songs = client.get_library_songs().await.unwrap();
     assert_eq!(
-        songs,
+        songs.items,
         vec![
             LibrarySong {
                 video_id: "song-1".to_owned(),
@@ -323,9 +323,9 @@ async fn get_library_songs_skips_localized_leading_control_tile() {
         .unwrap();
 
     let songs = client.get_library_songs().await.unwrap();
-    assert_eq!(songs.len(), 2);
-    assert_eq!(songs[0].video_id, "song-1");
-    assert_eq!(songs[1].video_id, "song-2");
+    assert_eq!(songs.items.len(), 2);
+    assert_eq!(songs.items[0].video_id, "song-1");
+    assert_eq!(songs.items[1].video_id, "song-2");
 }
 
 #[tokio::test]
@@ -391,9 +391,9 @@ async fn get_library_songs_skips_multiple_leading_control_tiles_with_extra_colum
         .unwrap();
 
     let songs = client.get_library_songs().await.unwrap();
-    assert_eq!(songs.len(), 2);
-    assert_eq!(songs[0].video_id, "song-1");
-    assert_eq!(songs[1].video_id, "song-2");
+    assert_eq!(songs.items.len(), 2);
+    assert_eq!(songs.items[0].video_id, "song-1");
+    assert_eq!(songs.items[1].video_id, "song-2");
 }
 
 #[tokio::test]
@@ -464,7 +464,7 @@ async fn get_library_songs_parses_shifted_combined_metadata_columns() {
 
     let songs = client.get_library_songs().await.unwrap();
     assert_eq!(
-        songs[1],
+        songs.items[1],
         LibrarySong {
             video_id: "song-2".to_owned(),
             title: "Archangel".to_owned(),
@@ -521,7 +521,7 @@ async fn get_library_songs_parses_title_after_leading_badge_and_multi_run_text()
         .unwrap();
 
     let songs = client.get_library_songs().await.unwrap();
-    assert_eq!(songs[1].title, "Archangel");
+    assert_eq!(songs.items[1].title, "Archangel");
 }
 
 #[tokio::test]
@@ -568,7 +568,7 @@ async fn get_library_songs_preserves_plain_text_artist_metadata() {
 
     let songs = client.get_library_songs().await.unwrap();
     assert_eq!(
-        songs[1].artists,
+        songs.items[1].artists,
         vec![ArtistRef {
             id: String::new(),
             name: "Burial".to_owned(),
@@ -620,7 +620,7 @@ async fn get_library_songs_preserves_plain_text_album_metadata() {
 
     let songs = client.get_library_songs().await.unwrap();
     assert_eq!(
-        songs[0].album,
+        songs.items[0].album,
         Some(AlbumRef {
             id: String::new(),
             name: "Music Has the Right to Children".to_owned(),
@@ -692,9 +692,9 @@ async fn get_library_songs_parses_title_when_metadata_column_precedes_it() {
         .unwrap();
 
     let songs = client.get_library_songs().await.unwrap();
-    assert_eq!(songs[1].title, "Archangel");
+    assert_eq!(songs.items[1].title, "Archangel");
     assert_eq!(
-        songs[1].artists,
+        songs.items[1].artists,
         vec![ArtistRef {
             id: "UCBRL".to_owned(),
             name: "Burial".to_owned(),
@@ -753,7 +753,7 @@ async fn get_library_songs_parses_all_plain_text_columns() {
 
     let songs = client.get_library_songs().await.unwrap();
     assert_eq!(
-        songs[1],
+        songs.items[1],
         LibrarySong {
             video_id: "song-2".to_owned(),
             title: "Archangel".to_owned(),
@@ -802,7 +802,7 @@ async fn get_library_songs_returns_empty_results_for_empty_library_message() {
         .unwrap();
 
     let songs = client.get_library_songs().await.unwrap();
-    assert_eq!(songs, Vec::<LibrarySong>::new());
+    assert_eq!(songs.items, Vec::<LibrarySong>::new());
 }
 
 #[tokio::test]

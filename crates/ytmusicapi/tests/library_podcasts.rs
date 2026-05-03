@@ -192,7 +192,7 @@ async fn get_library_podcasts_returns_first_page_results() {
 
     let podcasts = client.get_library_podcasts().await.unwrap();
     assert_eq!(
-        podcasts,
+        podcasts.items,
         vec![
             LibraryPodcast {
                 title: "New Episodes".to_owned(),
@@ -276,5 +276,5 @@ async fn get_library_podcasts_returns_empty_results_for_control_tile_only_grid()
         .unwrap();
 
     let podcasts = client.get_library_podcasts().await.unwrap();
-    assert_eq!(podcasts, vec![]);
+    assert_eq!(podcasts.items, vec![]);
 }

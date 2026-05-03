@@ -1,6 +1,7 @@
 use serde_json::Value;
 
-use crate::{Error, LikedSongItem, LikedSongs};
+use crate::model::library::LikedSongs;
+use crate::{Error, LikedSongItem};
 
 use super::{
     core::{parse_thumbnails, required_runs_text, section_message_only_without_subtext},

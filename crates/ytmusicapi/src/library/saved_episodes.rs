@@ -1,6 +1,7 @@
 use serde_json::Value;
 
-use crate::{Error, SavedEpisodeItem, SavedEpisodes};
+use crate::model::library::SavedEpisodes;
+use crate::{Error, SavedEpisodeItem};
 
 use super::{
     core::{

@@ -188,7 +188,7 @@ async fn get_library_subscriptions_returns_first_page_results() {
 
     let subscriptions = client.get_library_subscriptions().await.unwrap();
     assert_eq!(
-        subscriptions,
+        subscriptions.items,
         vec![
             LibrarySubscription {
                 browse_id: "UCSubscription1".to_owned(),
@@ -262,5 +262,5 @@ async fn get_library_subscriptions_returns_empty_results_for_empty_library_messa
         .unwrap();
 
     let subscriptions = client.get_library_subscriptions().await.unwrap();
-    assert_eq!(subscriptions, vec![]);
+    assert_eq!(subscriptions.items, vec![]);
 }

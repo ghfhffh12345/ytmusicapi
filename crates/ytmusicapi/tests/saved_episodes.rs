@@ -4,7 +4,9 @@ use serde_json::json;
 use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
-use ytmusicapi::{Error, SavedEpisodeItem, SavedEpisodes, Thumbnail, YtMusic, setup_browser_auth};
+use ytmusicapi::{
+    Error, SavedEpisodeItem, SavedEpisodesPage, Thumbnail, YtMusic, setup_browser_auth,
+};
 
 fn browser_auth_json() -> String {
     setup_browser_auth(
@@ -377,7 +379,7 @@ async fn get_saved_episodes_returns_typed_wrapper_and_uses_vlse_browse_id() {
     let saved_episodes = client.get_saved_episodes().await.unwrap();
     assert_eq!(
         saved_episodes,
-        SavedEpisodes {
+        SavedEpisodesPage {
             playlist_id: "SE".to_owned(),
             title: "Saved Episodes".to_owned(),
             items: vec![
@@ -407,6 +409,7 @@ async fn get_saved_episodes_returns_typed_wrapper_and_uses_vlse_browse_id() {
                 width: 640,
                 height: 640,
             }],
+            continuation: None,
         }
     );
 
@@ -501,7 +504,7 @@ async fn get_saved_episodes_returns_empty_wrapper_for_empty_library_message() {
     let saved_episodes = client.get_saved_episodes().await.unwrap();
     assert_eq!(
         saved_episodes,
-        SavedEpisodes {
+        SavedEpisodesPage {
             playlist_id: "SE".to_owned(),
             title: "Saved Episodes".to_owned(),
             items: vec![],
@@ -510,6 +513,7 @@ async fn get_saved_episodes_returns_empty_wrapper_for_empty_library_message() {
                 width: 640,
                 height: 640,
             }],
+            continuation: None,
         }
     );
 }
@@ -548,7 +552,7 @@ async fn get_saved_episodes_returns_empty_wrapper_for_simple_text_message_only_p
     let saved_episodes = client.get_saved_episodes().await.unwrap();
     assert_eq!(
         saved_episodes,
-        SavedEpisodes {
+        SavedEpisodesPage {
             playlist_id: "SE".to_owned(),
             title: "Saved Episodes".to_owned(),
             items: vec![],
@@ -557,6 +561,7 @@ async fn get_saved_episodes_returns_empty_wrapper_for_simple_text_message_only_p
                 width: 640,
                 height: 640,
             }],
+            continuation: None,
         }
     );
 }
@@ -595,7 +600,7 @@ async fn get_saved_episodes_returns_empty_wrapper_for_header_only_page() {
     let saved_episodes = client.get_saved_episodes().await.unwrap();
     assert_eq!(
         saved_episodes,
-        SavedEpisodes {
+        SavedEpisodesPage {
             playlist_id: "SE".to_owned(),
             title: "Saved Episodes".to_owned(),
             items: vec![],
@@ -604,6 +609,7 @@ async fn get_saved_episodes_returns_empty_wrapper_for_header_only_page() {
                 width: 640,
                 height: 640,
             }],
+            continuation: None,
         }
     );
 }

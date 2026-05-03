@@ -27,28 +27,29 @@ async fn get_library_playlists_live_smoke_test() {
     let client = YtMusic::from_browser_auth_file(&browser_json).unwrap();
     let playlists = client.get_library_playlists().await.unwrap();
     assert!(
-        !playlists.is_empty(),
+        !playlists.items.is_empty(),
         "expected at least one library playlist from the authenticated account"
     );
 
     let artists = client.get_library_artists().await.unwrap();
-    if artists.is_empty() {
+    if artists.items.is_empty() {
         eprintln!(
             "library artists returned 0 items for this account; verified empty-state parsing"
         );
     }
 
     let albums = client.get_library_albums().await.unwrap();
-    if albums.is_empty() {
+    if albums.items.is_empty() {
         eprintln!("library albums returned 0 items for this account; verified empty-state parsing");
     }
 
     let songs = client.get_library_songs().await.unwrap();
-    if songs.is_empty() {
+    if songs.items.is_empty() {
         eprintln!("library songs returned 0 items for this account; verified empty-state parsing");
     } else {
         assert!(
             songs
+                .items
                 .iter()
                 .all(|song| !song.video_id.is_empty() && !song.title.is_empty()),
             "expected each live library song to include stable identity fields"
@@ -56,13 +57,14 @@ async fn get_library_playlists_live_smoke_test() {
     }
 
     let subscriptions = client.get_library_subscriptions().await.unwrap();
-    if subscriptions.is_empty() {
+    if subscriptions.items.is_empty() {
         eprintln!(
             "library subscriptions returned 0 items for this account; verified empty-state parsing"
         );
     } else {
         assert!(
             subscriptions
+                .items
                 .iter()
                 .all(|subscription| !subscription.browse_id.is_empty()
                     && !subscription.name.is_empty()),
@@ -71,13 +73,14 @@ async fn get_library_playlists_live_smoke_test() {
     }
 
     let channels = client.get_library_channels().await.unwrap();
-    if channels.is_empty() {
+    if channels.items.is_empty() {
         eprintln!(
             "library channels returned 0 items for this account; verified empty-state parsing"
         );
     } else {
         assert!(
             channels
+                .items
                 .iter()
                 .all(|channel| !channel.browse_id.is_empty() && !channel.name.is_empty()),
             "expected each live library channel to include stable identity fields"
@@ -85,13 +88,13 @@ async fn get_library_playlists_live_smoke_test() {
     }
 
     let podcasts = client.get_library_podcasts().await.unwrap();
-    if podcasts.is_empty() {
+    if podcasts.items.is_empty() {
         eprintln!(
             "library podcasts returned 0 items for this account; verified empty-state parsing"
         );
     } else {
         assert!(
-            podcasts.iter().all(|podcast| {
+            podcasts.items.iter().all(|podcast| {
                 !podcast.title.is_empty()
                     && !podcast.browse_id.is_empty()
                     && !podcast.podcast_id.is_empty()

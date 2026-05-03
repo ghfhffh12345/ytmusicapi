@@ -185,7 +185,7 @@ async fn get_library_artists_returns_first_page_results() {
 
     let artists = client.get_library_artists().await.unwrap();
     assert_eq!(
-        artists,
+        artists.items,
         vec![
             LibraryArtist {
                 browse_id: "UCArtist1".to_owned(),
@@ -265,7 +265,7 @@ async fn get_library_artists_returns_empty_results_for_empty_library_message() {
         .unwrap();
 
     let artists = client.get_library_artists().await.unwrap();
-    assert!(artists.is_empty());
+    assert!(artists.items.is_empty());
 }
 
 #[tokio::test]
@@ -353,7 +353,10 @@ async fn get_library_artists_preserves_nbsp_subscriber_separator() {
 
     let artists = client.get_library_artists().await.unwrap();
 
-    assert_eq!(artists[0].subscribers, Some("12\u{00A0}345".to_owned()));
+    assert_eq!(
+        artists.items[0].subscribers,
+        Some("12\u{00A0}345".to_owned())
+    );
 }
 
 #[tokio::test]

@@ -188,7 +188,7 @@ async fn get_library_channels_returns_first_page_results() {
 
     let channels = client.get_library_channels().await.unwrap();
     assert_eq!(
-        channels,
+        channels.items,
         vec![
             LibraryChannel {
                 browse_id: "UCChannel1".to_owned(),
@@ -260,5 +260,5 @@ async fn get_library_channels_returns_empty_results_for_empty_library_message() 
         .unwrap();
 
     let channels = client.get_library_channels().await.unwrap();
-    assert_eq!(channels, vec![]);
+    assert_eq!(channels.items, vec![]);
 }
