@@ -222,10 +222,43 @@ pub(crate) fn section_empty_library_message(section: &Value) -> bool {
         return false;
     };
 
-    !contents.is_empty()
-        && contents
-            .iter()
-            .all(|content| content.get("messageRenderer").is_some())
+    !contents.is_empty() && contents.iter().all(is_known_empty_library_message)
+}
+
+fn is_known_empty_library_message(content: &Value) -> bool {
+    let Some(message) = content.get("messageRenderer") else {
+        return false;
+    };
+
+    matches!(
+        (
+            message_text(message),
+            message_subtext(message),
+        ),
+        (
+            Some(text),
+            Some(subtext),
+        ) if matches!(
+            (text.as_str(), subtext.as_str()),
+            ("No playlists saved yet", "Your saved playlists will show up here")
+                | ("No songs yet", "Songs you save to your library will show here")
+                | ("No albums yet", "Albums you save to your library will show here")
+                | ("아직 아티스트가 없습니다", "저장한 음악의 아티스트가 여기에 표시됩니다")
+                | (
+                    "No subscriptions yet",
+                    "Channels you subscribe to will show here"
+                )
+        )
+    )
+}
+
+fn message_text(message: &Value) -> Option<String> {
+    optional_runs_text(message, "/text/runs").or_else(|| optional_text(message, "/text/simpleText"))
+}
+
+fn message_subtext(message: &Value) -> Option<String> {
+    optional_runs_text(message, "/subtext/messageSubtextRenderer/text/runs")
+        .or_else(|| optional_text(message, "/subtext/messageSubtextRenderer/text/simpleText"))
 }
 
 fn required_array_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a [Value], Error> {
@@ -255,6 +288,7 @@ mod tests {
     use serde_json::json;
 
     use super::{library_grid_items, library_shelf_contents, selected_library_tab};
+    use crate::Error;
 
     #[test]
     fn selected_library_tab_prefers_selected_marker() {
@@ -411,7 +445,7 @@ mod tests {
     }
 
     #[test]
-    fn library_shelf_contents_returns_empty_for_generic_message_only_section() {
+    fn library_shelf_contents_errors_for_generic_message_only_section() {
         let response = json!({
             "contents": {
                 "singleColumnBrowseResultsRenderer": {
@@ -450,8 +484,12 @@ mod tests {
             }
         });
 
-        let contents = library_shelf_contents(&response).unwrap();
-        assert!(contents.is_empty());
+        let error = library_shelf_contents(&response).unwrap_err();
+        assert!(matches!(
+            error,
+            Error::Parse(message)
+                if message == "library response missing shelf contents in selected library tab"
+        ));
     }
 
     #[test]
@@ -465,17 +503,26 @@ mod tests {
                             "content": {
                                 "sectionListRenderer": {
                                     "contents": [{
-                                        "itemSectionRenderer": {
-                                            "contents": [{
-                                                "messageRenderer": {
-                                                    "text": {
-                                                        "runs": [{
-                                                            "text": "No playlists saved yet"
-                                                        }]
+                                            "itemSectionRenderer": {
+                                                "contents": [{
+                                                    "messageRenderer": {
+                                                        "text": {
+                                                            "runs": [{
+                                                                "text": "No playlists saved yet"
+                                                            }]
+                                                        },
+                                                        "subtext": {
+                                                            "messageSubtextRenderer": {
+                                                                "text": {
+                                                                    "runs": [{
+                                                                        "text": "Your saved playlists will show up here"
+                                                                    }]
+                                                                }
+                                                            }
+                                                        }
                                                     }
-                                                }
-                                            }]
-                                        }
+                                                }]
+                                            }
                                     }]
                                 }
                             }
@@ -490,7 +537,7 @@ mod tests {
     }
 
     #[test]
-    fn library_grid_items_returns_empty_for_generic_message_only_section() {
+    fn library_grid_items_errors_for_generic_message_only_section() {
         let response = json!({
             "contents": {
                 "singleColumnBrowseResultsRenderer": {
@@ -529,12 +576,16 @@ mod tests {
             }
         });
 
-        let items = library_grid_items(&response).unwrap();
-        assert!(items.is_empty());
+        let error = library_grid_items(&response).unwrap_err();
+        assert!(matches!(
+            error,
+            Error::Parse(message)
+                if message == "library response missing grid items in selected library tab"
+        ));
     }
 
     #[test]
-    fn library_shelf_contents_returns_empty_for_alternate_generic_message_only_section() {
+    fn library_shelf_contents_errors_for_alternate_generic_message_only_section() {
         let response = json!({
             "contents": {
                 "singleColumnBrowseResultsRenderer": {
@@ -573,12 +624,56 @@ mod tests {
             }
         });
 
-        let contents = library_shelf_contents(&response).unwrap();
-        assert!(contents.is_empty());
+        let error = library_shelf_contents(&response).unwrap_err();
+        assert!(matches!(
+            error,
+            Error::Parse(message)
+                if message == "library response missing shelf contents in selected library tab"
+        ));
     }
 
     #[test]
-    fn library_grid_items_returns_empty_for_simple_text_message_only_section() {
+    fn library_grid_items_returns_empty_for_known_empty_subscriptions_message() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                            "itemSectionRenderer": {
+                                                "contents": [{
+                                                    "messageRenderer": {
+                                                        "text": {
+                                                            "simpleText": "No subscriptions yet"
+                                                        },
+                                                        "subtext": {
+                                                            "messageSubtextRenderer": {
+                                                                "text": {
+                                                                    "simpleText": "Channels you subscribe to will show here"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }]
+                                            }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let items = library_grid_items(&response).unwrap();
+        assert!(items.is_empty());
+    }
+
+    #[test]
+    fn library_grid_items_errors_for_generic_simple_text_message_only_section() {
         let response = json!({
             "contents": {
                 "singleColumnBrowseResultsRenderer": {
@@ -592,7 +687,7 @@ mod tests {
                                             "contents": [{
                                                 "messageRenderer": {
                                                     "text": {
-                                                        "simpleText": "No songs yet"
+                                                        "simpleText": "Something went wrong"
                                                     }
                                                 }
                                             }]
@@ -606,7 +701,11 @@ mod tests {
             }
         });
 
-        let items = library_grid_items(&response).unwrap();
-        assert!(items.is_empty());
+        let error = library_grid_items(&response).unwrap_err();
+        assert!(matches!(
+            error,
+            Error::Parse(message)
+                if message == "library response missing grid items in selected library tab"
+        ));
     }
 }

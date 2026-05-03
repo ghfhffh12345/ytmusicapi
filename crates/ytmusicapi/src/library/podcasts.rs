@@ -41,9 +41,10 @@ fn parse_library_podcast(item: &Value) -> Result<LibraryPodcast, Error> {
 fn is_leading_add_podcasts_tile(item: &Value) -> bool {
     item.get("musicTwoRowItemRenderer").is_some_and(|renderer| {
         optional_podcast_browse_id(renderer).is_none()
-            && optional_text(renderer, "/title/runs/0/text")
-                .or_else(|| optional_text(renderer, "/title/simpleText"))
-                .is_some_and(|title| title == "Add podcasts")
+            && renderer.get("title").is_some()
+            && renderer.get("subtitle").is_none()
+            && renderer.get("thumbnailRenderer").is_none()
+            && renderer.get("navigationEndpoint").is_none()
     })
 }
 
@@ -86,17 +87,22 @@ mod tests {
                             "content": {
                                 "sectionListRenderer": {
                                     "contents": [{
-                                        "gridRenderer": {
-                                            "items": [{
-                                                "musicTwoRowItemRenderer": {
-                                                    "title": {
-                                                        "runs": [{
-                                                            "text": "Unexpected Tile"
-                                                        }]
+                                            "gridRenderer": {
+                                                "items": [{
+                                                    "musicTwoRowItemRenderer": {
+                                                        "title": {
+                                                            "runs": [{
+                                                                "text": "Unexpected Tile"
+                                                            }]
+                                                        },
+                                                        "subtitle": {
+                                                            "runs": [{
+                                                                "text": "Still not a podcast"
+                                                            }]
+                                                        }
                                                     }
-                                                }
-                                            }, {
-                                                "musicTwoRowItemRenderer": {
+                                                }, {
+                                                    "musicTwoRowItemRenderer": {
                                                     "title": {
                                                         "runs": [{
                                                             "text": "Syntax",

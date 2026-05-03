@@ -39,7 +39,7 @@ fn grid_podcasts_response() -> serde_json::Value {
                                             "musicTwoRowItemRenderer": {
                                                 "title": {
                                                     "runs": [{
-                                                        "text": "Add podcasts"
+                                                        "text": "팟캐스트 추가"
                                                     }]
                                                 }
                                             }
