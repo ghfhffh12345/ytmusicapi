@@ -118,6 +118,37 @@ fn grid_podcasts_response() -> serde_json::Value {
     })
 }
 
+fn empty_library_podcasts_response() -> serde_json::Value {
+    json!({
+        "contents": {
+            "singleColumnBrowseResultsRenderer": {
+                "tabs": [{
+                    "tabRenderer": {
+                        "selected": true,
+                        "content": {
+                            "sectionListRenderer": {
+                                "contents": [{
+                                    "gridRenderer": {
+                                        "items": [{
+                                            "musicTwoRowItemRenderer": {
+                                                "title": {
+                                                    "runs": [{
+                                                        "text": "Añadir podcasts"
+                                                    }]
+                                                }
+                                            }
+                                        }]
+                                    }
+                                }]
+                            }
+                        }
+                    }
+                }]
+            }
+        }
+    })
+}
+
 #[tokio::test]
 async fn get_library_podcasts_requires_browser_auth() {
     let client = YtMusic::builder().build().unwrap();
@@ -213,4 +244,37 @@ async fn get_library_podcasts_returns_first_page_results() {
             }
         })
     );
+}
+
+#[tokio::test]
+async fn get_library_podcasts_returns_empty_results_for_control_tile_only_grid() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "9.99999999.99.99" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(empty_library_podcasts_response()))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let podcasts = client.get_library_podcasts().await.unwrap();
+    assert_eq!(podcasts, vec![]);
 }
