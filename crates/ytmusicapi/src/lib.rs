@@ -10,9 +10,10 @@ pub use crate::client::{YtMusic, YtMusicBuilder};
 pub use crate::error::Error;
 pub use crate::model::common::{AlbumRef, ArtistRef, Thumbnail};
 pub use crate::model::library::{
-    AccountInfo, LibraryAlbum, LibraryArtist, LibraryChannel, LibraryLikeStatus, LibraryPlaylist,
-    LibraryPodcast, LibraryPodcastChannel, LibrarySong, LibrarySubscription, LikedSongItem,
-    LikedSongs, SavedEpisodeItem, SavedEpisodes,
+    AccountInfo, ContinuationToken, LibraryAlbum, LibraryArtist, LibraryChannel, LibraryLikeStatus,
+    LibraryPlaylist, LibraryPodcast, LibraryPodcastChannel, LibrarySong, LibrarySubscription,
+    LikedSongItem, LikedSongs, LikedSongsPage, Page, SavedEpisodeItem, SavedEpisodes,
+    SavedEpisodesPage,
 };
 pub use crate::model::search::{
     AlbumResult, ArtistResult, PlaylistResult, ProfileResult, SearchFilter, SearchQuery,

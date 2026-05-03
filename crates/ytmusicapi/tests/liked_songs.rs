@@ -5,8 +5,8 @@ use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 use ytmusicapi::{
-    AlbumRef, ArtistRef, Error, LibraryLikeStatus, LikedSongItem, LikedSongs, Thumbnail, YtMusic,
-    setup_browser_auth,
+    AlbumRef, ArtistRef, ContinuationToken, Error, LibraryLikeStatus, LikedSongItem,
+    LikedSongsPage, Thumbnail, YtMusic, setup_browser_auth,
 };
 
 fn browser_auth_json() -> String {
@@ -156,6 +156,11 @@ fn liked_songs_response() -> serde_json::Value {
                                                         }
                                                     }
                                                 }]
+                                            }
+                                        }],
+                                        "continuations": [{
+                                            "nextContinuationData": {
+                                                "continuation": "liked-token-1"
                                             }
                                         }]
                                     }
@@ -404,7 +409,7 @@ async fn get_liked_songs_returns_typed_wrapper_and_uses_vllm_browse_id() {
     let liked_songs = client.get_liked_songs().await.unwrap();
     assert_eq!(
         liked_songs,
-        LikedSongs {
+        LikedSongsPage {
             playlist_id: "LM".to_owned(),
             title: "Liked Songs".to_owned(),
             items: vec![
@@ -445,6 +450,7 @@ async fn get_liked_songs_returns_typed_wrapper_and_uses_vllm_browse_id() {
                 width: 512,
                 height: 512,
             }],
+            continuation: Some(ContinuationToken::new("liked-token-1").unwrap()),
         }
     );
 
@@ -579,7 +585,7 @@ async fn get_liked_songs_returns_empty_wrapper_for_empty_library_message() {
     let liked_songs = client.get_liked_songs().await.unwrap();
     assert_eq!(
         liked_songs,
-        LikedSongs {
+        LikedSongsPage {
             playlist_id: "LM".to_owned(),
             title: "Liked Songs".to_owned(),
             items: vec![],
@@ -588,6 +594,7 @@ async fn get_liked_songs_returns_empty_wrapper_for_empty_library_message() {
                 width: 512,
                 height: 512,
             }],
+            continuation: None,
         }
     );
 }
@@ -626,7 +633,7 @@ async fn get_liked_songs_returns_empty_wrapper_for_simple_text_message_only_page
     let liked_songs = client.get_liked_songs().await.unwrap();
     assert_eq!(
         liked_songs,
-        LikedSongs {
+        LikedSongsPage {
             playlist_id: "LM".to_owned(),
             title: "Liked Songs".to_owned(),
             items: vec![],
@@ -635,6 +642,7 @@ async fn get_liked_songs_returns_empty_wrapper_for_simple_text_message_only_page
                 width: 512,
                 height: 512,
             }],
+            continuation: None,
         }
     );
 }
@@ -673,7 +681,7 @@ async fn get_liked_songs_returns_empty_wrapper_for_header_only_page() {
     let liked_songs = client.get_liked_songs().await.unwrap();
     assert_eq!(
         liked_songs,
-        LikedSongs {
+        LikedSongsPage {
             playlist_id: "LM".to_owned(),
             title: "Liked Songs".to_owned(),
             items: vec![],
@@ -682,6 +690,7 @@ async fn get_liked_songs_returns_empty_wrapper_for_header_only_page() {
                 width: 512,
                 height: 512,
             }],
+            continuation: None,
         }
     );
 }
