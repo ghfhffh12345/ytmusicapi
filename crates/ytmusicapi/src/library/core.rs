@@ -225,6 +225,17 @@ pub(crate) fn section_empty_library_message(section: &Value) -> bool {
     !contents.is_empty() && contents.iter().all(is_known_empty_library_message)
 }
 
+pub(crate) fn section_message_only_without_subtext(section: &Value) -> bool {
+    let Some(contents) = section
+        .pointer("/itemSectionRenderer/contents")
+        .and_then(Value::as_array)
+    else {
+        return false;
+    };
+
+    !contents.is_empty() && contents.iter().all(is_message_only_without_subtext)
+}
+
 fn is_known_empty_library_message(content: &Value) -> bool {
     let Some(message) = content.get("messageRenderer") else {
         return false;
@@ -259,6 +270,14 @@ fn message_text(message: &Value) -> Option<String> {
 fn message_subtext(message: &Value) -> Option<String> {
     optional_runs_text(message, "/subtext/messageSubtextRenderer/text/runs")
         .or_else(|| optional_text(message, "/subtext/messageSubtextRenderer/text/simpleText"))
+}
+
+fn is_message_only_without_subtext(content: &Value) -> bool {
+    let Some(message) = content.get("messageRenderer") else {
+        return false;
+    };
+
+    message_text(message).is_some() && message_subtext(message).is_none()
 }
 
 fn required_array_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a [Value], Error> {
@@ -670,6 +689,50 @@ mod tests {
 
         let items = library_grid_items(&response).unwrap();
         assert!(items.is_empty());
+    }
+
+    #[test]
+    fn library_shelf_contents_returns_empty_for_known_empty_subscriptions_runs_message() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "itemSectionRenderer": {
+                                            "contents": [{
+                                                "messageRenderer": {
+                                                    "text": {
+                                                        "runs": [{
+                                                            "text": "No subscriptions yet"
+                                                        }]
+                                                    },
+                                                    "subtext": {
+                                                        "messageSubtextRenderer": {
+                                                            "text": {
+                                                                "runs": [{
+                                                                    "text": "Channels you subscribe to will show here"
+                                                                }]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let contents = library_shelf_contents(&response).unwrap();
+        assert!(contents.is_empty());
     }
 
     #[test]

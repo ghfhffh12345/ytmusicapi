@@ -3,7 +3,7 @@ use serde_json::Value;
 use crate::{Error, LikedSongItem, LikedSongs};
 
 use super::{
-    core::{optional_runs_text, parse_thumbnails, required_runs_text},
+    core::{parse_thumbnails, required_runs_text, section_message_only_without_subtext},
     songs::parse_song_list_item,
 };
 
@@ -86,18 +86,5 @@ fn required_array_at<'a>(
 }
 
 fn section_empty_liked_songs_message(section: &Value) -> bool {
-    let Some(contents) = section
-        .pointer("/itemSectionRenderer/contents")
-        .and_then(Value::as_array)
-    else {
-        return false;
-    };
-
-    !contents.is_empty()
-        && contents.iter().all(|content| {
-            content.get("messageRenderer").is_some()
-                && optional_runs_text(content, "/messageRenderer/text/runs")
-                    .as_deref()
-                    .is_some_and(|text| text.trim() == "No liked songs yet")
-        })
+    section_message_only_without_subtext(section)
 }

@@ -4,7 +4,8 @@ use crate::{Error, SavedEpisodeItem, SavedEpisodes};
 
 use super::{
     core::{
-        optional_runs_text, optional_text, parse_thumbnails, required_runs_text, required_text,
+        optional_text, parse_thumbnails, required_runs_text, required_text,
+        section_message_only_without_subtext,
     },
     songs::{column_title_text, flex_column_runs, looks_like_duration},
 };
@@ -151,18 +152,5 @@ fn flex_columns(renderer: &Value) -> &[Value] {
 }
 
 fn section_empty_saved_episodes_message(section: &Value) -> bool {
-    let Some(contents) = section
-        .pointer("/itemSectionRenderer/contents")
-        .and_then(Value::as_array)
-    else {
-        return false;
-    };
-
-    !contents.is_empty()
-        && contents.iter().all(|content| {
-            content.get("messageRenderer").is_some()
-                && optional_runs_text(content, "/messageRenderer/text/runs")
-                    .as_deref()
-                    .is_some_and(|text| text.trim() == "No saved episodes yet")
-        })
+    section_message_only_without_subtext(section)
 }
