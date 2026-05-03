@@ -230,23 +230,40 @@ fn is_known_empty_library_message_renderer(content: &Value) -> bool {
         return false;
     };
 
-    let primary_text = optional_runs_text(message_renderer, "/text/runs");
+    let Some(primary_text) = optional_runs_text(message_renderer, "/text/runs") else {
+        return false;
+    };
     let subtext = optional_runs_text(
         message_renderer,
         "/subtext/messageSubtextRenderer/text/runs",
     );
 
-    !is_generic_error_message(primary_text.as_deref(), subtext.as_deref())
+    is_known_empty_library_primary_text(primary_text.trim())
+        && subtext
+            .as_deref()
+            .is_none_or(|text| is_known_empty_library_subtext(text.trim()))
 }
 
-fn is_generic_error_message(primary_text: Option<&str>, subtext: Option<&str>) -> bool {
-    primary_text.is_some_and(contains_generic_error_phrase)
-        || subtext.is_some_and(contains_generic_error_phrase)
+fn is_known_empty_library_primary_text(text: &str) -> bool {
+    matches!(
+        text,
+        "No playlists saved yet"
+            | "No songs yet"
+            | "No albums yet"
+            | "No liked songs yet"
+            | "No saved episodes yet"
+            | "아직 아티스트가 없습니다"
+    )
 }
 
-fn contains_generic_error_phrase(text: &str) -> bool {
-    let normalized = text.trim().to_ascii_lowercase();
-    normalized.contains("something went wrong") || normalized.contains("try again later")
+fn is_known_empty_library_subtext(text: &str) -> bool {
+    matches!(
+        text,
+        "Your saved playlists will show up here"
+            | "Songs you save to your library will show here"
+            | "Albums you save to your library will show here"
+            | "저장한 음악의 아티스트가 여기에 표시됩니다"
+    )
 }
 
 fn required_array_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a [Value], Error> {
@@ -491,7 +508,7 @@ mod tests {
                                                 "messageRenderer": {
                                                     "text": {
                                                         "runs": [{
-                                                            "text": "No playlists yet"
+                                                            "text": "No playlists saved yet"
                                                         }]
                                                     }
                                                 }
@@ -537,6 +554,83 @@ mod tests {
                                                                 }]
                                                             }
                                                         }
+                                                    }
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let error = library_grid_items(&response).unwrap_err();
+        assert!(matches!(error, crate::Error::Parse(_)));
+    }
+
+    #[test]
+    fn library_shelf_contents_errors_for_alternate_generic_message_only_section() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "itemSectionRenderer": {
+                                            "contents": [{
+                                                "messageRenderer": {
+                                                    "text": {
+                                                        "runs": [{
+                                                            "text": "Temporarily unavailable"
+                                                        }]
+                                                    },
+                                                    "subtext": {
+                                                        "messageSubtextRenderer": {
+                                                            "text": {
+                                                                "runs": [{
+                                                                    "text": "Please refresh and try again"
+                                                                }]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let error = library_shelf_contents(&response).unwrap_err();
+        assert!(matches!(error, crate::Error::Parse(_)));
+    }
+
+    #[test]
+    fn library_grid_items_errors_for_simple_text_message_only_section() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "itemSectionRenderer": {
+                                            "contents": [{
+                                                "messageRenderer": {
+                                                    "text": {
+                                                        "simpleText": "No songs yet"
                                                     }
                                                 }
                                             }]
