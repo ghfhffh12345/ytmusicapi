@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use crate::{AlbumRef, ArtistRef, Error, LibraryLikeStatus, LibrarySong};
+use crate::{AlbumRef, ArtistRef, Error, LibraryLikeStatus, LibrarySong, Thumbnail};
 
 use super::core::{library_shelf_contents, optional_text, parse_thumbnails, required_text};
 
@@ -13,11 +13,35 @@ pub(crate) fn parse_library_songs_response(response: &Value) -> Result<Vec<Libra
 }
 
 fn parse_library_song(item: &Value) -> Result<LibrarySong, Error> {
+    parse_song_list_item(item, "song shelf item").map(|parsed| LibrarySong {
+        video_id: parsed.video_id,
+        title: parsed.title,
+        artists: parsed.artists,
+        album: parsed.album,
+        duration: parsed.duration,
+        thumbnails: parsed.thumbnails,
+        like_status: parsed.like_status,
+    })
+}
+
+pub(crate) struct ParsedSongListItem {
+    pub(crate) video_id: String,
+    pub(crate) title: String,
+    pub(crate) artists: Vec<ArtistRef>,
+    pub(crate) album: Option<AlbumRef>,
+    pub(crate) duration: Option<String>,
+    pub(crate) thumbnails: Vec<Thumbnail>,
+    pub(crate) like_status: Option<LibraryLikeStatus>,
+}
+
+pub(crate) fn parse_song_list_item(
+    item: &Value,
+    item_label: &str,
+) -> Result<ParsedSongListItem, Error> {
     let renderer = item.get("musicResponsiveListItemRenderer").ok_or_else(|| {
-        Error::Parse(
-            "library response missing musicResponsiveListItemRenderer in song shelf item"
-                .to_owned(),
-        )
+        Error::Parse(format!(
+            "library response missing musicResponsiveListItemRenderer in {item_label}"
+        ))
     })?;
     let layout = infer_column_layout(renderer);
     let title_index = layout
@@ -27,7 +51,7 @@ fn parse_library_song(item: &Value) -> Result<LibrarySong, Error> {
         .ok_or_else(|| Error::Parse("library response missing song title".to_owned()))?;
     let metadata = parse_song_metadata(renderer, &layout);
 
-    Ok(LibrarySong {
+    Ok(ParsedSongListItem {
         video_id: required_text(renderer, "/playlistItemData/videoId")?,
         title,
         artists: metadata.artists,
@@ -319,7 +343,7 @@ fn flex_columns(renderer: &Value) -> &[Value] {
         .unwrap_or(&[])
 }
 
-fn flex_column_runs(column: &Value) -> &[Value] {
+pub(crate) fn flex_column_runs(column: &Value) -> &[Value] {
     column
         .pointer("/musicResponsiveListItemFlexColumnRenderer/text/runs")
         .and_then(Value::as_array)
@@ -327,7 +351,7 @@ fn flex_column_runs(column: &Value) -> &[Value] {
         .unwrap_or(&[])
 }
 
-fn column_title_text(column: &Value) -> Option<String> {
+pub(crate) fn column_title_text(column: &Value) -> Option<String> {
     let mut parts = meaningful_run_texts(column);
     while parts.len() > 1 && looks_like_title_badge(parts[0].trim()) {
         parts.remove(0);
@@ -378,7 +402,7 @@ fn looks_like_title_badge(value: &str) -> bool {
     matches!(value, "E" | "Explicit" | "EXPLICIT")
 }
 
-fn looks_like_duration(value: &str) -> bool {
+pub(crate) fn looks_like_duration(value: &str) -> bool {
     let mut parts = value.split(':');
     let Some(first) = parts.next() else {
         return false;

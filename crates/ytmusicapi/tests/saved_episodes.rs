@@ -238,3 +238,42 @@ async fn get_saved_episodes_returns_typed_wrapper_and_uses_vlse_browse_id() {
         })
     );
 }
+
+#[tokio::test]
+async fn get_saved_episodes_errors_when_subtitle_metadata_is_incomplete() {
+    let server = MockServer::start().await;
+    let mut response = saved_episodes_response();
+    response["contents"]["twoColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]["sectionListRenderer"]
+        ["contents"][1]["musicPlaylistShelfRenderer"]["contents"][1]["musicResponsiveListItemRenderer"]
+        ["flexColumns"][1]["musicResponsiveListItemFlexColumnRenderer"]["text"]["runs"] = json!([
+        { "text": "Tom Merritt" }
+    ]);
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "9.99999999.99.99" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(response))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let error = client.get_saved_episodes().await.unwrap_err();
+    assert!(matches!(error, Error::Parse(_)));
+}

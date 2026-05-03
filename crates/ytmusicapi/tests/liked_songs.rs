@@ -276,3 +276,82 @@ async fn get_liked_songs_returns_typed_wrapper_and_uses_vllm_browse_id() {
         })
     );
 }
+
+#[tokio::test]
+async fn get_liked_songs_parses_plain_text_title_metadata_and_long_fixed_duration() {
+    let server = MockServer::start().await;
+    let mut response = liked_songs_response();
+    response["contents"]["twoColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]["sectionListRenderer"]
+        ["contents"][1]["musicPlaylistShelfRenderer"]["contents"][1]["musicResponsiveListItemRenderer"]
+        ["flexColumns"] = json!([
+        {
+            "musicResponsiveListItemFlexColumnRenderer": {
+                "text": { "runs": [{ "text": "Archangel" }] }
+            }
+        },
+        {
+            "musicResponsiveListItemFlexColumnRenderer": {
+                "text": { "runs": [{ "text": "Burial" }] }
+            }
+        },
+        {
+            "musicResponsiveListItemFlexColumnRenderer": {
+                "text": { "runs": [{ "text": "Untrue" }] }
+            }
+        }
+    ]);
+    response["contents"]["twoColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]["sectionListRenderer"]
+        ["contents"][1]["musicPlaylistShelfRenderer"]["contents"][1]["musicResponsiveListItemRenderer"]
+        ["fixedColumns"] = json!([
+        {
+            "musicResponsiveListItemFixedColumnRenderer": {
+                "text": { "runs": [{ "text": "1:02:03" }] }
+            }
+        }
+    ]);
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "9.99999999.99.99" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(response))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let liked_songs = client.get_liked_songs().await.unwrap();
+    assert_eq!(
+        liked_songs.items[1],
+        LikedSongItem {
+            video_id: "liked-song-2".to_owned(),
+            title: "Archangel".to_owned(),
+            artists: vec![ArtistRef {
+                id: String::new(),
+                name: "Burial".to_owned(),
+            }],
+            album: Some(AlbumRef {
+                id: String::new(),
+                name: "Untrue".to_owned(),
+            }),
+            duration: Some("1:02:03".to_owned()),
+            thumbnails: vec![],
+            like_status: None,
+        }
+    );
+}
