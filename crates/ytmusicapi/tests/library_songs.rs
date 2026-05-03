@@ -278,6 +278,24 @@ async fn get_library_songs_skips_localized_leading_control_tile() {
         ["sectionListRenderer"]["contents"][0]["musicShelfRenderer"]["contents"][0]["musicResponsiveListItemRenderer"]
         ["flexColumns"][0]["musicResponsiveListItemFlexColumnRenderer"]["text"]["runs"][0]["text"] =
         json!("모두 셔플");
+    response["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]
+        ["sectionListRenderer"]["contents"][0]["musicShelfRenderer"]["contents"][0]["musicResponsiveListItemRenderer"]
+        ["flexColumns"][0]["musicResponsiveListItemFlexColumnRenderer"]["text"]["runs"][0]["navigationEndpoint"] = json!({
+        "browseEndpoint": { "browseId": "RDAMVMshuffle-all" }
+    });
+    response["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]
+        ["sectionListRenderer"]["contents"][0]["musicShelfRenderer"]["contents"][0]["musicResponsiveListItemRenderer"]
+        ["thumbnail"] = json!({
+        "musicThumbnailRenderer": {
+            "thumbnail": {
+                "thumbnails": [{
+                    "url": "https://example.com/shuffle-all.jpg",
+                    "width": 300,
+                    "height": 300
+                }]
+            }
+        }
+    });
 
     Mock::given(method("GET"))
         .and(path("/"))
@@ -314,9 +332,8 @@ async fn get_library_songs_skips_localized_leading_control_tile() {
 async fn get_library_songs_skips_multiple_leading_control_tiles_with_extra_columns() {
     let server = MockServer::start().await;
     let mut response = library_songs_response();
-    let contents = &mut response["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][0]
-        ["tabRenderer"]["content"]["sectionListRenderer"]["contents"][0]["musicShelfRenderer"]
-        ["contents"];
+    let contents = &mut response["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]
+        ["content"]["sectionListRenderer"]["contents"][0]["musicShelfRenderer"]["contents"];
 
     contents[0]["musicResponsiveListItemRenderer"]["flexColumns"] = json!([
         {
@@ -331,10 +348,9 @@ async fn get_library_songs_skips_multiple_leading_control_tiles_with_extra_colum
         }
     ]);
 
-    contents
-        .as_array_mut()
-        .unwrap()
-        .insert(1, json!({
+    contents.as_array_mut().unwrap().insert(
+        1,
+        json!({
             "musicResponsiveListItemRenderer": {
                 "flexColumns": [{
                     "musicResponsiveListItemFlexColumnRenderer": {
@@ -346,7 +362,8 @@ async fn get_library_songs_skips_multiple_leading_control_tiles_with_extra_colum
                     }
                 }]
             }
-        }));
+        }),
+    );
 
     Mock::given(method("GET"))
         .and(path("/"))

@@ -65,22 +65,26 @@ pub(crate) fn parse_song_list_item(
 fn is_leading_non_song_control_row(item: &Value) -> bool {
     item.get("musicResponsiveListItemRenderer")
         .is_some_and(|renderer| {
-            renderer.get("playlistItemData").is_none() && !looks_like_song_row(renderer)
+            renderer.get("playlistItemData").is_none() && is_control_row_without_video_id(renderer)
         })
 }
 
-fn looks_like_song_row(renderer: &Value) -> bool {
-    renderer.get("thumbnail").is_some()
-        || renderer.get("menu").is_some()
-        || renderer.get("fixedColumns").is_some()
-        || flex_columns(renderer).iter().any(|column| {
-            flex_column_runs(column).iter().any(|run| {
-                run.pointer("/navigationEndpoint/watchEndpoint").is_some()
-                    || optional_text(run, "/navigationEndpoint/browseEndpoint/browseId").is_some()
-                    || optional_text(run, "/text")
-                        .is_some_and(|text| looks_like_duration(text.trim()))
-            })
-        })
+fn is_control_row_without_video_id(renderer: &Value) -> bool {
+    flex_columns(renderer)
+        .first()
+        .and_then(column_title_text)
+        .is_some_and(|text| is_shuffle_all_control_text(text.trim()))
+}
+
+fn is_shuffle_all_control_text(text: &str) -> bool {
+    let normalized = text.to_ascii_lowercase();
+    normalized == "shuffle all"
+        || normalized.contains("shuffle all")
+        || normalized.contains("shuffle again")
+        || normalized.contains("play all")
+        || normalized.contains("queue next")
+        || normalized.contains("모두 셔플")
+        || normalized.contains("셔플")
 }
 
 #[derive(Default)]
