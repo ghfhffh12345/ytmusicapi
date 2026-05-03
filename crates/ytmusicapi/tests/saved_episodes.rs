@@ -200,25 +200,6 @@ fn generic_error_saved_episodes_response() -> serde_json::Value {
                         "content": {
                             "sectionListRenderer": {
                                 "contents": [{
-                                    "musicResponsiveHeaderRenderer": {
-                                        "title": {
-                                            "runs": [{
-                                                "text": "Saved Episodes"
-                                            }]
-                                        },
-                                        "thumbnail": {
-                                            "musicThumbnailRenderer": {
-                                                "thumbnail": {
-                                                    "thumbnails": [{
-                                                        "url": "https://example.com/saved-episodes.jpg",
-                                                        "width": 640,
-                                                        "height": 640
-                                                    }]
-                                                }
-                                            }
-                                        }
-                                    }
-                                }, {
                                     "itemSectionRenderer": {
                                         "contents": [{
                                             "messageRenderer": {

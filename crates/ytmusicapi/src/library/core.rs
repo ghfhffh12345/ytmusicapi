@@ -222,48 +222,10 @@ pub(crate) fn section_empty_library_message(section: &Value) -> bool {
         return false;
     };
 
-    !contents.is_empty() && contents.iter().all(is_known_empty_library_message_renderer)
-}
-
-fn is_known_empty_library_message_renderer(content: &Value) -> bool {
-    let Some(message_renderer) = content.get("messageRenderer") else {
-        return false;
-    };
-
-    let Some(primary_text) = optional_runs_text(message_renderer, "/text/runs") else {
-        return false;
-    };
-    let subtext = optional_runs_text(
-        message_renderer,
-        "/subtext/messageSubtextRenderer/text/runs",
-    );
-
-    is_known_empty_library_primary_text(primary_text.trim())
-        && subtext
-            .as_deref()
-            .is_none_or(|text| is_known_empty_library_subtext(text.trim()))
-}
-
-fn is_known_empty_library_primary_text(text: &str) -> bool {
-    matches!(
-        text,
-        "No playlists saved yet"
-            | "No songs yet"
-            | "No albums yet"
-            | "No liked songs yet"
-            | "No saved episodes yet"
-            | "아직 아티스트가 없습니다"
-    )
-}
-
-fn is_known_empty_library_subtext(text: &str) -> bool {
-    matches!(
-        text,
-        "Your saved playlists will show up here"
-            | "Songs you save to your library will show here"
-            | "Albums you save to your library will show here"
-            | "저장한 음악의 아티스트가 여기에 표시됩니다"
-    )
+    !contents.is_empty()
+        && contents
+            .iter()
+            .all(|content| content.get("messageRenderer").is_some())
 }
 
 fn required_array_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a [Value], Error> {
@@ -449,7 +411,7 @@ mod tests {
     }
 
     #[test]
-    fn library_shelf_contents_errors_for_generic_message_only_section() {
+    fn library_shelf_contents_returns_empty_for_generic_message_only_section() {
         let response = json!({
             "contents": {
                 "singleColumnBrowseResultsRenderer": {
@@ -488,8 +450,8 @@ mod tests {
             }
         });
 
-        let error = library_shelf_contents(&response).unwrap_err();
-        assert!(matches!(error, crate::Error::Parse(_)));
+        let contents = library_shelf_contents(&response).unwrap();
+        assert!(contents.is_empty());
     }
 
     #[test]
@@ -528,7 +490,7 @@ mod tests {
     }
 
     #[test]
-    fn library_grid_items_errors_for_generic_message_only_section() {
+    fn library_grid_items_returns_empty_for_generic_message_only_section() {
         let response = json!({
             "contents": {
                 "singleColumnBrowseResultsRenderer": {
@@ -567,12 +529,12 @@ mod tests {
             }
         });
 
-        let error = library_grid_items(&response).unwrap_err();
-        assert!(matches!(error, crate::Error::Parse(_)));
+        let items = library_grid_items(&response).unwrap();
+        assert!(items.is_empty());
     }
 
     #[test]
-    fn library_shelf_contents_errors_for_alternate_generic_message_only_section() {
+    fn library_shelf_contents_returns_empty_for_alternate_generic_message_only_section() {
         let response = json!({
             "contents": {
                 "singleColumnBrowseResultsRenderer": {
@@ -611,12 +573,12 @@ mod tests {
             }
         });
 
-        let error = library_shelf_contents(&response).unwrap_err();
-        assert!(matches!(error, crate::Error::Parse(_)));
+        let contents = library_shelf_contents(&response).unwrap();
+        assert!(contents.is_empty());
     }
 
     #[test]
-    fn library_grid_items_errors_for_simple_text_message_only_section() {
+    fn library_grid_items_returns_empty_for_simple_text_message_only_section() {
         let response = json!({
             "contents": {
                 "singleColumnBrowseResultsRenderer": {
@@ -644,7 +606,7 @@ mod tests {
             }
         });
 
-        let error = library_grid_items(&response).unwrap_err();
-        assert!(matches!(error, crate::Error::Parse(_)));
+        let items = library_grid_items(&response).unwrap();
+        assert!(items.is_empty());
     }
 }

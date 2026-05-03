@@ -227,25 +227,6 @@ fn generic_error_liked_songs_response() -> serde_json::Value {
                         "content": {
                             "sectionListRenderer": {
                                 "contents": [{
-                                    "musicResponsiveHeaderRenderer": {
-                                        "title": {
-                                            "runs": [{
-                                                "text": "Liked Songs"
-                                            }]
-                                        },
-                                        "thumbnail": {
-                                            "musicThumbnailRenderer": {
-                                                "thumbnail": {
-                                                    "thumbnails": [{
-                                                        "url": "https://example.com/liked-songs.jpg",
-                                                        "width": 512,
-                                                        "height": 512
-                                                    }]
-                                                }
-                                            }
-                                        }
-                                    }
-                                }, {
                                     "itemSectionRenderer": {
                                         "contents": [{
                                             "messageRenderer": {

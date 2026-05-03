@@ -3,7 +3,7 @@ use serde_json::Value;
 use crate::{Error, LikedSongItem, LikedSongs};
 
 use super::{
-    core::{parse_thumbnails, required_runs_text, section_empty_library_message},
+    core::{parse_thumbnails, required_runs_text},
     songs::parse_song_list_item,
 };
 
@@ -34,7 +34,7 @@ fn shelf_contents_or_empty<'a>(
     sections: &'a [Value],
     missing_message: &str,
 ) -> Result<&'a [Value], Error> {
-    let mut saw_empty_library_message = false;
+    let mut saw_message_only_section = false;
 
     for section in sections {
         if let Some(contents) = section
@@ -44,10 +44,10 @@ fn shelf_contents_or_empty<'a>(
             return Ok(contents.as_slice());
         }
 
-        saw_empty_library_message |= section_empty_library_message(section);
+        saw_message_only_section |= section_message_only(section);
     }
 
-    if saw_empty_library_message {
+    if saw_message_only_section {
         return Ok(&[]);
     }
 
@@ -76,4 +76,18 @@ fn required_array_at<'a>(
         .and_then(Value::as_array)
         .map(Vec::as_slice)
         .ok_or_else(|| Error::Parse(message.to_owned()))
+}
+
+fn section_message_only(section: &Value) -> bool {
+    let Some(contents) = section
+        .pointer("/itemSectionRenderer/contents")
+        .and_then(Value::as_array)
+    else {
+        return false;
+    };
+
+    !contents.is_empty()
+        && contents
+            .iter()
+            .all(|content| content.get("messageRenderer").is_some())
 }
