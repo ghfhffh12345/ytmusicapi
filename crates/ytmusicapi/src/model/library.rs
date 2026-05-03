@@ -102,3 +102,49 @@ pub struct LibrarySong {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub like_status: Option<LibraryLikeStatus>,
 }
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LikedSongItem {
+    pub video_id: String,
+    pub title: String,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub artists: Vec<ArtistRef>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub album: Option<AlbumRef>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub duration: Option<String>,
+    pub thumbnails: Vec<Thumbnail>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub like_status: Option<LibraryLikeStatus>,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LikedSongs {
+    pub playlist_id: String,
+    pub title: String,
+    pub items: Vec<LikedSongItem>,
+    pub thumbnails: Vec<Thumbnail>,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SavedEpisodeItem {
+    pub video_id: String,
+    pub title: String,
+    pub channel: String,
+    pub podcast: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub duration: Option<String>,
+    pub thumbnails: Vec<Thumbnail>,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SavedEpisodes {
+    pub playlist_id: String,
+    pub title: String,
+    pub items: Vec<SavedEpisodeItem>,
+    pub thumbnails: Vec<Thumbnail>,
+}

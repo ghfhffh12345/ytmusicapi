@@ -11,7 +11,8 @@ use crate::{
             BootstrapConfig, USER_AGENT, bootstrap_config as fetch_bootstrap_config,
             build_library_albums_body, build_library_artists_body, build_library_channels_body,
             build_library_playlists_body, build_library_podcasts_body, build_library_songs_body,
-            build_library_subscriptions_body, build_search_body,
+            build_library_subscriptions_body, build_liked_songs_body, build_saved_episodes_body,
+            build_search_body,
         },
     },
 };
@@ -288,6 +289,50 @@ impl YtMusic {
 
         let response = self.post_browse(body).await?;
         crate::library::songs::parse_library_songs_response(&response)
+    }
+
+    pub async fn get_liked_songs(&self) -> Result<crate::LikedSongs, Error> {
+        if self.browser_auth.is_none() {
+            return Err(Error::UnsupportedFeature(
+                "get_liked_songs requires browser authentication".to_owned(),
+            ));
+        }
+
+        let bootstrap_config = self.bootstrap_config().await?;
+        let client_version = self
+            .browser_auth
+            .as_ref()
+            .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
+            .map(String::as_str)
+            .unwrap_or(&bootstrap_config.client_version);
+        let mut browse_config = bootstrap_config.clone();
+        browse_config.client_version = client_version.to_owned();
+        let body = build_liked_songs_body(&browse_config);
+
+        let response = self.post_browse(body).await?;
+        crate::library::liked_songs::parse_liked_songs_response(&response)
+    }
+
+    pub async fn get_saved_episodes(&self) -> Result<crate::SavedEpisodes, Error> {
+        if self.browser_auth.is_none() {
+            return Err(Error::UnsupportedFeature(
+                "get_saved_episodes requires browser authentication".to_owned(),
+            ));
+        }
+
+        let bootstrap_config = self.bootstrap_config().await?;
+        let client_version = self
+            .browser_auth
+            .as_ref()
+            .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
+            .map(String::as_str)
+            .unwrap_or(&bootstrap_config.client_version);
+        let mut browse_config = bootstrap_config.clone();
+        browse_config.client_version = client_version.to_owned();
+        let body = build_saved_episodes_body(&browse_config);
+
+        let response = self.post_browse(body).await?;
+        crate::library::saved_episodes::parse_saved_episodes_response(&response)
     }
 
     async fn bootstrap_config(&self) -> Result<&BootstrapConfig, Error> {

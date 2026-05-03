@@ -98,6 +98,14 @@ pub(crate) fn build_library_songs_body(bootstrap_config: &BootstrapConfig) -> Va
     build_library_body("FEmusic_liked_videos", bootstrap_config)
 }
 
+pub(crate) fn build_liked_songs_body(bootstrap_config: &BootstrapConfig) -> Value {
+    build_library_body("VLLM", bootstrap_config)
+}
+
+pub(crate) fn build_saved_episodes_body(bootstrap_config: &BootstrapConfig) -> Value {
+    build_library_body("VLSE", bootstrap_config)
+}
+
 fn parse_bootstrap_config(body: &str) -> Result<BootstrapConfig, Error> {
     let mut missing_field = None;
 
@@ -199,7 +207,8 @@ mod tests {
     use super::{
         BootstrapConfig, build_library_albums_body, build_library_artists_body,
         build_library_channels_body, build_library_playlists_body, build_library_podcasts_body,
-        build_library_songs_body, build_library_subscriptions_body,
+        build_library_songs_body, build_library_subscriptions_body, build_liked_songs_body,
+        build_saved_episodes_body,
     };
 
     #[test]
@@ -324,6 +333,42 @@ mod tests {
         let body = build_library_songs_body(&bootstrap_config);
 
         assert_eq!(body["browseId"], "FEmusic_liked_videos");
+        assert_eq!(body["context"]["client"]["clientName"], "WEB_REMIX");
+        assert_eq!(
+            body["context"]["client"]["clientVersion"],
+            "1.20250501.02.00"
+        );
+    }
+
+    #[test]
+    fn build_liked_songs_body_includes_liked_songs_browse_id() {
+        let bootstrap_config = BootstrapConfig {
+            visitor_id: "visitor-id-123".to_owned(),
+            innertube_api_key: "test-api-key".to_owned(),
+            client_version: "1.20250501.02.00".to_owned(),
+        };
+
+        let body = build_liked_songs_body(&bootstrap_config);
+
+        assert_eq!(body["browseId"], "VLLM");
+        assert_eq!(body["context"]["client"]["clientName"], "WEB_REMIX");
+        assert_eq!(
+            body["context"]["client"]["clientVersion"],
+            "1.20250501.02.00"
+        );
+    }
+
+    #[test]
+    fn build_saved_episodes_body_includes_saved_episodes_browse_id() {
+        let bootstrap_config = BootstrapConfig {
+            visitor_id: "visitor-id-123".to_owned(),
+            innertube_api_key: "test-api-key".to_owned(),
+            client_version: "1.20250501.02.00".to_owned(),
+        };
+
+        let body = build_saved_episodes_body(&bootstrap_config);
+
+        assert_eq!(body["browseId"], "VLSE");
         assert_eq!(body["context"]["client"]["clientName"], "WEB_REMIX");
         assert_eq!(
             body["context"]["client"]["clientVersion"],
