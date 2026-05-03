@@ -198,8 +198,8 @@ fn extract_ytcfg_json(remainder: &str) -> Option<&str> {
 mod tests {
     use super::{
         BootstrapConfig, build_library_albums_body, build_library_artists_body,
-        build_library_channels_body, build_library_playlists_body, build_library_songs_body,
-        build_library_subscriptions_body,
+        build_library_channels_body, build_library_playlists_body, build_library_podcasts_body,
+        build_library_songs_body, build_library_subscriptions_body,
     };
 
     #[test]

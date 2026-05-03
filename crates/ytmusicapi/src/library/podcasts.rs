@@ -10,7 +10,7 @@ pub(crate) fn parse_library_podcasts_response(
     library_grid_items(response)?
         .iter()
         .enumerate()
-        .filter(|(index, item)| !(*index == 0 && is_leading_control_tile(item)))
+        .filter(|(index, item)| !(*index == 0 && is_leading_add_podcasts_tile(item)))
         .map(|(_, item)| parse_library_podcast(item))
         .collect()
 }
@@ -38,9 +38,13 @@ fn parse_library_podcast(item: &Value) -> Result<LibraryPodcast, Error> {
     })
 }
 
-fn is_leading_control_tile(item: &Value) -> bool {
-    item.get("musicTwoRowItemRenderer")
-        .is_some_and(|renderer| optional_podcast_browse_id(renderer).is_none())
+fn is_leading_add_podcasts_tile(item: &Value) -> bool {
+    item.get("musicTwoRowItemRenderer").is_some_and(|renderer| {
+        optional_podcast_browse_id(renderer).is_none()
+            && optional_text(renderer, "/title/runs/0/text")
+                .or_else(|| optional_text(renderer, "/title/simpleText"))
+                .is_some_and(|title| title == "Add podcasts")
+    })
 }
 
 fn podcast_browse_id(renderer: &Value) -> Result<String, Error> {
@@ -62,4 +66,69 @@ fn browse_id_to_podcast_id(browse_id: &str) -> String {
         .or_else(|| browse_id.strip_prefix("MPSP"))
         .unwrap_or(browse_id)
         .to_owned()
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+
+    use super::parse_library_podcasts_response;
+    use crate::Error;
+
+    #[test]
+    fn parse_library_podcasts_response_errors_on_unexpected_leading_tile() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "gridRenderer": {
+                                            "items": [{
+                                                "musicTwoRowItemRenderer": {
+                                                    "title": {
+                                                        "runs": [{
+                                                            "text": "Unexpected Tile"
+                                                        }]
+                                                    }
+                                                }
+                                            }, {
+                                                "musicTwoRowItemRenderer": {
+                                                    "title": {
+                                                        "runs": [{
+                                                            "text": "Syntax",
+                                                            "navigationEndpoint": {
+                                                                "browseEndpoint": {
+                                                                    "browseId": "MPSPpodcast123"
+                                                                }
+                                                            }
+                                                        }]
+                                                    },
+                                                    "subtitle": {
+                                                        "runs": [{
+                                                            "text": "Syntax FM"
+                                                        }]
+                                                    }
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let error = parse_library_podcasts_response(&response).unwrap_err();
+
+        assert!(matches!(
+            error,
+            Error::Parse(message) if message == "library response missing podcast browse id"
+        ));
+    }
 }
