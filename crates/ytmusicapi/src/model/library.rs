@@ -38,6 +38,26 @@ pub struct LibraryArtist {
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct LibrarySubscription {
+    pub browse_id: String,
+    pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub subscribers: Option<String>,
+    pub thumbnails: Vec<Thumbnail>,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LibraryChannel {
+    pub browse_id: String,
+    pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub subscribers: Option<String>,
+    pub thumbnails: Vec<Thumbnail>,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct LibraryPlaylist {
     pub playlist_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
