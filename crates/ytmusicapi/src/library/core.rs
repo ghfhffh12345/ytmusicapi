@@ -214,7 +214,7 @@ fn section_shelf_contents(section: &Value) -> Result<Option<&[Value]>, Error> {
     Ok(None)
 }
 
-fn section_empty_library_message(section: &Value) -> bool {
+pub(crate) fn section_empty_library_message(section: &Value) -> bool {
     let Some(contents) = section
         .pointer("/itemSectionRenderer/contents")
         .and_then(Value::as_array)
