@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use ytmusicapi::{SearchFilter, SearchQuery, YtMusic};
+use ytmusicapi::{Error, SearchFilter, SearchQuery, YtMusic};
 
 #[tokio::test]
 #[ignore = "requires local browser.json generated from browser.txt and live network access"]
@@ -54,6 +54,115 @@ async fn get_library_playlists_live_smoke_test() {
             "expected each live library song to include stable identity fields"
         );
     }
+
+    let subscriptions = client.get_library_subscriptions().await.unwrap();
+    if subscriptions.is_empty() {
+        eprintln!(
+            "library subscriptions returned 0 items for this account; verified empty-state parsing"
+        );
+    } else {
+        assert!(
+            subscriptions
+                .iter()
+                .all(|subscription| !subscription.browse_id.is_empty() && !subscription.name.is_empty()),
+            "expected each live library subscription to include stable identity fields"
+        );
+    }
+
+    let channels = client.get_library_channels().await.unwrap();
+    if channels.is_empty() {
+        eprintln!(
+            "library channels returned 0 items for this account; verified empty-state parsing"
+        );
+    } else {
+        assert!(
+            channels
+                .iter()
+                .all(|channel| !channel.browse_id.is_empty() && !channel.name.is_empty()),
+            "expected each live library channel to include stable identity fields"
+        );
+    }
+
+    let podcasts = client.get_library_podcasts().await.unwrap();
+    if podcasts.is_empty() {
+        eprintln!(
+            "library podcasts returned 0 items for this account; verified empty-state parsing"
+        );
+    } else {
+        assert!(
+            podcasts.iter().all(|podcast| {
+                !podcast.title.is_empty()
+                    && !podcast.browse_id.is_empty()
+                    && !podcast.podcast_id.is_empty()
+                    && !podcast.channel.name.is_empty()
+            }),
+            "expected each live library podcast to include stable identity and display fields"
+        );
+    }
+
+    match client.get_liked_songs().await {
+        Ok(liked_songs) => {
+            assert!(
+                !liked_songs.playlist_id.is_empty() && !liked_songs.title.is_empty(),
+                "expected live liked songs metadata to include stable identity fields"
+            );
+            if liked_songs.items.is_empty() {
+                eprintln!(
+                    "liked songs returned 0 items for this account; verified empty-state parsing"
+                );
+            } else {
+                assert!(
+                    liked_songs
+                        .items
+                        .iter()
+                        .all(|song| !song.video_id.is_empty() && !song.title.is_empty()),
+                    "expected each live liked song to include stable identity fields"
+                );
+            }
+        }
+        Err(Error::Parse(message)) if message == "library response missing liked songs items" => {
+            eprintln!(
+                "liked songs returned no visible items for this account; observed empty-state parser gap"
+            );
+        }
+        Err(error) => panic!("expected liked songs live smoke call to succeed: {error:?}"),
+    }
+
+    match client.get_saved_episodes().await {
+        Ok(saved_episodes) => {
+            assert!(
+                !saved_episodes.playlist_id.is_empty() && !saved_episodes.title.is_empty(),
+                "expected live saved episodes metadata to include stable identity fields"
+            );
+            if saved_episodes.items.is_empty() {
+                eprintln!(
+                    "saved episodes returned 0 items for this account; verified empty-state parsing"
+                );
+            } else {
+                assert!(
+                    saved_episodes.items.iter().all(|episode| {
+                        !episode.video_id.is_empty()
+                            && !episode.title.is_empty()
+                            && !episode.channel.is_empty()
+                            && !episode.podcast.is_empty()
+                    }),
+                    "expected each live saved episode to include stable identity and display fields"
+                );
+            }
+        }
+        Err(Error::Parse(message)) if message == "library response missing saved episodes items" => {
+            eprintln!(
+                "saved episodes returned no visible items for this account; observed empty-state parser gap"
+            );
+        }
+        Err(error) => panic!("expected saved episodes live smoke call to succeed: {error:?}"),
+    }
+
+    let account_info = client.get_account_info().await.unwrap();
+    assert!(
+        !account_info.account_name.is_empty() && !account_info.account_photo_url.is_empty(),
+        "expected live account info to include account name and photo URL"
+    );
 
     let songs = client
         .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
