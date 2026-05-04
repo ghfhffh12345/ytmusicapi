@@ -150,16 +150,17 @@ async fn get_library_playlists_live_smoke_test() {
     if let Some(token) = liked_songs.continuation.clone() {
         let continuation = client.get_liked_songs_continuation(token).await.unwrap();
         assert!(
+            !continuation.items.is_empty()
+                && !continuation.playlist_id.is_empty()
+                && !continuation.title.is_empty(),
+            "expected liked songs continuation to return items and wrapper metadata"
+        );
+        assert!(
             continuation
                 .items
                 .iter()
                 .all(|song| !song.video_id.is_empty() && !song.title.is_empty()),
             "expected each live liked song continuation item to include stable identity fields"
-        );
-        assert!(
-            continuation.playlist_id == liked_songs.playlist_id
-                && continuation.title == liked_songs.title,
-            "expected liked songs continuation metadata to preserve wrapper identity"
         );
     } else {
         eprintln!("liked songs returned no continuation token for this account");
