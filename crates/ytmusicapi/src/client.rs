@@ -4,7 +4,7 @@ use reqwest::{Client, header};
 use tokio::sync::OnceCell;
 
 use crate::{
-    Error, SearchQuery, SearchResult,
+    Error, SearchFilter, SearchQuery, SearchResult,
     search::{
         parse::parse_search_response,
         request::{
@@ -66,56 +66,56 @@ impl YtMusic {
 
         let bootstrap_config = self.bootstrap_config().await?;
         if self.browser_auth.is_some() {
+            let mut authenticated_search_config = bootstrap_config.clone();
+            if let Some(browser_auth) = &self.browser_auth {
+                if let Some(client_version) = browser_auth.headers.get("x-youtube-client-version")
+                {
+                    authenticated_search_config.client_version = client_version.clone();
+                }
+            }
+            let authenticated_body = build_search_body(&query, &authenticated_search_config);
             match self
-                .search_with_transport(&query, bootstrap_config, true)
+                .search_with_transport(bootstrap_config, authenticated_body)
                 .await
             {
                 Ok(results) => Ok(results),
                 Err(Error::HttpTransport(_)) | Err(Error::HttpStatus { .. }) => {
-                    self.search_with_transport(&query, bootstrap_config, false)
+                    let anonymous_body = build_search_body(&query, bootstrap_config);
+                    let anonymous_client = Self {
+                        browser_auth: None,
+                        ..self.clone()
+                    };
+                    anonymous_client
+                        .search_with_transport(bootstrap_config, anonymous_body)
                         .await
                 }
                 Err(error) => Err(error),
             }
         } else {
-            self.search_with_transport(&query, bootstrap_config, false)
+            let anonymous_body = build_search_body(&query, bootstrap_config);
+            self.search_with_transport(bootstrap_config, anonymous_body)
                 .await
         }
     }
 
     async fn search_with_transport(
         &self,
-        query: &SearchQuery,
-        bootstrap_config: &BootstrapConfig,
-        authenticated: bool,
+        bootstrap: &BootstrapConfig,
+        body: serde_json::Value,
     ) -> Result<crate::Page<SearchResult>, Error> {
-        let client_version = if authenticated {
-            self.browser_auth
-                .as_ref()
-                .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
-                .map(String::as_str)
-                .unwrap_or(&bootstrap_config.client_version)
-        } else {
-            &bootstrap_config.client_version
-        };
-        let mut search_config = bootstrap_config.clone();
-        search_config.client_version = client_version.to_owned();
-
         let url = format!(
             "{}/search?alt=json&key={}",
             self.base_url.trim_end_matches('/'),
-            bootstrap_config.innertube_api_key
+            bootstrap.innertube_api_key
         );
-        let body = build_search_body(query, &search_config).to_string();
-        let request = self.http_client.post(url).body(body);
-        let request = if authenticated {
-            let browser_auth = self.browser_auth.as_ref().unwrap();
-            request.headers(browser_auth.to_header_map(Some(&bootstrap_config.visitor_id))?)
+        let request = self.http_client.post(url).body(body.to_string());
+        let request = if let Some(browser_auth) = &self.browser_auth {
+            request.headers(browser_auth.to_header_map(Some(&bootstrap.visitor_id))?)
         } else {
             request
                 .header(header::CONTENT_TYPE, "application/json")
                 .header(header::USER_AGENT, USER_AGENT)
-                .header("x-goog-visitor-id", &bootstrap_config.visitor_id)
+                .header("x-goog-visitor-id", &bootstrap.visitor_id)
         };
         let response = request.send().await.map_err(Error::HttpTransport)?;
 
@@ -131,7 +131,7 @@ impl YtMusic {
             serde_json::from_str(&response_body).map_err(Error::JsonDecode)?;
         validate_search_response_structure(&response_json)?;
 
-        let results = parse_search_response(&response_json, query.filter)?;
+        let results = parse_search_response(&response_json, search_filter_from_body(&body))?;
         Ok(crate::Page {
             items: results,
             continuation: None,
@@ -621,6 +621,26 @@ impl YtMusic {
         }
 
         serde_json::from_str(&response_body).map_err(Error::JsonDecode)
+    }
+}
+
+fn search_filter_from_body(body: &serde_json::Value) -> Option<SearchFilter> {
+    match body.get("params").and_then(|value| value.as_str()) {
+        Some("EgWKAQIIAWoMEA4QChADEAQQCRAF") | Some("EgWKAQIIAUICCAFqDBAOEAoQAxAEEAkQBQ%3D%3D") => {
+            Some(SearchFilter::Songs)
+        }
+        Some("EgWKAQIQAWoMEA4QChADEAQQCRAF") | Some("EgWKAQIQAUICCAFqDBAOEAoQAxAEEAkQBQ%3D%3D") => {
+            Some(SearchFilter::Videos)
+        }
+        Some("EgWKAQIYAWoMEA4QChADEAQQCRAF") | Some("EgWKAQIYAUICCAFqDBAOEAoQAxAEEAkQBQ%3D%3D") => {
+            Some(SearchFilter::Albums)
+        }
+        Some("EgWKAQIgAWoMEA4QChADEAQQCRAF") | Some("EgWKAQIgAUICCAFqDBAOEAoQAxAEEAkQBQ%3D%3D") => {
+            Some(SearchFilter::Artists)
+        }
+        Some("Eg-KAQwIABAAGAAgACgBMABqChAEEAMQCRAFEAo%3D")
+        | Some("Eg-KAQwIABAAGAAgACgBMABCAggBagoQBBADEAkQBRAK") => Some(SearchFilter::Playlists),
+        _ => None,
     }
 }
 

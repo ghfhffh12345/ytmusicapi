@@ -173,6 +173,7 @@ async fn authenticated_search_falls_back_to_anonymous_transport_on_http_status_f
         &result.items[1],
         ytmusicapi::SearchResult::Album(album) if album.title == "Random Access Memories"
     ));
+    assert_eq!(result.continuation, None);
 
     let requests = server.received_requests().await.unwrap();
     let post_requests: Vec<_> = requests
@@ -237,6 +238,7 @@ async fn authenticated_unfiltered_search_uses_browser_auth_headers_and_default_m
         &result.items[1],
         ytmusicapi::SearchResult::Album(album) if album.title == "Random Access Memories"
     ));
+    assert_eq!(result.continuation, None);
 
     let requests = server.received_requests().await.unwrap();
     let bootstrap_request = requests
@@ -657,6 +659,15 @@ async fn search_returns_full_first_page_results() {
     let result = client.search(SearchQuery::new("abba")).await.unwrap();
 
     assert_eq!(result.items.len(), 24);
+    assert!(matches!(
+        &result.items[0],
+        ytmusicapi::SearchResult::Artist(artist) if artist.artists[0].name == "Daft Punk"
+    ));
+    assert!(matches!(
+        &result.items[1],
+        ytmusicapi::SearchResult::Album(album) if album.title == "Random Access Memories"
+    ));
+    assert_eq!(result.continuation, None);
 }
 
 #[tokio::test]
