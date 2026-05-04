@@ -1,14 +1,19 @@
 use serde_json::Value;
 
-use crate::model::library::LikedSongs;
-use crate::{Error, LikedSongItem};
+use crate::{Error, LikedSongItem, LikedSongsPage};
 
 use super::{
-    core::{parse_thumbnails, required_runs_text, section_message_only_without_subtext},
+    core::{
+        continuation_shelf, continuation_shelf_contents, extract_continuation_token,
+        parse_thumbnails, required_runs_text, section_message_only_without_subtext,
+    },
     songs::parse_song_list_item,
 };
 
-pub(crate) fn parse_liked_songs_response(response: &Value) -> Result<LikedSongs, Error> {
+const LIKED_SONGS_PLAYLIST_ID: &str = "LM";
+const LIKED_SONGS_TITLE: &str = "Liked Songs";
+
+pub(crate) fn parse_liked_songs_response(response: &Value) -> Result<LikedSongsPage, Error> {
     let sections = required_array_at(
         response,
         "/contents/twoColumnBrowseResultsRenderer/tabs/0/tabRenderer/content/sectionListRenderer/contents",
@@ -20,14 +25,31 @@ pub(crate) fn parse_liked_songs_response(response: &Value) -> Result<LikedSongs,
         .ok_or_else(|| Error::Parse("library response missing liked songs header".to_owned()))?;
     let items = shelf_contents_or_empty(sections, "library response missing liked songs items")?;
 
-    Ok(LikedSongs {
-        playlist_id: "LM".to_owned(),
+    Ok(LikedSongsPage {
+        playlist_id: LIKED_SONGS_PLAYLIST_ID.to_owned(),
         title: required_runs_text(header, "/title/runs")?,
         items: items
             .iter()
             .map(parse_liked_song_item)
             .collect::<Result<Vec<_>, _>>()?,
         thumbnails: parse_thumbnails(header)?,
+        continuation: shelf_continuation_or_empty(
+            sections,
+            "library response missing liked songs items",
+        )?,
+    })
+}
+
+pub(crate) fn parse_liked_songs_continuation(response: &Value) -> Result<LikedSongsPage, Error> {
+    Ok(LikedSongsPage {
+        playlist_id: LIKED_SONGS_PLAYLIST_ID.to_owned(),
+        title: LIKED_SONGS_TITLE.to_owned(),
+        items: continuation_shelf_contents(response)?
+            .iter()
+            .map(parse_liked_song_item)
+            .collect::<Result<Vec<_>, _>>()?,
+        thumbnails: vec![],
+        continuation: extract_continuation_token(continuation_shelf(response)?)?,
     })
 }
 
@@ -57,6 +79,30 @@ fn shelf_contents_or_empty<'a>(
 
     if !saw_non_header_section {
         return Ok(&[]);
+    }
+
+    Err(Error::Parse(missing_message.to_owned()))
+}
+
+fn shelf_continuation_or_empty(
+    sections: &[Value],
+    missing_message: &str,
+) -> Result<Option<crate::ContinuationToken>, Error> {
+    let mut saw_message_only_section = false;
+    let mut saw_non_header_section = false;
+
+    for section in sections {
+        if let Some(renderer) = section.get("musicPlaylistShelfRenderer") {
+            return extract_continuation_token(renderer);
+        }
+
+        let is_header_section = section.get("musicResponsiveHeaderRenderer").is_some();
+        saw_non_header_section |= !is_header_section;
+        saw_message_only_section |= section_empty_liked_songs_message(section);
+    }
+
+    if saw_message_only_section || !saw_non_header_section {
+        return Ok(None);
     }
 
     Err(Error::Parse(missing_message.to_owned()))

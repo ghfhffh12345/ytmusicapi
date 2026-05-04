@@ -1,15 +1,27 @@
 use serde_json::Value;
 
-use crate::{AlbumRef, ArtistRef, Error, LibraryLikeStatus, LibrarySong, Thumbnail};
+use crate::{AlbumRef, ArtistRef, Error, LibraryLikeStatus, LibrarySong, Page, Thumbnail};
 
-use super::core::{library_shelf_contents, optional_text, parse_thumbnails, required_text};
+use super::core::{
+    continuation_shelf, continuation_shelf_contents, extract_continuation_token,
+    library_shelf_contents, library_shelf_continuation, optional_text, parse_thumbnails,
+    required_text,
+};
 
-pub(crate) fn parse_library_songs_response(response: &Value) -> Result<Vec<LibrarySong>, Error> {
-    library_shelf_contents(response)?
-        .iter()
-        .skip_while(|item| is_leading_non_song_control_row(item))
-        .map(parse_library_song)
-        .collect()
+pub(crate) fn parse_library_songs_response(response: &Value) -> Result<Page<LibrarySong>, Error> {
+    Ok(Page {
+        items: parse_library_song_items(library_shelf_contents(response)?)?,
+        continuation: library_shelf_continuation(response)?,
+    })
+}
+
+pub(crate) fn parse_library_songs_continuation(
+    response: &Value,
+) -> Result<Page<LibrarySong>, Error> {
+    Ok(Page {
+        items: parse_library_song_items(continuation_shelf_contents(response)?)?,
+        continuation: extract_continuation_token(continuation_shelf(response)?)?,
+    })
 }
 
 fn parse_library_song(item: &Value) -> Result<LibrarySong, Error> {
@@ -22,6 +34,14 @@ fn parse_library_song(item: &Value) -> Result<LibrarySong, Error> {
         thumbnails: parsed.thumbnails,
         like_status: parsed.like_status,
     })
+}
+
+fn parse_library_song_items(items: &[Value]) -> Result<Vec<LibrarySong>, Error> {
+    items
+        .iter()
+        .skip_while(|item| is_leading_non_song_control_row(item))
+        .map(parse_library_song)
+        .collect()
 }
 
 pub(crate) struct ParsedSongListItem {

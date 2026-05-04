@@ -457,10 +457,30 @@ impl YtMusic {
         let body = build_library_songs_body(&browse_config);
 
         let response = self.post_browse(body).await?;
-        crate::library::songs::parse_library_songs_response(&response).map(|items| crate::Page {
-            items,
-            continuation: None,
-        })
+        crate::library::songs::parse_library_songs_response(&response)
+    }
+
+    pub async fn get_library_songs_continuation(
+        &self,
+        token: crate::ContinuationToken,
+    ) -> Result<crate::Page<crate::LibrarySong>, Error> {
+        if self.browser_auth.is_none() {
+            return Err(Error::UnsupportedFeature(
+                "get_library_songs_continuation requires browser authentication".to_owned(),
+            ));
+        }
+
+        let bootstrap_config = self.bootstrap_config().await?;
+        let client_version = self
+            .browser_auth
+            .as_ref()
+            .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
+            .map(String::as_str)
+            .unwrap_or(&bootstrap_config.client_version);
+        let body = build_continuation_body(&token, client_version);
+
+        let response = self.post_browse(body).await?;
+        crate::library::songs::parse_library_songs_continuation(&response)
     }
 
     pub async fn get_liked_songs(&self) -> Result<crate::LikedSongsPage, Error> {
@@ -482,15 +502,30 @@ impl YtMusic {
         let body = build_liked_songs_body(&browse_config);
 
         let response = self.post_browse(body).await?;
-        crate::library::liked_songs::parse_liked_songs_response(&response).map(|liked_songs| {
-            crate::LikedSongsPage {
-                playlist_id: liked_songs.playlist_id,
-                title: liked_songs.title,
-                items: liked_songs.items,
-                thumbnails: liked_songs.thumbnails,
-                continuation: None,
-            }
-        })
+        crate::library::liked_songs::parse_liked_songs_response(&response)
+    }
+
+    pub async fn get_liked_songs_continuation(
+        &self,
+        token: crate::ContinuationToken,
+    ) -> Result<crate::LikedSongsPage, Error> {
+        if self.browser_auth.is_none() {
+            return Err(Error::UnsupportedFeature(
+                "get_liked_songs_continuation requires browser authentication".to_owned(),
+            ));
+        }
+
+        let bootstrap_config = self.bootstrap_config().await?;
+        let client_version = self
+            .browser_auth
+            .as_ref()
+            .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
+            .map(String::as_str)
+            .unwrap_or(&bootstrap_config.client_version);
+        let body = build_continuation_body(&token, client_version);
+
+        let response = self.post_browse(body).await?;
+        crate::library::liked_songs::parse_liked_songs_continuation(&response)
     }
 
     pub async fn get_saved_episodes(&self) -> Result<crate::SavedEpisodesPage, Error> {
@@ -512,15 +547,30 @@ impl YtMusic {
         let body = build_saved_episodes_body(&browse_config);
 
         let response = self.post_browse(body).await?;
-        crate::library::saved_episodes::parse_saved_episodes_response(&response).map(
-            |saved_episodes| crate::SavedEpisodesPage {
-                playlist_id: saved_episodes.playlist_id,
-                title: saved_episodes.title,
-                items: saved_episodes.items,
-                thumbnails: saved_episodes.thumbnails,
-                continuation: None,
-            },
-        )
+        crate::library::saved_episodes::parse_saved_episodes_response(&response)
+    }
+
+    pub async fn get_saved_episodes_continuation(
+        &self,
+        token: crate::ContinuationToken,
+    ) -> Result<crate::SavedEpisodesPage, Error> {
+        if self.browser_auth.is_none() {
+            return Err(Error::UnsupportedFeature(
+                "get_saved_episodes_continuation requires browser authentication".to_owned(),
+            ));
+        }
+
+        let bootstrap_config = self.bootstrap_config().await?;
+        let client_version = self
+            .browser_auth
+            .as_ref()
+            .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
+            .map(String::as_str)
+            .unwrap_or(&bootstrap_config.client_version);
+        let body = build_continuation_body(&token, client_version);
+
+        let response = self.post_browse(body).await?;
+        crate::library::saved_episodes::parse_saved_episodes_continuation(&response)
     }
 
     async fn bootstrap_config(&self) -> Result<&BootstrapConfig, Error> {

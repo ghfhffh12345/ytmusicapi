@@ -5,7 +5,8 @@ use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 use ytmusicapi::{
-    Error, SavedEpisodeItem, SavedEpisodesPage, Thumbnail, YtMusic, setup_browser_auth,
+    ContinuationToken, Error, SavedEpisodeItem, SavedEpisodesPage, Thumbnail, YtMusic,
+    setup_browser_auth,
 };
 
 fn browser_auth_json() -> String {
@@ -186,6 +187,57 @@ fn empty_saved_episodes_response() -> serde_json::Value {
                                 }]
                             }
                         }
+                    }
+                }]
+            }
+        }
+    })
+}
+
+fn saved_episodes_continuation_response() -> serde_json::Value {
+    json!({
+        "continuationContents": {
+            "musicShelfContinuation": {
+                "contents": [{
+                    "musicResponsiveListItemRenderer": {
+                        "playlistItemData": {
+                            "videoId": "episode-3"
+                        },
+                        "flexColumns": [{
+                            "musicResponsiveListItemFlexColumnRenderer": {
+                                "text": {
+                                    "runs": [{
+                                        "text": "The Robots Return",
+                                        "navigationEndpoint": {
+                                            "watchEndpoint": {
+                                                "videoId": "episode-3"
+                                            }
+                                        }
+                                    }]
+                                }
+                            }
+                        }, {
+                            "musicResponsiveListItemFlexColumnRenderer": {
+                                "text": {
+                                    "runs": [{
+                                        "text": "Relay FM"
+                                    }, {
+                                        "text": " • "
+                                    }, {
+                                        "text": "Connected"
+                                    }, {
+                                        "text": " • "
+                                    }, {
+                                        "text": "1:03:11"
+                                    }]
+                                }
+                            }
+                        }]
+                    }
+                }],
+                "continuations": [{
+                    "nextContinuationData": {
+                        "continuation": "saved-token-2"
                     }
                 }]
             }
@@ -430,6 +482,60 @@ async fn get_saved_episodes_returns_typed_wrapper_and_uses_vlse_browse_id() {
                 }
             }
         })
+    );
+}
+
+#[tokio::test]
+async fn get_saved_episodes_continuation_preserves_wrapper_metadata() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "9.99999999.99.99" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_json(saved_episodes_continuation_response()),
+        )
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let saved_episodes = client
+        .get_saved_episodes_continuation(ContinuationToken::new("saved-token-1").unwrap())
+        .await
+        .unwrap();
+    assert_eq!(
+        saved_episodes,
+        SavedEpisodesPage {
+            playlist_id: "SE".to_owned(),
+            title: "Saved Episodes".to_owned(),
+            items: vec![SavedEpisodeItem {
+                video_id: "episode-3".to_owned(),
+                title: "The Robots Return".to_owned(),
+                channel: "Relay FM".to_owned(),
+                podcast: "Connected".to_owned(),
+                duration: Some("1:03:11".to_owned()),
+                thumbnails: vec![],
+            }],
+            thumbnails: vec![],
+            continuation: Some(ContinuationToken::new("saved-token-2").unwrap()),
+        }
     );
 }
 
