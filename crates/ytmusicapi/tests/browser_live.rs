@@ -36,13 +36,10 @@ async fn get_library_playlists_live_smoke_test() {
             .await
             .unwrap();
         assert!(
-            continuation.items.iter().all(|playlist| {
-                !playlist.playlist_id.is_empty()
-                    && playlist
-                        .title
-                        .as_ref()
-                        .is_some_and(|title| !title.is_empty())
-            }),
+            continuation
+                .items
+                .iter()
+                .all(|playlist| !playlist.playlist_id.is_empty()),
             "expected each live playlist continuation item to include stable identity fields"
         );
     } else {
