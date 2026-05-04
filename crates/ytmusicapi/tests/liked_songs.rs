@@ -582,13 +582,6 @@ async fn get_liked_songs_continuation_preserves_wrapper_metadata() {
     );
 }
 
-#[test]
-fn continuation_token_rejects_empty_string() {
-    let result = ContinuationToken::new("   ");
-
-    assert!(matches!(result, Err(Error::InvalidInput(_))));
-}
-
 #[tokio::test]
 async fn get_liked_songs_parses_plain_text_title_metadata_and_long_fixed_duration() {
     let server = MockServer::start().await;

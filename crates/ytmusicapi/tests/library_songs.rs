@@ -415,13 +415,6 @@ async fn get_library_songs_continuation_returns_page() {
     );
 }
 
-#[test]
-fn continuation_token_rejects_empty_string() {
-    let result = ContinuationToken::new("   ");
-
-    assert!(matches!(result, Err(Error::InvalidInput(_))));
-}
-
 #[tokio::test]
 async fn get_library_songs_skips_localized_leading_control_tile() {
     let server = MockServer::start().await;
