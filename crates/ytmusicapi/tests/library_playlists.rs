@@ -270,6 +270,13 @@ async fn get_library_playlists_continuation_returns_page_and_posts_token_body() 
     );
 }
 
+#[test]
+fn continuation_token_rejects_empty_string() {
+    let result = ContinuationToken::new("   ");
+
+    assert!(matches!(result, Err(Error::InvalidInput(_))));
+}
+
 #[tokio::test]
 async fn get_library_playlists_skips_leading_grid_item() {
     let server = MockServer::start().await;

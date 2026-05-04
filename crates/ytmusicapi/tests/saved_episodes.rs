@@ -539,6 +539,13 @@ async fn get_saved_episodes_continuation_preserves_wrapper_metadata() {
     );
 }
 
+#[test]
+fn continuation_token_rejects_empty_string() {
+    let result = ContinuationToken::new("   ");
+
+    assert!(matches!(result, Err(Error::InvalidInput(_))));
+}
+
 #[tokio::test]
 async fn get_saved_episodes_errors_when_subtitle_metadata_is_incomplete() {
     let server = MockServer::start().await;
