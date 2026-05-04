@@ -4,7 +4,10 @@ use serde_json::json;
 use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
-use ytmusicapi::{ArtistRef, Error, LibraryPlaylist, Thumbnail, YtMusic, setup_browser_auth};
+use ytmusicapi::{
+    ArtistRef, ContinuationToken, Error, LibraryPlaylist, Page, Thumbnail, YtMusic,
+    setup_browser_auth,
+};
 
 fn browser_auth_json() -> String {
     setup_browser_auth(
@@ -78,7 +81,7 @@ fn empty_library_playlists_response() -> serde_json::Value {
 }
 
 #[tokio::test]
-async fn get_library_playlists_returns_first_page_results() {
+async fn get_library_playlists_returns_page_and_continuation() {
     let server = MockServer::start().await;
 
     Mock::given(method("GET"))
@@ -120,7 +123,7 @@ async fn get_library_playlists_returns_first_page_results() {
                                                     "thumbnailRenderer": { "musicThumbnailRenderer": { "thumbnail": { "thumbnails": [] } } }
                                                 }
                                             }],
-                                            "continuations": [{ "nextContinuationData": { "continuation": "ignored-in-this-slice" } }]
+                                            "continuations": [{ "nextContinuationData": { "continuation": "playlist-token-1" } }]
                                         }
                                     }]
                                 }
@@ -147,33 +150,131 @@ async fn get_library_playlists_returns_first_page_results() {
     let playlists = client.get_library_playlists().await.unwrap();
     assert_eq!(
         playlists,
-        vec![
-            LibraryPlaylist {
-                playlist_id: "PL123".to_owned(),
-                title: Some("Synthwave Mix".to_owned()),
+        Page {
+            items: vec![
+                LibraryPlaylist {
+                    playlist_id: "PL123".to_owned(),
+                    title: Some("Synthwave Mix".to_owned()),
+                    authors: vec![ArtistRef {
+                        id: String::new(),
+                        name: "OpenAI".to_owned(),
+                    }],
+                    item_count: Some(15),
+                    thumbnails: vec![Thumbnail {
+                        url: "https://example.com/1.jpg".to_owned(),
+                        width: 300,
+                        height: 300,
+                    }],
+                },
+                LibraryPlaylist {
+                    playlist_id: "PL999".to_owned(),
+                    title: None,
+                    authors: vec![ArtistRef {
+                        id: String::new(),
+                        name: "Archive".to_owned(),
+                    }],
+                    item_count: None,
+                    thumbnails: vec![],
+                }
+            ],
+            continuation: Some(ContinuationToken::new("playlist-token-1").unwrap()),
+        }
+    );
+}
+
+#[tokio::test]
+async fn get_library_playlists_continuation_returns_page_and_posts_token_body() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "continuationContents": {
+                "gridContinuation": {
+                    "items": [{
+                        "musicTwoRowItemRenderer": {
+                            "title": { "runs": [{ "text": "Focus Flow", "navigationEndpoint": { "browseEndpoint": { "browseId": "VLPL222" } } }] },
+                            "subtitle": { "runs": [{ "text": "OpenAI" }, { "text": " • " }, { "text": "22 songs" }] },
+                            "thumbnailRenderer": { "musicThumbnailRenderer": { "thumbnail": { "thumbnails": [{ "url": "https://example.com/2.jpg", "width": 300, "height": 300 }] } } }
+                        }
+                    }],
+                    "continuations": [{ "nextContinuationData": { "continuation": "playlist-token-2" } }]
+                }
+            }
+        })))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let playlists = client
+        .get_library_playlists_continuation(ContinuationToken::new("playlist-token-1").unwrap())
+        .await
+        .unwrap();
+    assert_eq!(
+        playlists,
+        Page {
+            items: vec![LibraryPlaylist {
+                playlist_id: "PL222".to_owned(),
+                title: Some("Focus Flow".to_owned()),
                 authors: vec![ArtistRef {
                     id: String::new(),
                     name: "OpenAI".to_owned(),
                 }],
-                item_count: Some(15),
+                item_count: Some(22),
                 thumbnails: vec![Thumbnail {
-                    url: "https://example.com/1.jpg".to_owned(),
+                    url: "https://example.com/2.jpg".to_owned(),
                     width: 300,
                     height: 300,
                 }],
-            },
-            LibraryPlaylist {
-                playlist_id: "PL999".to_owned(),
-                title: None,
-                authors: vec![ArtistRef {
-                    id: String::new(),
-                    name: "Archive".to_owned(),
-                }],
-                item_count: None,
-                thumbnails: vec![],
-            }
-        ]
+            }],
+            continuation: Some(ContinuationToken::new("playlist-token-2").unwrap()),
+        }
     );
+
+    let requests = server.received_requests().await.unwrap();
+    let browse = requests
+        .iter()
+        .find(|request| request.method.as_str() == "POST")
+        .unwrap();
+    let body: serde_json::Value = serde_json::from_slice(&browse.body).unwrap();
+
+    assert_eq!(
+        body,
+        json!({
+            "continuation": "playlist-token-1",
+            "context": {
+                "client": {
+                    "clientName": "WEB_REMIX",
+                    "clientVersion": "1.20250501.01.00"
+                }
+            }
+        })
+    );
+}
+
+#[test]
+fn continuation_token_rejects_empty_string() {
+    let result = ContinuationToken::new("");
+
+    assert!(matches!(result, Err(Error::InvalidInput(_))));
 }
 
 #[tokio::test]
@@ -238,7 +339,7 @@ async fn get_library_playlists_skips_leading_grid_item() {
 
     let playlists = client.get_library_playlists().await.unwrap();
     assert_eq!(
-        playlists,
+        playlists.items,
         vec![LibraryPlaylist {
             playlist_id: "PL456".to_owned(),
             title: Some("Actual Playlist".to_owned()),
@@ -282,7 +383,7 @@ async fn get_library_playlists_returns_empty_results_for_empty_library_message()
         .unwrap();
 
     let playlists = client.get_library_playlists().await.unwrap();
-    assert!(playlists.is_empty());
+    assert!(playlists.items.is_empty());
 }
 
 #[tokio::test]
@@ -347,7 +448,7 @@ async fn get_library_playlists_keeps_first_item_when_it_is_a_playlist() {
 
     let playlists = client.get_library_playlists().await.unwrap();
     assert_eq!(
-        playlists,
+        playlists.items,
         vec![
             LibraryPlaylist {
                 playlist_id: "PLFIRST".to_owned(),
@@ -435,7 +536,7 @@ async fn get_library_playlists_tolerates_missing_title_runs() {
 
     let playlists = client.get_library_playlists().await.unwrap();
     assert_eq!(
-        playlists,
+        playlists.items,
         vec![LibraryPlaylist {
             playlist_id: "PLNOTITLE".to_owned(),
             title: None,
@@ -511,7 +612,7 @@ async fn get_library_playlists_does_not_treat_localized_count_text_as_author() {
 
     let playlists = client.get_library_playlists().await.unwrap();
     assert_eq!(
-        playlists,
+        playlists.items,
         vec![LibraryPlaylist {
             playlist_id: "PL777".to_owned(),
             title: Some("Regional Mix".to_owned()),
@@ -587,7 +688,7 @@ async fn get_library_playlists_keeps_numeric_artist_names_before_bullet_counts()
 
     let playlists = client.get_library_playlists().await.unwrap();
     assert_eq!(
-        playlists,
+        playlists.items,
         vec![LibraryPlaylist {
             playlist_id: "PL250".to_owned(),
             title: Some("Throwback Mix".to_owned()),
@@ -663,7 +764,7 @@ async fn get_library_playlists_keeps_numeric_artist_names_without_bullet_separat
 
     let playlists = client.get_library_playlists().await.unwrap();
     assert_eq!(
-        playlists,
+        playlists.items,
         vec![LibraryPlaylist {
             playlist_id: "PL500".to_owned(),
             title: Some("Club Classics".to_owned()),
@@ -739,7 +840,7 @@ async fn get_library_playlists_parses_comma_formatted_item_counts() {
 
     let playlists = client.get_library_playlists().await.unwrap();
     assert_eq!(
-        playlists,
+        playlists.items,
         vec![LibraryPlaylist {
             playlist_id: "PL1234".to_owned(),
             title: Some("Huge Mix".to_owned()),
@@ -815,7 +916,7 @@ async fn get_library_playlists_does_not_treat_trailing_metadata_as_author() {
 
     let playlists = client.get_library_playlists().await.unwrap();
     assert_eq!(
-        playlists,
+        playlists.items,
         vec![LibraryPlaylist {
             playlist_id: "PL778".to_owned(),
             title: Some("Shared Mix".to_owned()),
@@ -1095,9 +1196,12 @@ async fn get_library_playlists_supports_wrapped_item_section_grid() {
         .unwrap();
 
     let playlists = client.get_library_playlists().await.unwrap();
-    assert_eq!(playlists.len(), 1);
-    assert_eq!(playlists[0].playlist_id, "PLWRAPPED");
-    assert_eq!(playlists[0].title.as_deref(), Some("Wrapped Playlist"));
+    assert_eq!(playlists.items.len(), 1);
+    assert_eq!(playlists.items[0].playlist_id, "PLWRAPPED");
+    assert_eq!(
+        playlists.items[0].title.as_deref(),
+        Some("Wrapped Playlist")
+    );
 }
 
 #[tokio::test]
@@ -1185,7 +1289,7 @@ async fn get_library_playlists_supports_legacy_library_tab_without_selected_mark
 
     let playlists = client.get_library_playlists().await.unwrap();
     assert_eq!(
-        playlists,
+        playlists.items,
         vec![LibraryPlaylist {
             playlist_id: "PLLEGACY".to_owned(),
             title: Some("Legacy Playlist".to_owned()),

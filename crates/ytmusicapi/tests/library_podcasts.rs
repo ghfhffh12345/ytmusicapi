@@ -5,7 +5,8 @@ use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 use ytmusicapi::{
-    Error, LibraryPodcast, LibraryPodcastChannel, Thumbnail, YtMusic, setup_browser_auth,
+    ContinuationToken, Error, LibraryPodcast, LibraryPodcastChannel, Thumbnail, YtMusic,
+    setup_browser_auth,
 };
 
 fn browser_auth_json() -> String {
@@ -106,6 +107,11 @@ fn grid_podcasts_response() -> serde_json::Value {
                                                     }
                                                 }
                                             }
+                                        }],
+                                        "continuations": [{
+                                            "nextContinuationData": {
+                                                "continuation": "podcast-token-1"
+                                            }
                                         }]
                                     }
                                 }]
@@ -192,7 +198,7 @@ async fn get_library_podcasts_returns_first_page_results() {
 
     let podcasts = client.get_library_podcasts().await.unwrap();
     assert_eq!(
-        podcasts,
+        podcasts.items,
         vec![
             LibraryPodcast {
                 title: "New Episodes".to_owned(),
@@ -223,6 +229,10 @@ async fn get_library_podcasts_returns_first_page_results() {
                 }],
             }
         ]
+    );
+    assert_eq!(
+        podcasts.continuation,
+        Some(ContinuationToken::new("podcast-token-1").unwrap())
     );
 
     let requests = server.received_requests().await.unwrap();
@@ -276,5 +286,5 @@ async fn get_library_podcasts_returns_empty_results_for_control_tile_only_grid()
         .unwrap();
 
     let podcasts = client.get_library_podcasts().await.unwrap();
-    assert_eq!(podcasts, vec![]);
+    assert_eq!(podcasts.items, vec![]);
 }

@@ -5,8 +5,8 @@ use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 use ytmusicapi::{
-    AlbumRef, ArtistRef, Error, LibraryLikeStatus, LikedSongItem, LikedSongs, Thumbnail, YtMusic,
-    setup_browser_auth,
+    AlbumRef, ArtistRef, ContinuationToken, Error, LibraryLikeStatus, LikedSongItem,
+    LikedSongsPage, Thumbnail, YtMusic, setup_browser_auth,
 };
 
 fn browser_auth_json() -> String {
@@ -157,6 +157,11 @@ fn liked_songs_response() -> serde_json::Value {
                                                     }
                                                 }]
                                             }
+                                        }],
+                                        "continuations": [{
+                                            "nextContinuationData": {
+                                                "continuation": "liked-token-1"
+                                            }
                                         }]
                                     }
                                 }]
@@ -211,6 +216,58 @@ fn empty_liked_songs_response() -> serde_json::Value {
                                 }]
                             }
                         }
+                    }
+                }]
+            }
+        }
+    })
+}
+
+fn liked_songs_continuation_response() -> serde_json::Value {
+    json!({
+        "continuationContents": {
+            "musicShelfContinuation": {
+                "contents": [{
+                    "musicResponsiveListItemRenderer": {
+                        "playlistItemData": {
+                            "videoId": "liked-song-3"
+                        },
+                        "flexColumns": [{
+                            "musicResponsiveListItemFlexColumnRenderer": {
+                                "text": {
+                                    "runs": [{
+                                        "text": "Windowlicker",
+                                        "navigationEndpoint": {
+                                            "watchEndpoint": {
+                                                "videoId": "liked-song-3"
+                                            }
+                                        }
+                                    }]
+                                }
+                            }
+                        }, {
+                            "musicResponsiveListItemFlexColumnRenderer": {
+                                "text": {
+                                    "runs": [{
+                                        "text": "Aphex Twin",
+                                        "navigationEndpoint": {
+                                            "browseEndpoint": {
+                                                "browseId": "UCAPHEX"
+                                            }
+                                        }
+                                    }, {
+                                        "text": " • "
+                                    }, {
+                                        "text": "6:07"
+                                    }]
+                                }
+                            }
+                        }]
+                    }
+                }],
+                "continuations": [{
+                    "nextContinuationData": {
+                        "continuation": "liked-token-2"
                     }
                 }]
             }
@@ -404,7 +461,7 @@ async fn get_liked_songs_returns_typed_wrapper_and_uses_vllm_browse_id() {
     let liked_songs = client.get_liked_songs().await.unwrap();
     assert_eq!(
         liked_songs,
-        LikedSongs {
+        LikedSongsPage {
             playlist_id: "LM".to_owned(),
             title: "Liked Songs".to_owned(),
             items: vec![
@@ -445,6 +502,7 @@ async fn get_liked_songs_returns_typed_wrapper_and_uses_vllm_browse_id() {
                 width: 512,
                 height: 512,
             }],
+            continuation: Some(ContinuationToken::new("liked-token-1").unwrap()),
         }
     );
 
@@ -465,6 +523,62 @@ async fn get_liked_songs_returns_typed_wrapper_and_uses_vllm_browse_id() {
                 }
             }
         })
+    );
+}
+
+#[tokio::test]
+async fn get_liked_songs_continuation_preserves_wrapper_metadata() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "9.99999999.99.99" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(liked_songs_continuation_response()))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    let liked_songs = client
+        .get_liked_songs_continuation(ContinuationToken::new("liked-token-1").unwrap())
+        .await
+        .unwrap();
+    assert_eq!(
+        liked_songs,
+        LikedSongsPage {
+            playlist_id: "LM".to_owned(),
+            title: "Liked Songs".to_owned(),
+            items: vec![LikedSongItem {
+                video_id: "liked-song-3".to_owned(),
+                title: "Windowlicker".to_owned(),
+                artists: vec![ArtistRef {
+                    id: "UCAPHEX".to_owned(),
+                    name: "Aphex Twin".to_owned(),
+                }],
+                album: None,
+                duration: Some("6:07".to_owned()),
+                thumbnails: vec![],
+                like_status: None,
+            }],
+            thumbnails: vec![],
+            continuation: Some(ContinuationToken::new("liked-token-2").unwrap()),
+        }
     );
 }
 
@@ -579,7 +693,7 @@ async fn get_liked_songs_returns_empty_wrapper_for_empty_library_message() {
     let liked_songs = client.get_liked_songs().await.unwrap();
     assert_eq!(
         liked_songs,
-        LikedSongs {
+        LikedSongsPage {
             playlist_id: "LM".to_owned(),
             title: "Liked Songs".to_owned(),
             items: vec![],
@@ -588,6 +702,7 @@ async fn get_liked_songs_returns_empty_wrapper_for_empty_library_message() {
                 width: 512,
                 height: 512,
             }],
+            continuation: None,
         }
     );
 }
@@ -626,7 +741,7 @@ async fn get_liked_songs_returns_empty_wrapper_for_simple_text_message_only_page
     let liked_songs = client.get_liked_songs().await.unwrap();
     assert_eq!(
         liked_songs,
-        LikedSongs {
+        LikedSongsPage {
             playlist_id: "LM".to_owned(),
             title: "Liked Songs".to_owned(),
             items: vec![],
@@ -635,6 +750,7 @@ async fn get_liked_songs_returns_empty_wrapper_for_simple_text_message_only_page
                 width: 512,
                 height: 512,
             }],
+            continuation: None,
         }
     );
 }
@@ -673,7 +789,7 @@ async fn get_liked_songs_returns_empty_wrapper_for_header_only_page() {
     let liked_songs = client.get_liked_songs().await.unwrap();
     assert_eq!(
         liked_songs,
-        LikedSongs {
+        LikedSongsPage {
             playlist_id: "LM".to_owned(),
             title: "Liked Songs".to_owned(),
             items: vec![],
@@ -682,6 +798,7 @@ async fn get_liked_songs_returns_empty_wrapper_for_header_only_page() {
                 width: 512,
                 height: 512,
             }],
+            continuation: None,
         }
     );
 }

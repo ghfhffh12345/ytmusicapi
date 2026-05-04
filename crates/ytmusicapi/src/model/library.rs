@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::{AlbumRef, ArtistRef, Thumbnail};
+use crate::{AlbumRef, ArtistRef, Error, Thumbnail};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -8,6 +8,35 @@ pub enum LibraryLikeStatus {
     Like,
     Indifferent,
     Dislike,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[serde(transparent)]
+pub struct ContinuationToken(String);
+
+impl ContinuationToken {
+    pub fn new(token: impl Into<String>) -> Result<Self, Error> {
+        let token = token.into();
+        if token.trim().is_empty() {
+            return Err(Error::InvalidInput(
+                "continuation token must not be empty".to_owned(),
+            ));
+        }
+
+        Ok(Self(token))
+    }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Page<T> {
+    pub items: Vec<T>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub continuation: Option<ContinuationToken>,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
@@ -139,6 +168,17 @@ pub struct LikedSongs {
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct LikedSongsPage {
+    pub playlist_id: String,
+    pub title: String,
+    pub items: Vec<LikedSongItem>,
+    pub thumbnails: Vec<Thumbnail>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub continuation: Option<ContinuationToken>,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SavedEpisodeItem {
     pub video_id: String,
     pub title: String,
@@ -156,4 +196,15 @@ pub struct SavedEpisodes {
     pub title: String,
     pub items: Vec<SavedEpisodeItem>,
     pub thumbnails: Vec<Thumbnail>,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SavedEpisodesPage {
+    pub playlist_id: String,
+    pub title: String,
+    pub items: Vec<SavedEpisodeItem>,
+    pub thumbnails: Vec<Thumbnail>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub continuation: Option<ContinuationToken>,
 }

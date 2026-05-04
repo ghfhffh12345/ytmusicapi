@@ -1,16 +1,19 @@
 use serde_json::Value;
 
-use crate::{Error, SavedEpisodeItem, SavedEpisodes};
+use crate::{Error, SavedEpisodeItem, SavedEpisodesPage};
 
 use super::{
     core::{
-        optional_text, parse_thumbnails, required_runs_text, required_text,
-        section_message_only_without_subtext,
+        continuation_shelf, continuation_shelf_contents, extract_continuation_token, optional_text,
+        parse_thumbnails, required_runs_text, required_text, section_message_only_without_subtext,
     },
     songs::{column_title_text, flex_column_runs, looks_like_duration},
 };
 
-pub(crate) fn parse_saved_episodes_response(response: &Value) -> Result<SavedEpisodes, Error> {
+const SAVED_EPISODES_PLAYLIST_ID: &str = "SE";
+const SAVED_EPISODES_TITLE: &str = "Saved Episodes";
+
+pub(crate) fn parse_saved_episodes_response(response: &Value) -> Result<SavedEpisodesPage, Error> {
     let sections = required_array_at(
         response,
         "/contents/twoColumnBrowseResultsRenderer/tabs/0/tabRenderer/content/sectionListRenderer/contents",
@@ -22,14 +25,33 @@ pub(crate) fn parse_saved_episodes_response(response: &Value) -> Result<SavedEpi
         .ok_or_else(|| Error::Parse("library response missing saved episodes header".to_owned()))?;
     let items = shelf_contents_or_empty(sections, "library response missing saved episodes items")?;
 
-    Ok(SavedEpisodes {
-        playlist_id: "SE".to_owned(),
+    Ok(SavedEpisodesPage {
+        playlist_id: SAVED_EPISODES_PLAYLIST_ID.to_owned(),
         title: required_runs_text(header, "/title/runs")?,
         items: items
             .iter()
             .map(parse_saved_episode_item)
             .collect::<Result<Vec<_>, _>>()?,
         thumbnails: parse_thumbnails(header)?,
+        continuation: shelf_continuation_or_empty(
+            sections,
+            "library response missing saved episodes items",
+        )?,
+    })
+}
+
+pub(crate) fn parse_saved_episodes_continuation(
+    response: &Value,
+) -> Result<SavedEpisodesPage, Error> {
+    Ok(SavedEpisodesPage {
+        playlist_id: SAVED_EPISODES_PLAYLIST_ID.to_owned(),
+        title: SAVED_EPISODES_TITLE.to_owned(),
+        items: continuation_shelf_contents(response)?
+            .iter()
+            .map(parse_saved_episode_item)
+            .collect::<Result<Vec<_>, _>>()?,
+        thumbnails: vec![],
+        continuation: extract_continuation_token(continuation_shelf(response)?)?,
     })
 }
 
@@ -59,6 +81,30 @@ fn shelf_contents_or_empty<'a>(
 
     if !saw_non_header_section {
         return Ok(&[]);
+    }
+
+    Err(Error::Parse(missing_message.to_owned()))
+}
+
+fn shelf_continuation_or_empty(
+    sections: &[Value],
+    missing_message: &str,
+) -> Result<Option<crate::ContinuationToken>, Error> {
+    let mut saw_message_only_section = false;
+    let mut saw_non_header_section = false;
+
+    for section in sections {
+        if let Some(renderer) = section.get("musicPlaylistShelfRenderer") {
+            return extract_continuation_token(renderer);
+        }
+
+        let is_header_section = section.get("musicResponsiveHeaderRenderer").is_some();
+        saw_non_header_section |= !is_header_section;
+        saw_message_only_section |= section_empty_saved_episodes_message(section);
+    }
+
+    if saw_message_only_section || !saw_non_header_section {
+        return Ok(None);
     }
 
     Err(Error::Parse(missing_message.to_owned()))

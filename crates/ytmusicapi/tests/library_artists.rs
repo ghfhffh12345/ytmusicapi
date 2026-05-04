@@ -4,7 +4,7 @@ use serde_json::json;
 use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
-use ytmusicapi::{Error, LibraryArtist, Thumbnail, YtMusic, setup_browser_auth};
+use ytmusicapi::{ContinuationToken, Error, LibraryArtist, Thumbnail, YtMusic, setup_browser_auth};
 
 fn browser_auth_json() -> String {
     setup_browser_auth(
@@ -92,6 +92,11 @@ fn shelf_artist_response() -> serde_json::Value {
                                                         }
                                                     }
                                                 }
+                                            }
+                                        }],
+                                        "continuations": [{
+                                            "nextContinuationData": {
+                                                "continuation": "artist-token-1"
                                             }
                                         }]
                                     }
@@ -185,7 +190,7 @@ async fn get_library_artists_returns_first_page_results() {
 
     let artists = client.get_library_artists().await.unwrap();
     assert_eq!(
-        artists,
+        artists.items,
         vec![
             LibraryArtist {
                 browse_id: "UCArtist1".to_owned(),
@@ -204,6 +209,10 @@ async fn get_library_artists_returns_first_page_results() {
                 thumbnails: vec![],
             }
         ]
+    );
+    assert_eq!(
+        artists.continuation,
+        Some(ContinuationToken::new("artist-token-1").unwrap())
     );
 
     let requests = server.received_requests().await.unwrap();
@@ -265,7 +274,7 @@ async fn get_library_artists_returns_empty_results_for_empty_library_message() {
         .unwrap();
 
     let artists = client.get_library_artists().await.unwrap();
-    assert!(artists.is_empty());
+    assert!(artists.items.is_empty());
 }
 
 #[tokio::test]
@@ -353,7 +362,10 @@ async fn get_library_artists_preserves_nbsp_subscriber_separator() {
 
     let artists = client.get_library_artists().await.unwrap();
 
-    assert_eq!(artists[0].subscribers, Some("12\u{00A0}345".to_owned()));
+    assert_eq!(
+        artists.items[0].subscribers,
+        Some("12\u{00A0}345".to_owned())
+    );
 }
 
 #[tokio::test]

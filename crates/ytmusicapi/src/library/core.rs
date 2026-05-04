@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use crate::{Error, Thumbnail};
+use crate::{ContinuationToken, Error, Thumbnail};
 
 pub(crate) struct ArtistLikeRow {
     pub(crate) browse_id: String,
@@ -43,6 +43,33 @@ pub(crate) fn library_grid_items(response: &Value) -> Result<&[Value], Error> {
     ))
 }
 
+pub(crate) fn library_grid_continuation(
+    response: &Value,
+) -> Result<Option<ContinuationToken>, Error> {
+    let library_tab = selected_library_tab(response)?;
+    let sections = required_array_at(
+        library_tab,
+        "/tabRenderer/content/sectionListRenderer/contents",
+    )?;
+    let mut saw_empty_library_message = false;
+
+    for section in sections {
+        if let Some(renderer) = section_grid_renderer(section) {
+            return extract_continuation_token(renderer);
+        }
+
+        saw_empty_library_message |= section_empty_library_message(section);
+    }
+
+    if saw_empty_library_message {
+        return Ok(None);
+    }
+
+    Err(Error::Parse(
+        "library response missing grid items in selected library tab".to_owned(),
+    ))
+}
+
 pub(crate) fn library_shelf_contents(response: &Value) -> Result<&[Value], Error> {
     let library_tab = selected_library_tab(response)?;
     let sections = required_array_at(
@@ -66,6 +93,61 @@ pub(crate) fn library_shelf_contents(response: &Value) -> Result<&[Value], Error
     Err(Error::Parse(
         "library response missing shelf contents in selected library tab".to_owned(),
     ))
+}
+
+pub(crate) fn library_shelf_continuation(
+    response: &Value,
+) -> Result<Option<ContinuationToken>, Error> {
+    let library_tab = selected_library_tab(response)?;
+    let sections = required_array_at(
+        library_tab,
+        "/tabRenderer/content/sectionListRenderer/contents",
+    )?;
+    let mut saw_empty_library_message = false;
+
+    for section in sections {
+        if let Some(renderer) = section_shelf_renderer(section) {
+            return extract_continuation_token(renderer);
+        }
+
+        saw_empty_library_message |= section_empty_library_message(section);
+    }
+
+    if saw_empty_library_message {
+        return Ok(None);
+    }
+
+    Err(Error::Parse(
+        "library response missing shelf contents in selected library tab".to_owned(),
+    ))
+}
+
+pub(crate) fn extract_continuation_token(
+    value: &Value,
+) -> Result<Option<ContinuationToken>, Error> {
+    match optional_text(value, "/continuations/0/nextContinuationData/continuation") {
+        Some(token) => ContinuationToken::new(token).map(Some),
+        None => Ok(None),
+    }
+}
+
+pub(crate) fn continuation_grid(response: &Value) -> Result<&Value, Error> {
+    required_value_at(response, "/continuationContents/gridContinuation")
+}
+
+pub(crate) fn continuation_grid_items(response: &Value) -> Result<&[Value], Error> {
+    required_array_at(response, "/continuationContents/gridContinuation/items")
+}
+
+pub(crate) fn continuation_shelf(response: &Value) -> Result<&Value, Error> {
+    required_value_at(response, "/continuationContents/musicShelfContinuation")
+}
+
+pub(crate) fn continuation_shelf_contents(response: &Value) -> Result<&[Value], Error> {
+    required_array_at(
+        response,
+        "/continuationContents/musicShelfContinuation/contents",
+    )
 }
 
 pub(crate) fn parse_thumbnails(value: &Value) -> Result<Vec<Thumbnail>, Error> {
@@ -172,46 +254,58 @@ fn legacy_library_tab(tabs: &[Value]) -> Option<&Value> {
     tabs.get(library_tab_index)
 }
 
-fn section_grid_items(section: &Value) -> Result<Option<&[Value]>, Error> {
-    if section.get("gridRenderer").is_some() {
-        return required_array_at(section, "/gridRenderer/items").map(Some);
+fn section_grid_renderer(section: &Value) -> Option<&Value> {
+    if let Some(renderer) = section.get("gridRenderer") {
+        return Some(renderer);
     }
 
     let Some(contents) = section
         .pointer("/itemSectionRenderer/contents")
         .and_then(Value::as_array)
     else {
-        return Ok(None);
+        return None;
     };
 
     for content in contents {
-        if content.get("gridRenderer").is_some() {
-            return required_array_at(content, "/gridRenderer/items").map(Some);
+        if let Some(renderer) = content.get("gridRenderer") {
+            return Some(renderer);
         }
     }
 
-    Ok(None)
+    None
+}
+
+fn section_grid_items(section: &Value) -> Result<Option<&[Value]>, Error> {
+    section_grid_renderer(section)
+        .map(|renderer| required_array_at(renderer, "/items"))
+        .transpose()
+}
+
+fn section_shelf_renderer(section: &Value) -> Option<&Value> {
+    if let Some(renderer) = section.get("musicShelfRenderer") {
+        return Some(renderer);
+    }
+
+    let Some(contents) = section
+        .pointer("/itemSectionRenderer/contents")
+        .and_then(Value::as_array)
+    else {
+        return None;
+    };
+
+    for content in contents {
+        if let Some(renderer) = content.get("musicShelfRenderer") {
+            return Some(renderer);
+        }
+    }
+
+    None
 }
 
 fn section_shelf_contents(section: &Value) -> Result<Option<&[Value]>, Error> {
-    if section.get("musicShelfRenderer").is_some() {
-        return required_array_at(section, "/musicShelfRenderer/contents").map(Some);
-    }
-
-    let Some(contents) = section
-        .pointer("/itemSectionRenderer/contents")
-        .and_then(Value::as_array)
-    else {
-        return Ok(None);
-    };
-
-    for content in contents {
-        if content.get("musicShelfRenderer").is_some() {
-            return required_array_at(content, "/musicShelfRenderer/contents").map(Some);
-        }
-    }
-
-    Ok(None)
+    section_shelf_renderer(section)
+        .map(|renderer| required_array_at(renderer, "/contents"))
+        .transpose()
 }
 
 pub(crate) fn section_empty_library_message(section: &Value) -> bool {
