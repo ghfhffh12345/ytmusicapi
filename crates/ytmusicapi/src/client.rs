@@ -61,7 +61,7 @@ impl YtMusic {
         &self.homepage_url
     }
 
-    pub async fn search(&self, query: SearchQuery) -> Result<Vec<SearchResult>, Error> {
+    pub async fn search(&self, query: SearchQuery) -> Result<crate::Page<SearchResult>, Error> {
         query.validate()?;
 
         let bootstrap_config = self.bootstrap_config().await?;
@@ -88,7 +88,7 @@ impl YtMusic {
         query: &SearchQuery,
         bootstrap_config: &BootstrapConfig,
         authenticated: bool,
-    ) -> Result<Vec<SearchResult>, Error> {
+    ) -> Result<crate::Page<SearchResult>, Error> {
         let client_version = if authenticated {
             self.browser_auth
                 .as_ref()
@@ -132,7 +132,10 @@ impl YtMusic {
         validate_search_response_structure(&response_json)?;
 
         let results = parse_search_response(&response_json, query.filter)?;
-        Ok(results)
+        Ok(crate::Page {
+            items: results,
+            continuation: None,
+        })
     }
 
     pub async fn get_library_playlists(

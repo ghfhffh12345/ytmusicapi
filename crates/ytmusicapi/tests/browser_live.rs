@@ -200,17 +200,18 @@ async fn get_library_playlists_live_smoke_test() {
         .await
         .unwrap();
     assert!(
-        !songs.is_empty(),
+        !songs.items.is_empty(),
         "expected authenticated filtered songs results for query `abba`"
     );
     assert!(
         songs
+            .items
             .iter()
             .all(|result| matches!(result, ytmusicapi::SearchResult::Song(_))),
         "expected filtered songs search results to contain only songs"
     );
     assert!(
-        songs.iter().any(|result| match result {
+        songs.items.iter().any(|result| match result {
             ytmusicapi::SearchResult::Song(song) => song.album.is_some(),
             _ => false,
         }),
@@ -222,24 +223,25 @@ async fn get_library_playlists_live_smoke_test() {
         .await
         .unwrap();
     assert!(
-        !videos.is_empty(),
+        !videos.items.is_empty(),
         "expected authenticated filtered videos results for query `abba`"
     );
     assert!(
         videos
+            .items
             .iter()
             .all(|result| matches!(result, ytmusicapi::SearchResult::Video(_))),
         "expected filtered videos search results to contain only videos"
     );
     assert!(
-        videos.iter().any(|result| match result {
+        videos.items.iter().any(|result| match result {
             ytmusicapi::SearchResult::Video(video) => video.views.is_some(),
             _ => false,
         }),
         "expected at least one filtered video result to include view metadata"
     );
     assert!(
-        videos.iter().any(|result| match result {
+        videos.items.iter().any(|result| match result {
             ytmusicapi::SearchResult::Video(video) => video.duration.is_some(),
             _ => false,
         }),

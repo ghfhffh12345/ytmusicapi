@@ -64,7 +64,7 @@ async fn authenticated_search_uses_browser_auth_headers_when_available() {
         .await
         .unwrap();
 
-    assert!(!result.is_empty());
+    assert!(!result.items.is_empty());
 
     let requests = server.received_requests().await.unwrap();
     let bootstrap_request = requests
@@ -164,13 +164,13 @@ async fn authenticated_search_falls_back_to_anonymous_transport_on_http_status_f
         .unwrap();
 
     let result = client.search(SearchQuery::new("abba")).await.unwrap();
-    assert_eq!(result.len(), 24);
+    assert_eq!(result.items.len(), 24);
     assert!(matches!(
-        &result[0],
+        &result.items[0],
         ytmusicapi::SearchResult::Artist(artist) if artist.artists[0].name == "Daft Punk"
     ));
     assert!(matches!(
-        &result[1],
+        &result.items[1],
         ytmusicapi::SearchResult::Album(album) if album.title == "Random Access Memories"
     ));
 
@@ -228,13 +228,13 @@ async fn authenticated_unfiltered_search_uses_browser_auth_headers_and_default_m
         .unwrap();
 
     let result = client.search(SearchQuery::new("abba")).await.unwrap();
-    assert_eq!(result.len(), 24);
+    assert_eq!(result.items.len(), 24);
     assert!(matches!(
-        &result[0],
+        &result.items[0],
         ytmusicapi::SearchResult::Artist(artist) if artist.artists[0].name == "Daft Punk"
     ));
     assert!(matches!(
-        &result[1],
+        &result.items[1],
         ytmusicapi::SearchResult::Album(album) if album.title == "Random Access Memories"
     ));
 
@@ -357,7 +357,7 @@ async fn search_bootstraps_visitor_id_and_posts_search_request() {
     let query = SearchQuery::new("hip hop").with_filter(SearchFilter::Albums);
     let result = client.search(query).await.unwrap();
     assert_eq!(
-        serde_json::to_value(result).unwrap(),
+        serde_json::to_value(result.items).unwrap(),
         serde_json::from_str::<Value>(include_str!("fixtures/search/expected/albums.json"))
             .unwrap()
     );
@@ -443,8 +443,8 @@ async fn search_reuses_bootstrapped_visitor_id_across_requests() {
     let first = client.search(SearchQuery::new("first")).await.unwrap();
     let second = client.search(SearchQuery::new("second")).await.unwrap();
 
-    assert_eq!(first.len(), 24);
-    assert_eq!(second.len(), 24);
+    assert_eq!(first.items.len(), 24);
+    assert_eq!(second.items.len(), 24);
 
     let requests = server.received_requests().await.unwrap();
     let bootstrap_requests: Vec<_> = requests
@@ -621,7 +621,7 @@ async fn empty_successful_search_response_returns_empty_results() {
 
     let result = client.search(SearchQuery::new("abba")).await.unwrap();
 
-    assert!(result.is_empty());
+    assert!(result.items.is_empty());
 }
 
 #[tokio::test]
@@ -656,7 +656,7 @@ async fn search_returns_full_first_page_results() {
 
     let result = client.search(SearchQuery::new("abba")).await.unwrap();
 
-    assert_eq!(result.len(), 24);
+    assert_eq!(result.items.len(), 24);
 }
 
 #[tokio::test]
@@ -694,7 +694,7 @@ async fn anonymous_songs_filtered_search_returns_current_no_results_fixture() {
         .await
         .unwrap();
 
-    assert!(result.is_empty());
+    assert!(result.items.is_empty());
 }
 
 #[tokio::test]
@@ -732,9 +732,9 @@ async fn anonymous_videos_filtered_search_parses_legacy_fixture() {
         .await
         .unwrap();
 
-    assert_eq!(result.len(), 2);
+    assert_eq!(result.items.len(), 2);
     assert!(matches!(
-        &result[0],
+        &result.items[0],
         ytmusicapi::SearchResult::Video(video)
             if video.title == "BTS (방탄소년단) 'Butter''"
                 && video.artists[0].name == "BTS - Topic"
