@@ -14,10 +14,13 @@ use crate::{
 pub fn parse_search_response(
     response: &Value,
     filter: Option<SearchFilter>,
-) -> Result<Vec<SearchResult>, Error> {
+) -> Result<crate::Page<SearchResult>, Error> {
     let tabs = required_array_at(response, "/contents/tabbedSearchResultsRenderer/tabs")?;
     if tabs.is_empty() {
-        return Ok(Vec::new());
+        return Ok(crate::Page {
+            items: Vec::new(),
+            continuation: None,
+        });
     }
 
     let sections = required_array_at(
@@ -25,14 +28,21 @@ pub fn parse_search_response(
         "/contents/tabbedSearchResultsRenderer/tabs/0/tabRenderer/content/sectionListRenderer/contents",
     )?;
 
-    match filter {
-        None => parse_default_mixed_sections(sections),
-        Some(SearchFilter::Songs) => parse_filtered_sections(sections, SearchFilter::Songs),
-        Some(SearchFilter::Videos) => parse_filtered_sections(sections, SearchFilter::Videos),
-        Some(SearchFilter::Albums) => parse_filtered_sections(sections, SearchFilter::Albums),
-        Some(SearchFilter::Artists) => parse_filtered_sections(sections, SearchFilter::Artists),
-        Some(SearchFilter::Playlists) => parse_filtered_sections(sections, SearchFilter::Playlists),
-    }
+    let items = match filter {
+        None => parse_default_mixed_sections(sections)?,
+        Some(SearchFilter::Songs) => parse_filtered_sections(sections, SearchFilter::Songs)?,
+        Some(SearchFilter::Videos) => parse_filtered_sections(sections, SearchFilter::Videos)?,
+        Some(SearchFilter::Albums) => parse_filtered_sections(sections, SearchFilter::Albums)?,
+        Some(SearchFilter::Artists) => parse_filtered_sections(sections, SearchFilter::Artists)?,
+        Some(SearchFilter::Playlists) => {
+            parse_filtered_sections(sections, SearchFilter::Playlists)?
+        }
+    };
+
+    Ok(crate::Page {
+        items,
+        continuation: extract_search_continuation(response)?,
+    })
 }
 
 fn parse_default_mixed_sections(sections: &[Value]) -> Result<Vec<SearchResult>, Error> {
@@ -68,6 +78,21 @@ fn parse_filtered_sections(
     }
 
     Ok(results)
+}
+
+fn extract_search_continuation(
+    response: &Value,
+) -> Result<Option<crate::ContinuationToken>, Error> {
+    for path in [
+        "/contents/tabbedSearchResultsRenderer/tabs/0/tabRenderer/content/sectionListRenderer/continuations/0/nextContinuationData/continuation",
+        "/contents/tabbedSearchResultsRenderer/tabs/0/tabRenderer/content/sectionListRenderer/contents/0/musicShelfRenderer/continuations/0/nextContinuationData/continuation",
+    ] {
+        if let Some(token) = response.pointer(path).and_then(Value::as_str) {
+            return crate::ContinuationToken::new(token).map(Some);
+        }
+    }
+
+    Ok(None)
 }
 
 fn parse_top_result(card: &Value) -> Result<SearchResult, Error> {
@@ -642,7 +667,7 @@ mod tests {
 
     fn parse_raw_fixture(raw_fixture: &str, filter: Option<SearchFilter>) -> Vec<SearchResult> {
         let response: Value = serde_json::from_str(raw_fixture).unwrap();
-        parse_search_response(&response, filter).unwrap()
+        parse_search_response(&response, filter).unwrap().items
     }
 
     fn parse_fixture(fixture_name: &str, filter: Option<SearchFilter>) -> Vec<SearchResult> {
@@ -711,6 +736,7 @@ mod tests {
             None,
         )
         .unwrap()
+        .items
     }
 
     fn expected_default_mixed() -> Value {
@@ -1122,7 +1148,7 @@ mod tests {
         .unwrap();
 
         assert!(matches!(
-            &parsed[0],
+            &parsed.items[0],
             SearchResult::Album(result)
                 if result.category.as_deref() == Some("Albums")
                     && result.title == "Heathen Chemistry"

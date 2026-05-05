@@ -5,7 +5,7 @@ use tempfile::tempdir;
 use wiremock::matchers::{method, path, query_param};
 use wiremock::{Mock, MockServer, Request, ResponseTemplate};
 use ytmusicapi::setup_browser_auth;
-use ytmusicapi::{Error, SearchFilter, SearchQuery, YtMusic};
+use ytmusicapi::{ContinuationToken, Error, SearchFilter, SearchQuery, YtMusic};
 
 const BROWSER_USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36";
 
@@ -23,6 +23,30 @@ X-Youtube-Client-Version: 1.20250502.01.00\n\
 Cookie: __Secure-3PAPISID=test-sapisid; VISITOR_PRIVACY_METADATA=CgJVUxIEGgAgVg%3D%3D\n",
     )
     .unwrap()
+}
+
+fn default_mixed_with_continuation_response() -> Value {
+    let mut response: Value =
+        serde_json::from_str(include_str!("fixtures/search/raw/default_mixed.json")).unwrap();
+    response["contents"]["tabbedSearchResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]["sectionListRenderer"]
+        ["continuations"] = json!([{
+        "nextContinuationData": {
+            "continuation": "search-token-1"
+        }
+    }]);
+    response
+}
+
+fn songs_with_continuation_response() -> Value {
+    let mut response: Value =
+        serde_json::from_str(include_str!("fixtures/search/raw/songs_authenticated.json")).unwrap();
+    response["contents"]["tabbedSearchResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]["sectionListRenderer"]
+        ["contents"][0]["musicShelfRenderer"]["continuations"] = json!([{
+        "nextContinuationData": {
+            "continuation": "songs-token-1"
+        }
+    }]);
+    response
 }
 
 #[tokio::test]
@@ -118,6 +142,81 @@ async fn authenticated_search_uses_browser_auth_headers_when_available() {
     assert_eq!(
         search_body["context"]["client"]["clientVersion"],
         "1.20250502.01.00"
+    );
+}
+
+#[tokio::test]
+async fn unfiltered_search_returns_page_and_continuation() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_json(default_mixed_with_continuation_response()),
+        )
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let result = client.search(SearchQuery::new("abba")).await.unwrap();
+
+    assert!(!result.items.is_empty());
+    assert_eq!(
+        result.continuation,
+        Some(ContinuationToken::new("search-token-1").unwrap())
+    );
+}
+
+#[tokio::test]
+async fn filtered_songs_search_returns_page_and_continuation() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(songs_with_continuation_response()))
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
+        .await
+        .unwrap();
+
+    assert!(
+        page.items
+            .iter()
+            .all(|item| matches!(item, ytmusicapi::SearchResult::Song(_)))
+    );
+    assert_eq!(
+        page.continuation,
+        Some(ContinuationToken::new("songs-token-1").unwrap())
     );
 }
 

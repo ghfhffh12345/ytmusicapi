@@ -710,11 +710,7 @@ fn parse_search_page(
     response_json: &serde_json::Value,
     filter: Option<SearchFilter>,
 ) -> Result<crate::Page<SearchResult>, Error> {
-    let results = parse_search_response(response_json, filter)?;
-    Ok(crate::Page {
-        items: results,
-        continuation: None,
-    })
+    parse_search_response(response_json, filter)
 }
 
 fn extract_status_message(response_body: &str) -> String {
