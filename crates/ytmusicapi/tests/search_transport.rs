@@ -276,6 +276,24 @@ async fn anonymous_search_continuation_posts_continuation_body_and_parses_songs_
 
     Mock::given(method("POST"))
         .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| {
+            serde_json::from_slice::<Value>(&request.body)
+                .ok()
+                .and_then(|body| body.get("query").cloned())
+                .is_some()
+        })
+        .respond_with(ResponseTemplate::new(200).set_body_json(songs_with_continuation_response()))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| {
+            serde_json::from_slice::<Value>(&request.body)
+                .ok()
+                .and_then(|body| body.get("continuation").cloned())
+                .is_some()
+        })
         .respond_with(ResponseTemplate::new(200).set_body_json(songs_continuation_response()))
         .mount(&server)
         .await;
@@ -286,8 +304,13 @@ async fn anonymous_search_continuation_posts_continuation_body_and_parses_songs_
         .build()
         .unwrap();
 
+    let first_page = client
+        .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
+        .await
+        .unwrap();
+
     let page = client
-        .search_continuation(ContinuationToken::new("songs-token-1").unwrap())
+        .search_continuation(first_page.continuation.unwrap())
         .await
         .unwrap();
 
@@ -304,7 +327,13 @@ async fn anonymous_search_continuation_posts_continuation_body_and_parses_songs_
     let requests = server.received_requests().await.unwrap();
     let search_request = requests
         .iter()
-        .find(|request| request.method.as_str() == "POST")
+        .find(|request| {
+            request.method.as_str() == "POST"
+                && serde_json::from_slice::<Value>(&request.body)
+                    .ok()
+                    .and_then(|body| body.get("continuation").cloned())
+                    .is_some()
+        })
         .unwrap();
     let search_body: Value = serde_json::from_slice(&search_request.body).unwrap();
 
@@ -340,6 +369,26 @@ async fn authenticated_search_continuation_uses_browser_auth_headers_and_parses_
 
     Mock::given(method("POST"))
         .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| {
+            serde_json::from_slice::<Value>(&request.body)
+                .ok()
+                .and_then(|body| body.get("query").cloned())
+                .is_some()
+        })
+        .respond_with(
+            ResponseTemplate::new(200).set_body_json(default_mixed_with_continuation_response()),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| {
+            serde_json::from_slice::<Value>(&request.body)
+                .ok()
+                .and_then(|body| body.get("continuation").cloned())
+                .is_some()
+        })
         .respond_with(
             ResponseTemplate::new(200).set_body_json(default_mixed_continuation_response()),
         )
@@ -357,8 +406,10 @@ async fn authenticated_search_continuation_uses_browser_auth_headers_and_parses_
         .build()
         .unwrap();
 
+    let first_page = client.search(SearchQuery::new("abba")).await.unwrap();
+
     let page = client
-        .search_continuation(ContinuationToken::new("search-token-1").unwrap())
+        .search_continuation(first_page.continuation.unwrap())
         .await
         .unwrap();
 
@@ -379,7 +430,13 @@ async fn authenticated_search_continuation_uses_browser_auth_headers_and_parses_
     let requests = server.received_requests().await.unwrap();
     let search_request = requests
         .iter()
-        .find(|request| request.method.as_str() == "POST")
+        .find(|request| {
+            request.method.as_str() == "POST"
+                && serde_json::from_slice::<Value>(&request.body)
+                    .ok()
+                    .and_then(|body| body.get("continuation").cloned())
+                    .is_some()
+        })
         .unwrap();
     let search_body: Value = serde_json::from_slice(&search_request.body).unwrap();
 
@@ -409,7 +466,131 @@ async fn authenticated_search_continuation_uses_browser_auth_headers_and_parses_
     assert_eq!(search_body["context"]["client"]["clientName"], "WEB_REMIX");
     assert_eq!(
         search_body["context"]["client"]["clientVersion"],
-        "1.20250501.01.00"
+        "1.20250502.01.00"
+    );
+}
+
+#[tokio::test]
+async fn authenticated_search_continuation_falls_back_to_anonymous_transport_on_http_status_failure()
+ {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| {
+            request.headers.get("authorization").is_some()
+                && serde_json::from_slice::<Value>(&request.body)
+                    .ok()
+                    .and_then(|body| body.get("query").cloned())
+                    .is_some()
+        })
+        .respond_with(ResponseTemplate::new(403).set_body_string("forbidden"))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| {
+            request.headers.get("authorization").is_none()
+                && serde_json::from_slice::<Value>(&request.body)
+                    .ok()
+                    .and_then(|body| body.get("query").cloned())
+                    .is_some()
+        })
+        .respond_with(ResponseTemplate::new(200).set_body_json(songs_with_continuation_response()))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| {
+            request.headers.get("authorization").is_some()
+                && serde_json::from_slice::<Value>(&request.body)
+                    .ok()
+                    .and_then(|body| body.get("continuation").cloned())
+                    .is_some()
+        })
+        .respond_with(ResponseTemplate::new(403).set_body_string("forbidden"))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| {
+            request.headers.get("authorization").is_none()
+                && serde_json::from_slice::<Value>(&request.body)
+                    .ok()
+                    .and_then(|body| body.get("continuation").cloned())
+                    .is_some()
+        })
+        .respond_with(ResponseTemplate::new(200).set_body_json(songs_continuation_response()))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let browser_json: PathBuf = dir.path().join("browser.json");
+    fs::write(&browser_json, firefox_search_headers()).unwrap();
+
+    let client = YtMusic::builder()
+        .browser_auth_path(&browser_json)
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let first_page = client
+        .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
+        .await
+        .unwrap();
+    let continuation_token = first_page.continuation.unwrap();
+
+    let page = client
+        .search_continuation(continuation_token)
+        .await
+        .unwrap();
+
+    assert!(
+        page.items
+            .iter()
+            .all(|item| matches!(item, ytmusicapi::SearchResult::Song(_)))
+    );
+    assert_eq!(
+        page.continuation,
+        Some(ContinuationToken::new("songs-token-2").unwrap())
+    );
+
+    let requests = server.received_requests().await.unwrap();
+    let continuation_requests: Vec<_> = requests
+        .iter()
+        .filter(|request| {
+            request.method.as_str() == "POST"
+                && serde_json::from_slice::<Value>(&request.body)
+                    .ok()
+                    .and_then(|body| body.get("continuation").cloned())
+                    .is_some()
+        })
+        .collect();
+
+    assert_eq!(continuation_requests.len(), 2);
+    assert!(
+        continuation_requests
+            .iter()
+            .any(|request| request.headers.contains_key("authorization"))
+    );
+    assert!(
+        continuation_requests
+            .iter()
+            .any(|request| !request.headers.contains_key("authorization"))
     );
 }
 

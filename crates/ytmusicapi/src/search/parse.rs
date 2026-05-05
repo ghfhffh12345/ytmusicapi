@@ -47,6 +47,7 @@ pub fn parse_search_response(
 
 pub(crate) fn parse_search_continuation_response(
     response: &Value,
+    filter: Option<SearchFilter>,
 ) -> Result<crate::Page<crate::SearchResult>, Error> {
     let shelf = response
         .pointer("/continuationContents/musicShelfContinuation")
@@ -59,10 +60,16 @@ pub(crate) fn parse_search_continuation_response(
         .and_then(Value::as_array)
         .ok_or_else(|| Error::Parse("missing continuation contents array".to_owned()))?;
 
-    let items = contents
-        .iter()
-        .map(parse_search_continuation_item)
-        .collect::<Result<Vec<_>, _>>()?;
+    let items = match filter {
+        Some(filter) => contents
+            .iter()
+            .map(|item| parse_filtered_shelf_item(item, None, filter))
+            .collect::<Result<Vec<_>, _>>()?,
+        None => contents
+            .iter()
+            .map(|item| parse_shelf_item(item, None))
+            .collect::<Result<Vec<_>, _>>()?,
+    };
 
     let continuation = shelf
         .pointer("/continuations/0/nextContinuationData/continuation")
@@ -109,66 +116,6 @@ fn parse_filtered_sections(
     }
 
     Ok(results)
-}
-
-fn parse_search_continuation_item(item: &Value) -> Result<SearchResult, Error> {
-    let renderer = required_value_at(item, "/musicResponsiveListItemRenderer")?;
-    let metadata_runs = required_array_at(
-        renderer,
-        "/flexColumns/1/musicResponsiveListItemFlexColumnRenderer/text/runs",
-    )?;
-    let metadata_parts = non_separator_runs(metadata_runs);
-    let type_label = metadata_parts
-        .first()
-        .map(|run| required_text(run, "/text"))
-        .transpose()?;
-
-    match type_label.as_deref() {
-        Some(
-            "Song" | "Video" | "Album" | "Single" | "EP" | "Artist" | "Profile" | "Playlist"
-            | "Episode" | "Podcast",
-        ) => parse_shelf_item(item, None),
-        _ => parse_filtered_continuation_shelf_item(item),
-    }
-}
-
-fn parse_filtered_continuation_shelf_item(item: &Value) -> Result<SearchResult, Error> {
-    let renderer = required_value_at(item, "/musicResponsiveListItemRenderer")?;
-    let metadata_runs = required_array_at(
-        renderer,
-        "/flexColumns/1/musicResponsiveListItemFlexColumnRenderer/text/runs",
-    )?;
-    let metadata_parts = non_separator_runs(metadata_runs);
-    let metadata_text = metadata_parts
-        .iter()
-        .map(|run| required_text(run, "/text"))
-        .collect::<Result<Vec<_>, _>>()?;
-    let first_part = metadata_text.first().map(String::as_str);
-    let has_subscribers = metadata_text
-        .iter()
-        .any(|text| text.to_ascii_lowercase().contains("subscriber"));
-    let has_views = metadata_text
-        .iter()
-        .any(|text| text.to_ascii_lowercase().contains("views"));
-    let has_browse_id = renderer
-        .pointer("/navigationEndpoint/browseEndpoint/browseId")
-        .and_then(Value::as_str)
-        .is_some();
-    let filter = match first_part {
-        Some("Album" | "Single" | "EP") => SearchFilter::Albums,
-        Some("Artist") => SearchFilter::Artists,
-        _ if has_subscribers => SearchFilter::Artists,
-        _ if has_browse_id => SearchFilter::Playlists,
-        _ if has_views => SearchFilter::Videos,
-        _ if required_video_id(renderer).is_ok() => SearchFilter::Songs,
-        _ => {
-            return Err(Error::Parse(
-                "unable to infer filtered continuation item type".to_owned(),
-            ));
-        }
-    };
-
-    parse_filtered_shelf_item(item, None, filter)
 }
 
 fn extract_search_continuation(
@@ -1096,8 +1043,11 @@ mod tests {
 
     #[test]
     fn filtered_songs_continuation_response_parses_items_and_token() {
-        let parsed =
-            parse_search_continuation_response(&filtered_songs_continuation_response()).unwrap();
+        let parsed = parse_search_continuation_response(
+            &filtered_songs_continuation_response(),
+            Some(SearchFilter::Songs),
+        )
+        .unwrap();
 
         assert!(
             parsed
@@ -1114,7 +1064,8 @@ mod tests {
     #[test]
     fn default_mixed_continuation_response_parses_items_and_token() {
         let parsed =
-            parse_search_continuation_response(&default_mixed_continuation_response()).unwrap();
+            parse_search_continuation_response(&default_mixed_continuation_response(), None)
+                .unwrap();
 
         assert!(matches!(
             &parsed.items[0],
