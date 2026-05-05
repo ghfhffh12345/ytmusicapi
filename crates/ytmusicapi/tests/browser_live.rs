@@ -195,6 +195,24 @@ async fn get_library_playlists_live_smoke_test() {
         "expected live account info to include account name and photo URL"
     );
 
+    let default_page = client.search(SearchQuery::new("abba")).await.unwrap();
+    if let Some(token) = default_page.continuation.clone() {
+        let continuation = client.search_continuation(token).await.unwrap();
+        assert!(
+            continuation.items.iter().all(|item| matches!(
+                item,
+                ytmusicapi::SearchResult::Song(_)
+                    | ytmusicapi::SearchResult::Video(_)
+                    | ytmusicapi::SearchResult::Album(_)
+                    | ytmusicapi::SearchResult::Artist(_)
+                    | ytmusicapi::SearchResult::Playlist(_)
+                    | ytmusicapi::SearchResult::Profile(_)
+                    | ytmusicapi::SearchResult::Episode(_)
+            )),
+            "expected continuation search results to preserve typed variants"
+        );
+    }
+
     let songs = client
         .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
         .await
@@ -217,6 +235,16 @@ async fn get_library_playlists_live_smoke_test() {
         }),
         "expected at least one filtered song result to include album metadata"
     );
+    if let Some(token) = songs.continuation.clone() {
+        let continuation = client.search_continuation(token).await.unwrap();
+        assert!(
+            continuation
+                .items
+                .iter()
+                .all(|item| matches!(item, ytmusicapi::SearchResult::Song(_))),
+            "expected filtered song continuation results to remain song-only"
+        );
+    }
 
     let videos = client
         .search(SearchQuery::new("abba").with_filter(SearchFilter::Videos))

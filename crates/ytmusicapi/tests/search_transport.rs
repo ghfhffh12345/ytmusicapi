@@ -530,6 +530,174 @@ async fn authenticated_search_continuation_falls_back_to_anonymous_transport_on_
 }
 
 #[tokio::test]
+async fn authenticated_songs_search_continuation_parses_non_empty_song_results() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| {
+            serde_json::from_slice::<Value>(&request.body)
+                .ok()
+                .and_then(|body| body.get("continuation").cloned())
+                .is_some()
+        })
+        .respond_with(ResponseTemplate::new(200).set_body_string(include_str!(
+            "fixtures/search/raw/songs_authenticated_continuation.json"
+        )))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let browser_json: PathBuf = dir.path().join("browser.json");
+    fs::write(&browser_json, firefox_search_headers()).unwrap();
+
+    let client = YtMusic::builder()
+        .browser_auth_path(&browser_json)
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .search_continuation(ContinuationToken::new("songs-token-1").unwrap())
+        .await
+        .unwrap();
+
+    assert!(!page.items.is_empty());
+    assert!(
+        page.items
+            .iter()
+            .all(|item| matches!(item, ytmusicapi::SearchResult::Song(_)))
+    );
+    assert_eq!(
+        page.continuation,
+        Some(ContinuationToken::new("songs-token-2").unwrap())
+    );
+}
+
+#[tokio::test]
+async fn unfiltered_search_continuation_parses_mixed_results_and_next_token() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| {
+            serde_json::from_slice::<Value>(&request.body)
+                .ok()
+                .and_then(|body| body.get("continuation").cloned())
+                .is_some()
+        })
+        .respond_with(ResponseTemplate::new(200).set_body_string(include_str!(
+            "fixtures/search/raw/default_mixed_continuation.json"
+        )))
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .search_continuation(ContinuationToken::new("search-token-1").unwrap())
+        .await
+        .unwrap();
+
+    assert!(!page.items.is_empty());
+    assert!(page.items.iter().all(|item| {
+        matches!(
+            item,
+            ytmusicapi::SearchResult::Song(_)
+                | ytmusicapi::SearchResult::Video(_)
+                | ytmusicapi::SearchResult::Album(_)
+                | ytmusicapi::SearchResult::Artist(_)
+                | ytmusicapi::SearchResult::Playlist(_)
+                | ytmusicapi::SearchResult::Profile(_)
+                | ytmusicapi::SearchResult::Episode(_)
+        )
+    }));
+    assert_eq!(
+        page.continuation,
+        Some(ContinuationToken::new("search-token-2").unwrap())
+    );
+}
+
+#[tokio::test]
+async fn authenticated_videos_search_continuation_parses_non_empty_video_results() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| {
+            serde_json::from_slice::<Value>(&request.body)
+                .ok()
+                .and_then(|body| body.get("continuation").cloned())
+                .is_some()
+        })
+        .respond_with(ResponseTemplate::new(200).set_body_string(include_str!(
+            "fixtures/search/raw/videos_authenticated_continuation.json"
+        )))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let browser_json: PathBuf = dir.path().join("browser.json");
+    fs::write(&browser_json, firefox_search_headers()).unwrap();
+
+    let client = YtMusic::builder()
+        .browser_auth_path(&browser_json)
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .search_continuation(ContinuationToken::new("videos-token-1").unwrap())
+        .await
+        .unwrap();
+
+    assert!(!page.items.is_empty());
+    assert!(
+        page.items
+            .iter()
+            .all(|item| matches!(item, ytmusicapi::SearchResult::Video(_)))
+    );
+    assert_eq!(
+        page.continuation,
+        Some(ContinuationToken::new("videos-token-2").unwrap())
+    );
+}
+
+#[tokio::test]
 async fn authenticated_search_falls_back_to_anonymous_transport_on_http_status_failure() {
     let server = MockServer::start().await;
 
