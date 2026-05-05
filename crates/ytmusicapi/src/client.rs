@@ -6,7 +6,7 @@ use tokio::sync::OnceCell;
 use crate::{
     Error, SearchFilter, SearchQuery, SearchResult,
     search::{
-        parse::parse_search_response,
+        parse::{parse_search_continuation_response, parse_search_response},
         request::{
             BootstrapConfig, USER_AGENT, bootstrap_config as fetch_bootstrap_config,
             build_continuation_body, build_library_albums_body, build_library_artists_body,
@@ -112,6 +112,17 @@ impl YtMusic {
                 parse_search_page(&response_json, query.filter)
             }
         }
+    }
+
+    pub async fn search_continuation(
+        &self,
+        token: crate::ContinuationToken,
+    ) -> Result<crate::Page<crate::SearchResult>, Error> {
+        let bootstrap = self.bootstrap_config().await?;
+        let body =
+            crate::search::request::build_continuation_body(&token, &bootstrap.client_version);
+
+        self.search_with_transport(&bootstrap, body).await
     }
 
     async fn search_with_transport(
@@ -710,7 +721,14 @@ fn parse_search_page(
     response_json: &serde_json::Value,
     filter: Option<SearchFilter>,
 ) -> Result<crate::Page<SearchResult>, Error> {
-    parse_search_response(response_json, filter)
+    if response_json
+        .pointer("/continuationContents/musicShelfContinuation")
+        .is_some()
+    {
+        parse_search_continuation_response(response_json)
+    } else {
+        parse_search_response(response_json, filter)
+    }
 }
 
 fn extract_status_message(response_body: &str) -> String {
@@ -727,13 +745,19 @@ fn extract_status_message(response_body: &str) -> String {
 }
 
 fn validate_search_response_structure(response_json: &serde_json::Value) -> Result<(), Error> {
-    match response_json
+    if response_json
         .pointer("/contents/tabbedSearchResultsRenderer")
         .and_then(serde_json::Value::as_object)
+        .is_some()
+        || response_json
+            .pointer("/continuationContents/musicShelfContinuation")
+            .and_then(serde_json::Value::as_object)
+            .is_some()
     {
-        Some(_) => Ok(()),
-        None => Err(Error::Parse(
+        Ok(())
+    } else {
+        Err(Error::Parse(
             "search response missing contents.tabbedSearchResultsRenderer".to_owned(),
-        )),
+        ))
     }
 }

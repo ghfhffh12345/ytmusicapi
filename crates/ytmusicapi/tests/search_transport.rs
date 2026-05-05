@@ -49,6 +49,48 @@ fn songs_with_continuation_response() -> Value {
     response
 }
 
+fn songs_continuation_response() -> Value {
+    let response: Value =
+        serde_json::from_str(include_str!("fixtures/search/raw/songs_authenticated.json")).unwrap();
+    let contents = response["contents"]["tabbedSearchResultsRenderer"]["tabs"][0]["tabRenderer"]
+        ["content"]["sectionListRenderer"]["contents"][0]["musicShelfRenderer"]["contents"]
+        .clone();
+
+    json!({
+        "continuationContents": {
+            "musicShelfContinuation": {
+                "contents": contents,
+                "continuations": [{
+                    "nextContinuationData": {
+                        "continuation": "songs-token-2"
+                    }
+                }]
+            }
+        }
+    })
+}
+
+fn default_mixed_continuation_response() -> Value {
+    let response: Value =
+        serde_json::from_str(include_str!("fixtures/search/raw/default_mixed.json")).unwrap();
+    let contents = response["contents"]["tabbedSearchResultsRenderer"]["tabs"][0]["tabRenderer"]
+        ["content"]["sectionListRenderer"]["contents"][1]["musicShelfRenderer"]["contents"]
+        .clone();
+
+    json!({
+        "continuationContents": {
+            "musicShelfContinuation": {
+                "contents": contents,
+                "continuations": [{
+                    "nextContinuationData": {
+                        "continuation": "search-token-2"
+                    }
+                }]
+            }
+        }
+    })
+}
+
 #[tokio::test]
 async fn authenticated_search_uses_browser_auth_headers_when_available() {
     let server = MockServer::start().await;
@@ -217,6 +259,157 @@ async fn filtered_songs_search_returns_page_and_continuation() {
     assert_eq!(
         page.continuation,
         Some(ContinuationToken::new("songs-token-1").unwrap())
+    );
+}
+
+#[tokio::test]
+async fn anonymous_search_continuation_posts_continuation_body_and_parses_songs_page() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(songs_continuation_response()))
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .search_continuation(ContinuationToken::new("songs-token-1").unwrap())
+        .await
+        .unwrap();
+
+    assert!(
+        page.items
+            .iter()
+            .all(|item| matches!(item, ytmusicapi::SearchResult::Song(_)))
+    );
+    assert_eq!(
+        page.continuation,
+        Some(ContinuationToken::new("songs-token-2").unwrap())
+    );
+
+    let requests = server.received_requests().await.unwrap();
+    let search_request = requests
+        .iter()
+        .find(|request| request.method.as_str() == "POST")
+        .unwrap();
+    let search_body: Value = serde_json::from_slice(&search_request.body).unwrap();
+
+    assert_eq!(search_request.url.path(), "/youtubei/v1/search");
+    assert_eq!(
+        search_request.url.query(),
+        Some("alt=json&key=test-api-key")
+    );
+    assert_eq!(search_body["continuation"], "songs-token-1");
+    assert!(search_body.get("query").is_none());
+    assert!(search_body.get("params").is_none());
+    assert_eq!(search_body["context"]["client"]["clientName"], "WEB_REMIX");
+    assert_eq!(
+        search_body["context"]["client"]["clientVersion"],
+        "1.20250501.01.00"
+    );
+}
+
+#[tokio::test]
+async fn authenticated_search_continuation_uses_browser_auth_headers_and_parses_default_mixed_page()
+{
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_json(default_mixed_continuation_response()),
+        )
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let browser_json: PathBuf = dir.path().join("browser.json");
+    fs::write(&browser_json, firefox_search_headers()).unwrap();
+
+    let client = YtMusic::builder()
+        .browser_auth_path(&browser_json)
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .search_continuation(ContinuationToken::new("search-token-1").unwrap())
+        .await
+        .unwrap();
+
+    assert!(!page.items.is_empty());
+    assert!(matches!(
+        &page.items[0],
+        ytmusicapi::SearchResult::Album(album) if album.title == "Random Access Memories"
+    ));
+    assert!(matches!(
+        &page.items[1],
+        ytmusicapi::SearchResult::Album(album) if album.title == "Discovery"
+    ));
+    assert_eq!(
+        page.continuation,
+        Some(ContinuationToken::new("search-token-2").unwrap())
+    );
+
+    let requests = server.received_requests().await.unwrap();
+    let search_request = requests
+        .iter()
+        .find(|request| request.method.as_str() == "POST")
+        .unwrap();
+    let search_body: Value = serde_json::from_slice(&search_request.body).unwrap();
+
+    assert_eq!(search_request.url.path(), "/youtubei/v1/search");
+    assert_eq!(
+        search_request.url.query(),
+        Some("alt=json&key=test-api-key")
+    );
+    assert!(
+        search_request
+            .headers
+            .get("authorization")
+            .and_then(|value| value.to_str().ok())
+            .map(|value| value.starts_with("SAPISIDHASH "))
+            .unwrap_or(false)
+    );
+    assert_eq!(
+        search_request
+            .headers
+            .get("x-goog-visitor-id")
+            .and_then(|value| value.to_str().ok()),
+        Some("visitor-id-123")
+    );
+    assert_eq!(search_body["continuation"], "search-token-1");
+    assert!(search_body.get("query").is_none());
+    assert!(search_body.get("params").is_none());
+    assert_eq!(search_body["context"]["client"]["clientName"], "WEB_REMIX");
+    assert_eq!(
+        search_body["context"]["client"]["clientVersion"],
+        "1.20250501.01.00"
     );
 }
 

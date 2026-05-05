@@ -45,6 +45,37 @@ pub fn parse_search_response(
     })
 }
 
+pub(crate) fn parse_search_continuation_response(
+    response: &Value,
+) -> Result<crate::Page<crate::SearchResult>, Error> {
+    let shelf = response
+        .pointer("/continuationContents/musicShelfContinuation")
+        .ok_or_else(|| {
+            Error::Parse("missing continuationContents.musicShelfContinuation".to_owned())
+        })?;
+
+    let contents = shelf
+        .get("contents")
+        .and_then(Value::as_array)
+        .ok_or_else(|| Error::Parse("missing continuation contents array".to_owned()))?;
+
+    let items = contents
+        .iter()
+        .map(parse_search_continuation_item)
+        .collect::<Result<Vec<_>, _>>()?;
+
+    let continuation = shelf
+        .pointer("/continuations/0/nextContinuationData/continuation")
+        .and_then(Value::as_str)
+        .map(crate::ContinuationToken::new)
+        .transpose()?;
+
+    Ok(crate::Page {
+        items,
+        continuation,
+    })
+}
+
 fn parse_default_mixed_sections(sections: &[Value]) -> Result<Vec<SearchResult>, Error> {
     let mut results = Vec::new();
     for section in sections {
@@ -78,6 +109,66 @@ fn parse_filtered_sections(
     }
 
     Ok(results)
+}
+
+fn parse_search_continuation_item(item: &Value) -> Result<SearchResult, Error> {
+    let renderer = required_value_at(item, "/musicResponsiveListItemRenderer")?;
+    let metadata_runs = required_array_at(
+        renderer,
+        "/flexColumns/1/musicResponsiveListItemFlexColumnRenderer/text/runs",
+    )?;
+    let metadata_parts = non_separator_runs(metadata_runs);
+    let type_label = metadata_parts
+        .first()
+        .map(|run| required_text(run, "/text"))
+        .transpose()?;
+
+    match type_label.as_deref() {
+        Some(
+            "Song" | "Video" | "Album" | "Single" | "EP" | "Artist" | "Profile" | "Playlist"
+            | "Episode" | "Podcast",
+        ) => parse_shelf_item(item, None),
+        _ => parse_filtered_continuation_shelf_item(item),
+    }
+}
+
+fn parse_filtered_continuation_shelf_item(item: &Value) -> Result<SearchResult, Error> {
+    let renderer = required_value_at(item, "/musicResponsiveListItemRenderer")?;
+    let metadata_runs = required_array_at(
+        renderer,
+        "/flexColumns/1/musicResponsiveListItemFlexColumnRenderer/text/runs",
+    )?;
+    let metadata_parts = non_separator_runs(metadata_runs);
+    let metadata_text = metadata_parts
+        .iter()
+        .map(|run| required_text(run, "/text"))
+        .collect::<Result<Vec<_>, _>>()?;
+    let first_part = metadata_text.first().map(String::as_str);
+    let has_subscribers = metadata_text
+        .iter()
+        .any(|text| text.to_ascii_lowercase().contains("subscriber"));
+    let has_views = metadata_text
+        .iter()
+        .any(|text| text.to_ascii_lowercase().contains("views"));
+    let has_browse_id = renderer
+        .pointer("/navigationEndpoint/browseEndpoint/browseId")
+        .and_then(Value::as_str)
+        .is_some();
+    let filter = match first_part {
+        Some("Album" | "Single" | "EP") => SearchFilter::Albums,
+        Some("Artist") => SearchFilter::Artists,
+        _ if has_subscribers => SearchFilter::Artists,
+        _ if has_browse_id => SearchFilter::Playlists,
+        _ if has_views => SearchFilter::Videos,
+        _ if required_video_id(renderer).is_ok() => SearchFilter::Songs,
+        _ => {
+            return Err(Error::Parse(
+                "unable to infer filtered continuation item type".to_owned(),
+            ));
+        }
+    };
+
+    parse_filtered_shelf_item(item, None, filter)
 }
 
 fn extract_search_continuation(
@@ -672,7 +763,7 @@ fn required_value_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a Value, E
 
 #[cfg(test)]
 mod tests {
-    use super::parse_search_response;
+    use super::{parse_search_continuation_response, parse_search_response};
     use crate::{ContinuationToken, SearchFilter, SearchResult};
     use serde_json::{Value, json};
 
@@ -725,6 +816,54 @@ mod tests {
             include_str!("../../tests/fixtures/search/raw/playlists.json"),
             Some(SearchFilter::Playlists),
         )
+    }
+
+    fn filtered_songs_continuation_response() -> Value {
+        let response: Value = serde_json::from_str(include_str!(
+            "../../tests/fixtures/search/raw/songs_authenticated.json"
+        ))
+        .unwrap();
+        let contents = response["contents"]["tabbedSearchResultsRenderer"]["tabs"][0]
+            ["tabRenderer"]["content"]["sectionListRenderer"]["contents"][0]
+            ["musicShelfRenderer"]["contents"]
+            .clone();
+
+        json!({
+            "continuationContents": {
+                "musicShelfContinuation": {
+                    "contents": contents,
+                    "continuations": [{
+                        "nextContinuationData": {
+                            "continuation": "songs-token-2"
+                        }
+                    }]
+                }
+            }
+        })
+    }
+
+    fn default_mixed_continuation_response() -> Value {
+        let response: Value = serde_json::from_str(include_str!(
+            "../../tests/fixtures/search/raw/default_mixed.json"
+        ))
+        .unwrap();
+        let contents = response["contents"]["tabbedSearchResultsRenderer"]["tabs"][0]
+            ["tabRenderer"]["content"]["sectionListRenderer"]["contents"][1]
+            ["musicShelfRenderer"]["contents"]
+            .clone();
+
+        json!({
+            "continuationContents": {
+                "musicShelfContinuation": {
+                    "contents": contents,
+                    "continuations": [{
+                        "nextContinuationData": {
+                            "continuation": "search-token-2"
+                        }
+                    }]
+                }
+            }
+        })
     }
 
     fn parse_inline_default_mixed(sections: Vec<Value>) -> Vec<SearchResult> {
@@ -952,6 +1091,42 @@ mod tests {
         assert_eq!(
             parsed.continuation,
             Some(ContinuationToken::new("songs-token-1").unwrap())
+        );
+    }
+
+    #[test]
+    fn filtered_songs_continuation_response_parses_items_and_token() {
+        let parsed =
+            parse_search_continuation_response(&filtered_songs_continuation_response()).unwrap();
+
+        assert!(
+            parsed
+                .items
+                .iter()
+                .all(|result| matches!(result, SearchResult::Song(_)))
+        );
+        assert_eq!(
+            parsed.continuation,
+            Some(ContinuationToken::new("songs-token-2").unwrap())
+        );
+    }
+
+    #[test]
+    fn default_mixed_continuation_response_parses_items_and_token() {
+        let parsed =
+            parse_search_continuation_response(&default_mixed_continuation_response()).unwrap();
+
+        assert!(matches!(
+            &parsed.items[0],
+            SearchResult::Album(result) if result.title == "Random Access Memories"
+        ));
+        assert!(matches!(
+            &parsed.items[1],
+            SearchResult::Album(result) if result.title == "Discovery"
+        ));
+        assert_eq!(
+            parsed.continuation,
+            Some(ContinuationToken::new("search-token-2").unwrap())
         );
     }
 
