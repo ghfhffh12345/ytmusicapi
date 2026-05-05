@@ -339,6 +339,30 @@ async fn anonymous_search_continuation_posts_continuation_body_and_parses_songs_
 async fn authenticated_search_continuation_uses_browser_auth_headers_and_parses_default_mixed_page()
 {
     let server = MockServer::start().await;
+    let raw_fixture: Value = serde_json::from_str(include_str!(
+        "fixtures/search/raw/default_mixed_continuation.json"
+    ))
+    .unwrap();
+
+    let raw_items = raw_fixture["continuationContents"]["musicShelfContinuation"]["contents"]
+        .as_array()
+        .expect("expected mixed continuation contents array");
+    assert_eq!(raw_items.len(), 23);
+    assert_eq!(
+        raw_items[0]["musicResponsiveListItemRenderer"]["flexColumns"][0]["musicResponsiveListItemFlexColumnRenderer"]
+            ["text"]["runs"][0]["text"],
+        "Random Access Memories"
+    );
+    assert_eq!(
+        raw_items[3]["musicResponsiveListItemRenderer"]["flexColumns"][1]["musicResponsiveListItemFlexColumnRenderer"]
+            ["text"]["runs"][0]["text"],
+        "Artist"
+    );
+    assert_eq!(
+        raw_items[20]["musicResponsiveListItemRenderer"]["flexColumns"][1]["musicResponsiveListItemFlexColumnRenderer"]
+            ["text"]["runs"][0]["text"],
+        "Podcast"
+    );
 
     Mock::given(method("GET"))
         .and(path("/"))
@@ -389,6 +413,11 @@ async fn authenticated_search_continuation_uses_browser_auth_headers_and_parses_
         &page.items[1],
         ytmusicapi::SearchResult::Album(album) if album.title == "Discovery"
     ));
+    assert!(
+        page.items
+            .iter()
+            .any(|item| matches!(item, ytmusicapi::SearchResult::Podcast(_)))
+    );
     assert_eq!(
         page.continuation,
         Some(ContinuationToken::new("search-token-2").unwrap())
@@ -582,62 +611,6 @@ async fn authenticated_songs_search_continuation_parses_non_empty_song_results()
     assert_eq!(
         page.continuation,
         Some(ContinuationToken::new("songs-token-2").unwrap())
-    );
-}
-
-#[tokio::test]
-async fn unfiltered_search_continuation_parses_mixed_results_and_next_token() {
-    let server = MockServer::start().await;
-
-    Mock::given(method("GET"))
-        .and(path("/"))
-        .respond_with(ResponseTemplate::new(200).set_body_string(
-            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
-        ))
-        .mount(&server)
-        .await;
-
-    Mock::given(method("POST"))
-        .and(path("/youtubei/v1/search"))
-        .and(|request: &Request| {
-            serde_json::from_slice::<Value>(&request.body)
-                .ok()
-                .and_then(|body| body.get("continuation").cloned())
-                .is_some()
-        })
-        .respond_with(ResponseTemplate::new(200).set_body_string(include_str!(
-            "fixtures/search/raw/default_mixed_continuation.json"
-        )))
-        .mount(&server)
-        .await;
-
-    let client = YtMusic::builder()
-        .homepage_url(server.uri())
-        .base_url(format!("{}/youtubei/v1/", server.uri()))
-        .build()
-        .unwrap();
-
-    let page = client
-        .search_continuation(ContinuationToken::new("search-token-1").unwrap())
-        .await
-        .unwrap();
-
-    assert!(!page.items.is_empty());
-    assert!(page.items.iter().all(|item| {
-        matches!(
-            item,
-            ytmusicapi::SearchResult::Song(_)
-                | ytmusicapi::SearchResult::Video(_)
-                | ytmusicapi::SearchResult::Album(_)
-                | ytmusicapi::SearchResult::Artist(_)
-                | ytmusicapi::SearchResult::Playlist(_)
-                | ytmusicapi::SearchResult::Profile(_)
-                | ytmusicapi::SearchResult::Episode(_)
-        )
-    }));
-    assert_eq!(
-        page.continuation,
-        Some(ContinuationToken::new("search-token-2").unwrap())
     );
 }
 

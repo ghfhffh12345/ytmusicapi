@@ -208,6 +208,7 @@ async fn get_library_playlists_live_smoke_test() {
                     | ytmusicapi::SearchResult::Playlist(_)
                     | ytmusicapi::SearchResult::Profile(_)
                     | ytmusicapi::SearchResult::Episode(_)
+                    | ytmusicapi::SearchResult::Podcast(_)
             )),
             "expected continuation search results to preserve typed variants"
         );
