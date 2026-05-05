@@ -24,6 +24,7 @@ pub struct YtMusic {
     pub(crate) homepage_url: String,
     pub(crate) bootstrap_config: Arc<OnceCell<BootstrapConfig>>,
     pub(crate) browser_auth: Option<crate::auth::BrowserAuthHeaders>,
+    pub(crate) search_filter_override: Option<SearchFilter>,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -74,46 +75,37 @@ impl YtMusic {
                 }
             }
             let authenticated_body = build_search_body(&query, &authenticated_search_config);
-            let authenticated_result = if filter.is_some() {
-                self.search_with_transport_for_filter(bootstrap_config, authenticated_body, filter)
-                    .await
-            } else {
-                self.search_with_transport(bootstrap_config, authenticated_body)
-                    .await
+            let authenticated_client = Self {
+                search_filter_override: filter,
+                ..self.clone()
             };
+            let authenticated_result = authenticated_client
+                .search_with_transport(bootstrap_config, authenticated_body)
+                .await;
             match authenticated_result {
                 Ok(results) => Ok(results),
                 Err(Error::HttpTransport(_)) | Err(Error::HttpStatus { .. }) => {
                     let anonymous_body = build_search_body(&query, bootstrap_config);
                     let anonymous_client = Self {
                         browser_auth: None,
+                        search_filter_override: filter,
                         ..self.clone()
                     };
-                    if filter.is_some() {
-                        anonymous_client
-                            .search_with_transport_for_filter(
-                                bootstrap_config,
-                                anonymous_body,
-                                filter,
-                            )
-                            .await
-                    } else {
-                        anonymous_client
-                            .search_with_transport(bootstrap_config, anonymous_body)
-                            .await
-                    }
+                    anonymous_client
+                        .search_with_transport(bootstrap_config, anonymous_body)
+                        .await
                 }
                 Err(error) => Err(error),
             }
         } else {
             let anonymous_body = build_search_body(&query, bootstrap_config);
-            if filter.is_some() {
-                self.search_with_transport_for_filter(bootstrap_config, anonymous_body, filter)
-                    .await
-            } else {
-                self.search_with_transport(bootstrap_config, anonymous_body)
-                    .await
-            }
+            let anonymous_client = Self {
+                search_filter_override: filter,
+                ..self.clone()
+            };
+            anonymous_client
+                .search_with_transport(bootstrap_config, anonymous_body)
+                .await
         }
     }
 
@@ -121,16 +113,6 @@ impl YtMusic {
         &self,
         bootstrap: &BootstrapConfig,
         body: serde_json::Value,
-    ) -> Result<crate::Page<SearchResult>, Error> {
-        self.search_with_transport_for_filter(bootstrap, body, None)
-            .await
-    }
-
-    async fn search_with_transport_for_filter(
-        &self,
-        bootstrap: &BootstrapConfig,
-        body: serde_json::Value,
-        filter: Option<SearchFilter>,
     ) -> Result<crate::Page<SearchResult>, Error> {
         let url = format!(
             "{}/search?alt=json&key={}",
@@ -160,7 +142,7 @@ impl YtMusic {
             serde_json::from_str(&response_body).map_err(Error::JsonDecode)?;
         validate_search_response_structure(&response_json)?;
 
-        let results = parse_search_response(&response_json, filter)?;
+        let results = parse_search_response(&response_json, self.search_filter_override)?;
         Ok(crate::Page {
             items: results,
             continuation: None,
@@ -708,6 +690,7 @@ impl YtMusicBuilder {
                 .unwrap_or_else(|| "https://music.youtube.com".to_owned()),
             bootstrap_config: Arc::new(OnceCell::new()),
             browser_auth,
+            search_filter_override: None,
         })
     }
 }
