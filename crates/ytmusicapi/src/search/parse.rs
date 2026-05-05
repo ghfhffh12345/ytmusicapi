@@ -41,7 +41,7 @@ pub fn parse_search_response(
 
     Ok(crate::Page {
         items,
-        continuation: extract_search_continuation(response)?,
+        continuation: extract_search_continuation(response, sections)?,
     })
 }
 
@@ -82,13 +82,24 @@ fn parse_filtered_sections(
 
 fn extract_search_continuation(
     response: &Value,
+    sections: &[Value],
 ) -> Result<Option<crate::ContinuationToken>, Error> {
     for path in [
         "/contents/tabbedSearchResultsRenderer/tabs/0/tabRenderer/content/sectionListRenderer/continuations/0/nextContinuationData/continuation",
-        "/contents/tabbedSearchResultsRenderer/tabs/0/tabRenderer/content/sectionListRenderer/contents/0/musicShelfRenderer/continuations/0/nextContinuationData/continuation",
     ] {
         if let Some(token) = response.pointer(path).and_then(Value::as_str) {
             return crate::ContinuationToken::new(token).map(Some);
+        }
+    }
+
+    for section in sections {
+        if let Some(shelf) = section.get("musicShelfRenderer") {
+            if let Some(token) = shelf
+                .pointer("/continuations/0/nextContinuationData/continuation")
+                .and_then(Value::as_str)
+            {
+                return crate::ContinuationToken::new(token).map(Some);
+            }
         }
     }
 
@@ -662,7 +673,7 @@ fn required_value_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a Value, E
 #[cfg(test)]
 mod tests {
     use super::parse_search_response;
-    use crate::{SearchFilter, SearchResult};
+    use crate::{ContinuationToken, SearchFilter, SearchResult};
     use serde_json::{Value, json};
 
     fn parse_raw_fixture(raw_fixture: &str, filter: Option<SearchFilter>) -> Vec<SearchResult> {
@@ -739,6 +750,31 @@ mod tests {
         .items
     }
 
+    fn parse_inline_page(
+        sections: Vec<Value>,
+        filter: Option<SearchFilter>,
+    ) -> crate::Page<SearchResult> {
+        parse_search_response(
+            &json!({
+                "contents": {
+                    "tabbedSearchResultsRenderer": {
+                        "tabs": [{
+                            "tabRenderer": {
+                                "content": {
+                                    "sectionListRenderer": {
+                                        "contents": sections
+                                    }
+                                }
+                            }
+                        }]
+                    }
+                }
+            }),
+            filter,
+        )
+        .unwrap()
+    }
+
     fn expected_default_mixed() -> Value {
         expected_fixture(include_str!(
             "../../tests/fixtures/search/expected/default_mixed.json"
@@ -770,6 +806,27 @@ mod tests {
         assert_eq!(
             serde_json::to_value(parsed).unwrap(),
             expected_default_mixed()
+        );
+    }
+
+    #[test]
+    fn default_mixed_fixture_reports_continuation() {
+        let mut response: Value = serde_json::from_str(include_str!(
+            "../../tests/fixtures/search/raw/default_mixed.json"
+        ))
+        .unwrap();
+        response["contents"]["tabbedSearchResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]
+            ["sectionListRenderer"]["continuations"] = json!([{
+            "nextContinuationData": {
+                "continuation": "search-token-1"
+            }
+        }]);
+
+        let parsed = parse_search_response(&response, None).unwrap();
+
+        assert_eq!(
+            parsed.continuation,
+            Some(ContinuationToken::new("search-token-1").unwrap())
         );
     }
 
@@ -863,6 +920,39 @@ mod tests {
                     && result.author.as_deref() == Some("Adam")
                     && result.item_count.is_none()
         ));
+    }
+
+    #[test]
+    fn filtered_songs_continuation_is_found_on_any_shelf() {
+        let response: Value = serde_json::from_str(include_str!(
+            "../../tests/fixtures/search/raw/songs_authenticated.json"
+        ))
+        .unwrap();
+        let mut sections = response["contents"]["tabbedSearchResultsRenderer"]["tabs"][0]
+            ["tabRenderer"]["content"]["sectionListRenderer"]["contents"]
+            .as_array()
+            .unwrap()
+            .clone();
+        let second_section = sections[0].clone();
+        sections.push(second_section);
+        sections[1]["musicShelfRenderer"]["continuations"] = json!([{
+            "nextContinuationData": {
+                "continuation": "songs-token-1"
+            }
+        }]);
+
+        let parsed = parse_inline_page(sections, Some(SearchFilter::Songs));
+
+        assert!(
+            parsed
+                .items
+                .iter()
+                .all(|result| matches!(result, SearchResult::Song(_)))
+        );
+        assert_eq!(
+            parsed.continuation,
+            Some(ContinuationToken::new("songs-token-1").unwrap())
+        );
     }
 
     #[test]
