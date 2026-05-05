@@ -195,51 +195,98 @@ async fn get_library_playlists_live_smoke_test() {
         "expected live account info to include account name and photo URL"
     );
 
+    let default_page = client.search(SearchQuery::new("abba")).await.unwrap();
+    if let Some(token) = default_page.continuation.clone() {
+        let continuation = client.search_continuation(token).await.unwrap();
+        if continuation.items.is_empty() {
+            eprintln!(
+                "search continuation returned 0 items for this account; verified empty-state parsing"
+            );
+        } else {
+            assert!(
+                continuation.items.iter().all(|item| matches!(
+                    item,
+                    ytmusicapi::SearchResult::Song(_)
+                        | ytmusicapi::SearchResult::Video(_)
+                        | ytmusicapi::SearchResult::Album(_)
+                        | ytmusicapi::SearchResult::Artist(_)
+                        | ytmusicapi::SearchResult::Playlist(_)
+                        | ytmusicapi::SearchResult::Profile(_)
+                        | ytmusicapi::SearchResult::Episode(_)
+                        | ytmusicapi::SearchResult::Podcast(_)
+                )),
+                "expected continuation search results to preserve typed variants"
+            );
+        }
+    } else {
+        eprintln!("search returned no continuation token for this account");
+    }
+
     let songs = client
         .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
         .await
         .unwrap();
     assert!(
-        !songs.is_empty(),
+        !songs.items.is_empty(),
         "expected authenticated filtered songs results for query `abba`"
     );
     assert!(
         songs
+            .items
             .iter()
             .all(|result| matches!(result, ytmusicapi::SearchResult::Song(_))),
         "expected filtered songs search results to contain only songs"
     );
     assert!(
-        songs.iter().any(|result| match result {
+        songs.items.iter().any(|result| match result {
             ytmusicapi::SearchResult::Song(song) => song.album.is_some(),
             _ => false,
         }),
         "expected at least one filtered song result to include album metadata"
     );
+    if let Some(token) = songs.continuation.clone() {
+        let continuation = client.search_continuation(token).await.unwrap();
+        if continuation.items.is_empty() {
+            eprintln!(
+                "filtered songs continuation returned 0 items for this account; verified empty-state parsing"
+            );
+        } else {
+            assert!(
+                continuation
+                    .items
+                    .iter()
+                    .all(|item| matches!(item, ytmusicapi::SearchResult::Song(_))),
+                "expected filtered song continuation results to remain song-only"
+            );
+        }
+    } else {
+        eprintln!("filtered songs search returned no continuation token for this account");
+    }
 
     let videos = client
         .search(SearchQuery::new("abba").with_filter(SearchFilter::Videos))
         .await
         .unwrap();
     assert!(
-        !videos.is_empty(),
+        !videos.items.is_empty(),
         "expected authenticated filtered videos results for query `abba`"
     );
     assert!(
         videos
+            .items
             .iter()
             .all(|result| matches!(result, ytmusicapi::SearchResult::Video(_))),
         "expected filtered videos search results to contain only videos"
     );
     assert!(
-        videos.iter().any(|result| match result {
+        videos.items.iter().any(|result| match result {
             ytmusicapi::SearchResult::Video(video) => video.views.is_some(),
             _ => false,
         }),
         "expected at least one filtered video result to include view metadata"
     );
     assert!(
-        videos.iter().any(|result| match result {
+        videos.items.iter().any(|result| match result {
             ytmusicapi::SearchResult::Video(video) => video.duration.is_some(),
             _ => false,
         }),

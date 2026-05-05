@@ -1,0 +1,167 @@
+{
+  "continuationContents": {
+    "musicShelfContinuation": {
+      "contents": [
+        {
+          "musicResponsiveListItemRenderer": {
+            "thumbnail": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "url": "https://i.ytimg.com/vi/m9B0rp55l5Y/sddefault.jpg?sqp=-oaymwEWCJADEOEBIAQqCghqEJQEGHgg6AJIWg&rs=AMzJL3nZPxLWPeGS_GefnaUqltkmZkJx9A",
+                      "width": 400,
+                      "height": 225
+                    }
+                  ]
+                }
+              }
+            },
+            "overlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "playNavigationEndpoint": {
+                      "watchEndpoint": {
+                        "videoId": "m9B0rp55l5Y",
+                        "watchEndpointMusicSupportedConfigs": {
+                          "watchEndpointMusicConfig": {
+                            "musicVideoType": "MUSIC_VIDEO_TYPE_UGC"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "flexColumns": [
+              {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                  "text": {
+                    "runs": [
+                      {
+                        "text": "💃 ABBA – Dancing Queen | The ultimate disco anthem loved by generations worldwide #classicpop"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                  "text": {
+                    "runs": [
+                      {
+                        "text": "Laugh Zone",
+                        "navigationEndpoint": {
+                          "browseEndpoint": {
+                            "browseId": "UCr3k1mSwpQxV_7zLZgn7fBw"
+                          }
+                        }
+                      },
+                      {
+                        "text": " • "
+                      },
+                      {
+                        "text": "233K views"
+                      },
+                      {
+                        "text": " • "
+                      },
+                      {
+                        "text": "1:09:21"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "musicResponsiveListItemRenderer": {
+            "thumbnail": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "url": "https://i.ytimg.com/vi/ihu3JcTHN0I/sddefault.jpg?sqp=-oaymwEWCJADEOEBIAQqCghqEJQEGHgg6AJIWg&rs=AMzJL3mgHH_QGvkwxQay5mf7iT3hWXCx_A",
+                      "width": 400,
+                      "height": 225
+                    }
+                  ]
+                }
+              }
+            },
+            "overlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "playNavigationEndpoint": {
+                      "watchEndpoint": {
+                        "videoId": "ihu3JcTHN0I",
+                        "watchEndpointMusicSupportedConfigs": {
+                          "watchEndpointMusicConfig": {
+                            "musicVideoType": "MUSIC_VIDEO_TYPE_UGC"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "flexColumns": [
+              {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                  "text": {
+                    "runs": [
+                      {
+                        "text": "ABBA Greatest Hits 2026 💿 The Best of ABBA | Mamma Mia, Dancing Queen, Fernando"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "musicResponsiveListItemFlexColumnRenderer": {
+                  "text": {
+                    "runs": [
+                      {
+                        "text": "Disco Grooves",
+                        "navigationEndpoint": {
+                          "browseEndpoint": {
+                            "browseId": "UCdxuFy-VXHBPYwBBHO4hUNQ"
+                          }
+                        }
+                      },
+                      {
+                        "text": " • "
+                      },
+                      {
+                        "text": "66K views"
+                      },
+                      {
+                        "text": " • "
+                      },
+                      {
+                        "text": "42:28"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "continuations": [
+        {
+          "nextContinuationData": {
+            "continuation": "videos-token-2"
+          }
+        }
+      ]
+    }
+  }
+}

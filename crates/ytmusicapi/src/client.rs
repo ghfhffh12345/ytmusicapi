@@ -4,9 +4,9 @@ use reqwest::{Client, header};
 use tokio::sync::OnceCell;
 
 use crate::{
-    Error, SearchQuery, SearchResult,
+    Error, SearchFilter, SearchQuery, SearchResult,
     search::{
-        parse::parse_search_response,
+        parse::{parse_search_continuation_response, parse_search_response},
         request::{
             BootstrapConfig, USER_AGENT, bootstrap_config as fetch_bootstrap_config,
             build_continuation_body, build_library_albums_body, build_library_artists_body,
@@ -61,61 +61,117 @@ impl YtMusic {
         &self.homepage_url
     }
 
-    pub async fn search(&self, query: SearchQuery) -> Result<Vec<SearchResult>, Error> {
+    pub async fn search(&self, query: SearchQuery) -> Result<crate::Page<SearchResult>, Error> {
         query.validate()?;
 
         let bootstrap_config = self.bootstrap_config().await?;
         if self.browser_auth.is_some() {
-            match self
-                .search_with_transport(&query, bootstrap_config, true)
-                .await
-            {
+            let mut authenticated_search_config = bootstrap_config.clone();
+            authenticated_search_config.client_version =
+                self.search_client_version(&bootstrap_config);
+            let authenticated_body = build_search_body(&query, &authenticated_search_config);
+            let authenticated_result = self
+                .search_with_transport(
+                    &bootstrap_config,
+                    authenticated_body,
+                    self.browser_auth.as_ref(),
+                    query.filter,
+                )
+                .await;
+            match authenticated_result {
                 Ok(results) => Ok(results),
                 Err(Error::HttpTransport(_)) | Err(Error::HttpStatus { .. }) => {
-                    self.search_with_transport(&query, bootstrap_config, false)
+                    let anonymous_body = build_search_body(&query, bootstrap_config);
+                    self.search_with_transport(
+                        &bootstrap_config,
+                        anonymous_body,
+                        None,
+                        query.filter,
+                    )
+                    .await
+                }
+                Err(error) => Err(error),
+            }
+        } else {
+            let anonymous_body = build_search_body(&query, bootstrap_config);
+            self.search_with_transport(&bootstrap_config, anonymous_body, None, query.filter)
+                .await
+        }
+    }
+
+    pub async fn search_continuation(
+        &self,
+        token: crate::ContinuationToken,
+    ) -> Result<crate::Page<crate::SearchResult>, Error> {
+        let bootstrap = self.bootstrap_config().await?;
+
+        if self.browser_auth.is_some() {
+            let client_version = self.search_client_version(&bootstrap);
+            let authenticated_body = build_continuation_body(&token, &client_version);
+            match self
+                .search_with_transport(
+                    &bootstrap,
+                    authenticated_body,
+                    self.browser_auth.as_ref(),
+                    None,
+                )
+                .await
+            {
+                Ok(page) => Ok(page),
+                Err(Error::HttpTransport(_)) | Err(Error::HttpStatus { .. }) => {
+                    let anonymous_body = build_continuation_body(&token, &bootstrap.client_version);
+                    self.search_with_transport(&bootstrap, anonymous_body, None, None)
                         .await
                 }
                 Err(error) => Err(error),
             }
         } else {
-            self.search_with_transport(&query, bootstrap_config, false)
+            let body = build_continuation_body(&token, &bootstrap.client_version);
+            self.search_with_transport(&bootstrap, body, None, None)
                 .await
         }
     }
 
     async fn search_with_transport(
         &self,
-        query: &SearchQuery,
-        bootstrap_config: &BootstrapConfig,
-        authenticated: bool,
-    ) -> Result<Vec<SearchResult>, Error> {
-        let client_version = if authenticated {
-            self.browser_auth
-                .as_ref()
-                .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
-                .map(String::as_str)
-                .unwrap_or(&bootstrap_config.client_version)
-        } else {
-            &bootstrap_config.client_version
-        };
-        let mut search_config = bootstrap_config.clone();
-        search_config.client_version = client_version.to_owned();
+        bootstrap: &BootstrapConfig,
+        body: serde_json::Value,
+        browser_auth: Option<&crate::auth::BrowserAuthHeaders>,
+        filter: Option<SearchFilter>,
+    ) -> Result<crate::Page<SearchResult>, Error> {
+        let response_json = self
+            .search_raw_transport(bootstrap, body, browser_auth)
+            .await?;
+        parse_search_page(&response_json, filter)
+    }
 
+    fn search_client_version(&self, bootstrap: &BootstrapConfig) -> String {
+        self.browser_auth
+            .as_ref()
+            .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
+            .cloned()
+            .unwrap_or_else(|| bootstrap.client_version.clone())
+    }
+
+    async fn search_raw_transport(
+        &self,
+        bootstrap: &BootstrapConfig,
+        body: serde_json::Value,
+        browser_auth: Option<&crate::auth::BrowserAuthHeaders>,
+    ) -> Result<serde_json::Value, Error> {
         let url = format!(
             "{}/search?alt=json&key={}",
             self.base_url.trim_end_matches('/'),
-            bootstrap_config.innertube_api_key
+            bootstrap.innertube_api_key
         );
-        let body = build_search_body(query, &search_config).to_string();
-        let request = self.http_client.post(url).body(body);
-        let request = if authenticated {
-            let browser_auth = self.browser_auth.as_ref().unwrap();
-            request.headers(browser_auth.to_header_map(Some(&bootstrap_config.visitor_id))?)
+        let request = self.http_client.post(url).body(body.to_string());
+        let request = if let Some(browser_auth) = browser_auth {
+            request.headers(browser_auth.to_header_map(Some(&bootstrap.visitor_id))?)
         } else {
             request
                 .header(header::CONTENT_TYPE, "application/json")
                 .header(header::USER_AGENT, USER_AGENT)
-                .header("x-goog-visitor-id", &bootstrap_config.visitor_id)
+                .header("x-goog-visitor-id", &bootstrap.visitor_id)
         };
         let response = request.send().await.map_err(Error::HttpTransport)?;
 
@@ -130,9 +186,7 @@ impl YtMusic {
         let response_json: serde_json::Value =
             serde_json::from_str(&response_body).map_err(Error::JsonDecode)?;
         validate_search_response_structure(&response_json)?;
-
-        let results = parse_search_response(&response_json, query.filter)?;
-        Ok(results)
+        Ok(response_json)
     }
 
     pub async fn get_library_playlists(
@@ -680,6 +734,20 @@ impl YtMusicBuilder {
     }
 }
 
+fn parse_search_page(
+    response_json: &serde_json::Value,
+    filter: Option<SearchFilter>,
+) -> Result<crate::Page<SearchResult>, Error> {
+    if response_json
+        .pointer("/continuationContents/musicShelfContinuation")
+        .is_some()
+    {
+        parse_search_continuation_response(response_json)
+    } else {
+        parse_search_response(response_json, filter)
+    }
+}
+
 fn extract_status_message(response_body: &str) -> String {
     serde_json::from_str::<serde_json::Value>(response_body)
         .ok()
@@ -694,13 +762,19 @@ fn extract_status_message(response_body: &str) -> String {
 }
 
 fn validate_search_response_structure(response_json: &serde_json::Value) -> Result<(), Error> {
-    match response_json
+    if response_json
         .pointer("/contents/tabbedSearchResultsRenderer")
         .and_then(serde_json::Value::as_object)
+        .is_some()
+        || response_json
+            .pointer("/continuationContents/musicShelfContinuation")
+            .and_then(serde_json::Value::as_object)
+            .is_some()
     {
-        Some(_) => Ok(()),
-        None => Err(Error::Parse(
+        Ok(())
+    } else {
+        Err(Error::Parse(
             "search response missing contents.tabbedSearchResultsRenderer".to_owned(),
-        )),
+        ))
     }
 }
