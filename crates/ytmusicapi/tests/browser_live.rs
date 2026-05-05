@@ -198,20 +198,26 @@ async fn get_library_playlists_live_smoke_test() {
     let default_page = client.search(SearchQuery::new("abba")).await.unwrap();
     if let Some(token) = default_page.continuation.clone() {
         let continuation = client.search_continuation(token).await.unwrap();
-        assert!(
-            continuation.items.iter().all(|item| matches!(
-                item,
-                ytmusicapi::SearchResult::Song(_)
-                    | ytmusicapi::SearchResult::Video(_)
-                    | ytmusicapi::SearchResult::Album(_)
-                    | ytmusicapi::SearchResult::Artist(_)
-                    | ytmusicapi::SearchResult::Playlist(_)
-                    | ytmusicapi::SearchResult::Profile(_)
-                    | ytmusicapi::SearchResult::Episode(_)
-                    | ytmusicapi::SearchResult::Podcast(_)
-            )),
-            "expected continuation search results to preserve typed variants"
-        );
+        if continuation.items.is_empty() {
+            eprintln!(
+                "search continuation returned 0 items for this account; verified empty-state parsing"
+            );
+        } else {
+            assert!(
+                continuation.items.iter().all(|item| matches!(
+                    item,
+                    ytmusicapi::SearchResult::Song(_)
+                        | ytmusicapi::SearchResult::Video(_)
+                        | ytmusicapi::SearchResult::Album(_)
+                        | ytmusicapi::SearchResult::Artist(_)
+                        | ytmusicapi::SearchResult::Playlist(_)
+                        | ytmusicapi::SearchResult::Profile(_)
+                        | ytmusicapi::SearchResult::Episode(_)
+                        | ytmusicapi::SearchResult::Podcast(_)
+                )),
+                "expected continuation search results to preserve typed variants"
+            );
+        }
     } else {
         eprintln!("search returned no continuation token for this account");
     }
@@ -240,13 +246,19 @@ async fn get_library_playlists_live_smoke_test() {
     );
     if let Some(token) = songs.continuation.clone() {
         let continuation = client.search_continuation(token).await.unwrap();
-        assert!(
-            continuation
-                .items
-                .iter()
-                .all(|item| matches!(item, ytmusicapi::SearchResult::Song(_))),
-            "expected filtered song continuation results to remain song-only"
-        );
+        if continuation.items.is_empty() {
+            eprintln!(
+                "filtered songs continuation returned 0 items for this account; verified empty-state parsing"
+            );
+        } else {
+            assert!(
+                continuation
+                    .items
+                    .iter()
+                    .all(|item| matches!(item, ytmusicapi::SearchResult::Song(_))),
+                "expected filtered song continuation results to remain song-only"
+            );
+        }
     } else {
         eprintln!("filtered songs search returned no continuation token for this account");
     }

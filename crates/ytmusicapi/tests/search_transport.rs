@@ -281,6 +281,14 @@ async fn anonymous_search_continuation_posts_continuation_body_and_parses_songs_
             .iter()
             .all(|item| matches!(item, ytmusicapi::SearchResult::Song(_)))
     );
+    assert!(page.items.iter().any(|item| matches!(
+        item,
+        ytmusicapi::SearchResult::Song(song)
+            if song.title == "Slipping Through My Fingers"
+                && song.artists.first().map(|artist| artist.name.as_str()) == Some("ABBA")
+                && song.album.as_ref().map(|album| album.name.as_str()) == Some("The Visitors")
+                && song.duration.as_deref() == Some("3:56")
+    )));
     assert_eq!(
         page.continuation,
         Some(ContinuationToken::new("songs-token-2").unwrap())
@@ -318,31 +326,6 @@ async fn anonymous_search_continuation_posts_continuation_body_and_parses_songs_
 async fn authenticated_search_continuation_uses_browser_auth_headers_and_parses_default_mixed_page()
 {
     let server = MockServer::start().await;
-    let raw_fixture: Value = serde_json::from_str(include_str!(
-        "fixtures/search/raw/default_mixed_continuation.json"
-    ))
-    .unwrap();
-
-    let raw_items = raw_fixture["continuationContents"]["musicShelfContinuation"]["contents"]
-        .as_array()
-        .expect("expected mixed continuation contents array");
-    assert_eq!(raw_items.len(), 23);
-    assert_eq!(
-        raw_items[0]["musicResponsiveListItemRenderer"]["flexColumns"][0]["musicResponsiveListItemFlexColumnRenderer"]
-            ["text"]["runs"][0]["text"],
-        "Random Access Memories"
-    );
-    assert_eq!(
-        raw_items[3]["musicResponsiveListItemRenderer"]["flexColumns"][1]["musicResponsiveListItemFlexColumnRenderer"]
-            ["text"]["runs"][0]["text"],
-        "Artist"
-    );
-    assert_eq!(
-        raw_items[20]["musicResponsiveListItemRenderer"]["flexColumns"][1]["musicResponsiveListItemFlexColumnRenderer"]
-            ["text"]["runs"][0]["text"],
-        "Podcast"
-    );
-
     Mock::given(method("GET"))
         .and(path("/"))
         .respond_with(
@@ -384,19 +367,35 @@ async fn authenticated_search_continuation_uses_browser_auth_headers_and_parses_
         .unwrap();
 
     assert!(!page.items.is_empty());
-    assert!(matches!(
-        &page.items[0],
-        ytmusicapi::SearchResult::Album(album) if album.title == "Random Access Memories"
-    ));
-    assert!(matches!(
-        &page.items[1],
-        ytmusicapi::SearchResult::Album(album) if album.title == "Discovery"
-    ));
-    assert!(
-        page.items
-            .iter()
-            .any(|item| matches!(item, ytmusicapi::SearchResult::Podcast(_)))
-    );
+    assert!(page.items.iter().any(|item| matches!(
+        item,
+        ytmusicapi::SearchResult::Album(album)
+            if album.title == "Random Access Memories"
+                && album.artists.first().map(|artist| artist.name.as_str()) == Some("Daft Punk")
+                && album.year.as_deref() == Some("2013")
+    )));
+    assert!(page.items.iter().any(|item| matches!(
+        item,
+        ytmusicapi::SearchResult::Playlist(playlist)
+            if playlist.title == "Best Of Daft Punk"
+                && playlist.author.as_deref() == Some("misterepicpants")
+    )));
+    assert!(page.items.iter().any(|item| matches!(
+        item,
+        ytmusicapi::SearchResult::Episode(episode)
+            if episode.title
+                == "Best Future Funk Playlist - Daft Punk Future Funk & Cyber Funk Playlist for Neon City Vibes"
+                && episode
+                    .podcast
+                    .as_ref()
+                    .map(|podcast| podcast.name.as_str())
+                    == Some("🌟 Funkzone Sound – Future Funk Podcast 🌟")
+    )));
+    assert!(page.items.iter().any(|item| matches!(
+        item,
+        ytmusicapi::SearchResult::Podcast(podcast)
+            if podcast.title == "off Track Podcast Season 2"
+    )));
     assert_eq!(
         page.continuation,
         Some(ContinuationToken::new("search-token-2").unwrap())
@@ -643,6 +642,13 @@ async fn authenticated_videos_search_continuation_parses_non_empty_video_results
             .iter()
             .all(|item| matches!(item, ytmusicapi::SearchResult::Video(_)))
     );
+    assert!(page.items.iter().any(|item| matches!(
+        item,
+        ytmusicapi::SearchResult::Video(video)
+            if video.title.contains("Dancing Queen")
+                && video.views.as_deref() == Some("233K views")
+                && video.duration.as_deref() == Some("1:09:21")
+    )));
     assert_eq!(
         page.continuation,
         Some(ContinuationToken::new("videos-token-2").unwrap())
