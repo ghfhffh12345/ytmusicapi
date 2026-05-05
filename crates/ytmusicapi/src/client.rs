@@ -1,8 +1,4 @@
-use std::{
-    collections::HashMap,
-    fmt,
-    sync::{Arc, Mutex},
-};
+use std::{fmt, sync::Arc};
 
 use reqwest::{Client, header};
 use tokio::sync::OnceCell;
@@ -28,7 +24,6 @@ pub struct YtMusic {
     pub(crate) homepage_url: String,
     pub(crate) bootstrap_config: Arc<OnceCell<BootstrapConfig>>,
     pub(crate) browser_auth: Option<crate::auth::BrowserAuthHeaders>,
-    pub(crate) search_continuation_filters: Arc<Mutex<HashMap<String, Option<SearchFilter>>>>,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -109,7 +104,6 @@ impl YtMusic {
         token: crate::ContinuationToken,
     ) -> Result<crate::Page<crate::SearchResult>, Error> {
         let bootstrap = self.bootstrap_config().await?;
-        let filter = self.search_continuation_filter(&token);
 
         if self.browser_auth.is_some() {
             let client_version = self.search_client_version(&bootstrap);
@@ -119,21 +113,21 @@ impl YtMusic {
                     &bootstrap,
                     authenticated_body,
                     self.browser_auth.as_ref(),
-                    filter,
+                    None,
                 )
                 .await
             {
                 Ok(page) => Ok(page),
                 Err(Error::HttpTransport(_)) | Err(Error::HttpStatus { .. }) => {
                     let anonymous_body = build_continuation_body(&token, &bootstrap.client_version);
-                    self.search_with_transport(&bootstrap, anonymous_body, None, filter)
+                    self.search_with_transport(&bootstrap, anonymous_body, None, None)
                         .await
                 }
                 Err(error) => Err(error),
             }
         } else {
             let body = build_continuation_body(&token, &bootstrap.client_version);
-            self.search_with_transport(&bootstrap, body, None, filter)
+            self.search_with_transport(&bootstrap, body, None, None)
                 .await
         }
     }
@@ -148,9 +142,7 @@ impl YtMusic {
         let response_json = self
             .search_raw_transport(bootstrap, body, browser_auth)
             .await?;
-        let page = parse_search_page(&response_json, filter)?;
-        self.store_search_continuation_filter(page.continuation.as_ref(), filter);
-        Ok(page)
+        parse_search_page(&response_json, filter)
     }
 
     fn search_client_version(&self, bootstrap: &BootstrapConfig) -> String {
@@ -159,30 +151,6 @@ impl YtMusic {
             .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
             .cloned()
             .unwrap_or_else(|| bootstrap.client_version.clone())
-    }
-
-    fn search_continuation_filter(&self, token: &crate::ContinuationToken) -> Option<SearchFilter> {
-        self.search_continuation_filters
-            .lock()
-            .expect("search continuation filter mutex poisoned")
-            .get(token.as_str())
-            .copied()
-            .flatten()
-    }
-
-    fn store_search_continuation_filter(
-        &self,
-        token: Option<&crate::ContinuationToken>,
-        filter: Option<SearchFilter>,
-    ) {
-        let Some(token) = token else {
-            return;
-        };
-
-        self.search_continuation_filters
-            .lock()
-            .expect("search continuation filter mutex poisoned")
-            .insert(token.as_str().to_owned(), filter);
     }
 
     async fn search_raw_transport(
@@ -762,7 +730,6 @@ impl YtMusicBuilder {
                 .unwrap_or_else(|| "https://music.youtube.com".to_owned()),
             bootstrap_config: Arc::new(OnceCell::new()),
             browser_auth,
-            search_continuation_filters: Arc::new(Mutex::new(HashMap::new())),
         })
     }
 }
@@ -775,7 +742,7 @@ fn parse_search_page(
         .pointer("/continuationContents/musicShelfContinuation")
         .is_some()
     {
-        parse_search_continuation_response(response_json, filter)
+        parse_search_continuation_response(response_json)
     } else {
         parse_search_response(response_json, filter)
     }

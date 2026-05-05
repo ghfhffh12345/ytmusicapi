@@ -47,7 +47,6 @@ pub fn parse_search_response(
 
 pub(crate) fn parse_search_continuation_response(
     response: &Value,
-    filter: Option<SearchFilter>,
 ) -> Result<crate::Page<crate::SearchResult>, Error> {
     let shelf = response
         .pointer("/continuationContents/musicShelfContinuation")
@@ -60,16 +59,10 @@ pub(crate) fn parse_search_continuation_response(
         .and_then(Value::as_array)
         .ok_or_else(|| Error::Parse("missing continuation contents array".to_owned()))?;
 
-    let items = match filter {
-        Some(filter) => contents
-            .iter()
-            .map(|item| parse_filtered_shelf_item(item, None, filter))
-            .collect::<Result<Vec<_>, _>>()?,
-        None => contents
-            .iter()
-            .map(|item| parse_shelf_item(item, None))
-            .collect::<Result<Vec<_>, _>>()?,
-    };
+    let items = contents
+        .iter()
+        .map(parse_search_continuation_item)
+        .collect::<Result<Vec<_>, _>>()?;
 
     let continuation = shelf
         .pointer("/continuations/0/nextContinuationData/continuation")
@@ -81,6 +74,89 @@ pub(crate) fn parse_search_continuation_response(
         items,
         continuation,
     })
+}
+
+fn parse_search_continuation_item(item: &Value) -> Result<SearchResult, Error> {
+    let renderer = required_value_at(item, "/musicResponsiveListItemRenderer")?;
+    let metadata_runs = required_array_at(
+        renderer,
+        "/flexColumns/1/musicResponsiveListItemFlexColumnRenderer/text/runs",
+    )?;
+    let metadata_parts = non_separator_runs(metadata_runs);
+    let leading_text = metadata_parts
+        .first()
+        .map(|run| required_text(run, "/text"))
+        .transpose()?;
+
+    match leading_text.as_deref() {
+        Some(
+            "Song" | "Video" | "Album" | "Single" | "EP" | "Artist" | "Profile" | "Playlist"
+            | "Episode" | "Podcast",
+        ) => parse_shelf_item(item, None),
+        _ => parse_filtered_search_continuation_item(item, renderer, &metadata_parts),
+    }
+}
+
+fn parse_filtered_search_continuation_item(
+    item: &Value,
+    renderer: &Value,
+    metadata_parts: &[&Value],
+) -> Result<SearchResult, Error> {
+    // Continuation rows omit the explicit filter context from the request contract, so the parser
+    // infers the filtered row kind from payload shape only:
+    // - song/video rows carry a playable video id
+    // - playlist/album/artist rows carry browse ids
+    // - album rows still keep an explicit type label ("Album"/"Single"/"EP")
+    // - video rows expose a views count, while song rows expose album linkage or just duration
+    let leading_text = metadata_parts
+        .first()
+        .map(|run| required_text(run, "/text"))
+        .transpose()?;
+    let has_video_id = required_video_id(renderer).is_ok();
+    let has_browse_id = renderer
+        .pointer("/navigationEndpoint/browseEndpoint/browseId")
+        .and_then(Value::as_str)
+        .is_some();
+    let has_views = metadata_parts.iter().any(|part| {
+        required_text(part, "/text")
+            .map(|text| text.to_ascii_lowercase().contains("views"))
+            .unwrap_or(false)
+    });
+    let has_subscribers_or_audience = metadata_parts.iter().any(|part| {
+        required_text(part, "/text")
+            .map(|text| {
+                let text = text.to_ascii_lowercase();
+                text.contains("subscriber") || text.contains("monthly audience")
+            })
+            .unwrap_or(false)
+    });
+    let has_album_link = metadata_parts.iter().skip(1).any(|part| {
+        part.pointer("/navigationEndpoint/browseEndpoint/browseId")
+            .and_then(Value::as_str)
+            .is_some()
+    });
+    let trailing_text = metadata_parts
+        .last()
+        .and_then(|part| required_text(part, "/text").ok());
+
+    let inferred_filter = match leading_text.as_deref() {
+        Some("Album" | "Single" | "EP") => SearchFilter::Albums,
+        _ if has_video_id && has_views => SearchFilter::Videos,
+        _ if has_video_id
+            && (has_album_link || trailing_text.as_deref().is_some_and(looks_like_duration)) =>
+        {
+            SearchFilter::Songs
+        }
+        _ if has_browse_id && has_subscribers_or_audience => SearchFilter::Artists,
+        _ if has_browse_id => SearchFilter::Playlists,
+        _ => {
+            return Err(Error::Parse(
+                "unable to infer filtered continuation item type from search payload".to_owned(),
+            ));
+        }
+    };
+
+    parse_filtered_shelf_item(item, None, inferred_filter)
 }
 
 fn parse_default_mixed_sections(sections: &[Value]) -> Result<Vec<SearchResult>, Error> {
@@ -1043,11 +1119,8 @@ mod tests {
 
     #[test]
     fn filtered_songs_continuation_response_parses_items_and_token() {
-        let parsed = parse_search_continuation_response(
-            &filtered_songs_continuation_response(),
-            Some(SearchFilter::Songs),
-        )
-        .unwrap();
+        let parsed =
+            parse_search_continuation_response(&filtered_songs_continuation_response()).unwrap();
 
         assert!(
             parsed
@@ -1064,8 +1137,7 @@ mod tests {
     #[test]
     fn default_mixed_continuation_response_parses_items_and_token() {
         let parsed =
-            parse_search_continuation_response(&default_mixed_continuation_response(), None)
-                .unwrap();
+            parse_search_continuation_response(&default_mixed_continuation_response()).unwrap();
 
         assert!(matches!(
             &parsed.items[0],

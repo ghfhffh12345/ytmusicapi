@@ -279,18 +279,6 @@ async fn anonymous_search_continuation_posts_continuation_body_and_parses_songs_
         .and(|request: &Request| {
             serde_json::from_slice::<Value>(&request.body)
                 .ok()
-                .and_then(|body| body.get("query").cloned())
-                .is_some()
-        })
-        .respond_with(ResponseTemplate::new(200).set_body_json(songs_with_continuation_response()))
-        .mount(&server)
-        .await;
-
-    Mock::given(method("POST"))
-        .and(path("/youtubei/v1/search"))
-        .and(|request: &Request| {
-            serde_json::from_slice::<Value>(&request.body)
-                .ok()
                 .and_then(|body| body.get("continuation").cloned())
                 .is_some()
         })
@@ -304,13 +292,8 @@ async fn anonymous_search_continuation_posts_continuation_body_and_parses_songs_
         .build()
         .unwrap();
 
-    let first_page = client
-        .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
-        .await
-        .unwrap();
-
     let page = client
-        .search_continuation(first_page.continuation.unwrap())
+        .search_continuation(ContinuationToken::new("songs-token-1").unwrap())
         .await
         .unwrap();
 
@@ -372,20 +355,6 @@ async fn authenticated_search_continuation_uses_browser_auth_headers_and_parses_
         .and(|request: &Request| {
             serde_json::from_slice::<Value>(&request.body)
                 .ok()
-                .and_then(|body| body.get("query").cloned())
-                .is_some()
-        })
-        .respond_with(
-            ResponseTemplate::new(200).set_body_json(default_mixed_with_continuation_response()),
-        )
-        .mount(&server)
-        .await;
-
-    Mock::given(method("POST"))
-        .and(path("/youtubei/v1/search"))
-        .and(|request: &Request| {
-            serde_json::from_slice::<Value>(&request.body)
-                .ok()
                 .and_then(|body| body.get("continuation").cloned())
                 .is_some()
         })
@@ -406,10 +375,8 @@ async fn authenticated_search_continuation_uses_browser_auth_headers_and_parses_
         .build()
         .unwrap();
 
-    let first_page = client.search(SearchQuery::new("abba")).await.unwrap();
-
     let page = client
-        .search_continuation(first_page.continuation.unwrap())
+        .search_continuation(ContinuationToken::new("search-token-1").unwrap())
         .await
         .unwrap();
 
@@ -491,32 +458,6 @@ async fn authenticated_search_continuation_falls_back_to_anonymous_transport_on_
             request.headers.get("authorization").is_some()
                 && serde_json::from_slice::<Value>(&request.body)
                     .ok()
-                    .and_then(|body| body.get("query").cloned())
-                    .is_some()
-        })
-        .respond_with(ResponseTemplate::new(403).set_body_string("forbidden"))
-        .mount(&server)
-        .await;
-
-    Mock::given(method("POST"))
-        .and(path("/youtubei/v1/search"))
-        .and(|request: &Request| {
-            request.headers.get("authorization").is_none()
-                && serde_json::from_slice::<Value>(&request.body)
-                    .ok()
-                    .and_then(|body| body.get("query").cloned())
-                    .is_some()
-        })
-        .respond_with(ResponseTemplate::new(200).set_body_json(songs_with_continuation_response()))
-        .mount(&server)
-        .await;
-
-    Mock::given(method("POST"))
-        .and(path("/youtubei/v1/search"))
-        .and(|request: &Request| {
-            request.headers.get("authorization").is_some()
-                && serde_json::from_slice::<Value>(&request.body)
-                    .ok()
                     .and_then(|body| body.get("continuation").cloned())
                     .is_some()
         })
@@ -548,14 +489,8 @@ async fn authenticated_search_continuation_falls_back_to_anonymous_transport_on_
         .build()
         .unwrap();
 
-    let first_page = client
-        .search(SearchQuery::new("abba").with_filter(SearchFilter::Songs))
-        .await
-        .unwrap();
-    let continuation_token = first_page.continuation.unwrap();
-
     let page = client
-        .search_continuation(continuation_token)
+        .search_continuation(ContinuationToken::new("songs-token-1").unwrap())
         .await
         .unwrap();
 
