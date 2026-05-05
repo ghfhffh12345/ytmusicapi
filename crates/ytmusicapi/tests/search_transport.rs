@@ -586,6 +586,14 @@ async fn authenticated_songs_search_continuation_parses_non_empty_song_results()
             .iter()
             .all(|item| matches!(item, ytmusicapi::SearchResult::Song(_)))
     );
+    assert!(page.items.iter().any(|item| matches!(
+        item,
+        ytmusicapi::SearchResult::Song(song)
+            if song.title == "Slipping Through My Fingers"
+                && song.artists.first().map(|artist| artist.name.as_str()) == Some("ABBA")
+                && song.album.as_ref().map(|album| album.name.as_str()) == Some("The Visitors")
+                && song.duration.as_deref() == Some("3:56")
+    )));
     assert_eq!(
         page.continuation,
         Some(ContinuationToken::new("songs-token-2").unwrap())
