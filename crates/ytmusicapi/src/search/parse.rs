@@ -113,10 +113,13 @@ fn parse_filtered_search_continuation_item(
         .map(|run| required_text(run, "/text"))
         .transpose()?;
     let has_video_id = required_video_id(renderer).is_ok();
-    let has_browse_id = renderer
+    let browse_id = renderer
         .pointer("/navigationEndpoint/browseEndpoint/browseId")
-        .and_then(Value::as_str)
-        .is_some();
+        .and_then(Value::as_str);
+    let has_browse_id = browse_id.is_some();
+    // Artist continuations can omit subscriber/audience text, so keep channel-style browse ids
+    // out of the playlist fallback.
+    let has_artist_browse_id = browse_id.is_some_and(|browse_id| browse_id.starts_with("UC"));
     let has_views = metadata_parts.iter().any(|part| {
         required_text(part, "/text")
             .map(|text| text.to_ascii_lowercase().contains("views"))
@@ -148,6 +151,7 @@ fn parse_filtered_search_continuation_item(
             SearchFilter::Songs
         }
         _ if has_browse_id && has_subscribers_or_audience => SearchFilter::Artists,
+        _ if has_artist_browse_id => SearchFilter::Artists,
         _ if has_browse_id => SearchFilter::Playlists,
         _ => {
             return Err(Error::Parse(
@@ -865,6 +869,32 @@ mod tests {
         })
     }
 
+    fn filtered_artist_continuation_response_without_subscribers() -> Value {
+        let response: Value =
+            serde_json::from_str(include_str!("../../tests/fixtures/search/raw/artists.json"))
+                .unwrap();
+        let mut contents = response["contents"]["tabbedSearchResultsRenderer"]["tabs"][0]
+            ["tabRenderer"]["content"]["sectionListRenderer"]["contents"][0]
+            ["musicShelfRenderer"]["contents"]
+            .clone();
+        let artist_item = &mut contents[3]["musicResponsiveListItemRenderer"];
+        artist_item["flexColumns"][1]["musicResponsiveListItemFlexColumnRenderer"]["text"]["runs"] =
+            json!([{ "text": "Armin van Buuren ASOT Radio" }]);
+
+        json!({
+            "continuationContents": {
+                "musicShelfContinuation": {
+                    "contents": [contents[3].clone()],
+                    "continuations": [{
+                        "nextContinuationData": {
+                            "continuation": "artists-token-1"
+                        }
+                    }]
+                }
+            }
+        })
+    }
+
     fn default_mixed_continuation_response() -> Value {
         let response: Value = serde_json::from_str(include_str!(
             "../../tests/fixtures/search/raw/default_mixed.json"
@@ -1131,6 +1161,25 @@ mod tests {
         assert_eq!(
             parsed.continuation,
             Some(ContinuationToken::new("songs-token-2").unwrap())
+        );
+    }
+
+    #[test]
+    fn filtered_artist_continuation_without_subscribers_remains_artist() {
+        let parsed = parse_search_continuation_response(
+            &filtered_artist_continuation_response_without_subscribers(),
+        )
+        .unwrap();
+
+        assert!(matches!(
+            &parsed.items[0],
+            SearchResult::Artist(result)
+                if result.artist.as_deref() == Some("Armin van Buuren ASOT Radio")
+                    && result.subscribers.is_none()
+        ));
+        assert_eq!(
+            parsed.continuation,
+            Some(ContinuationToken::new("artists-token-1").unwrap())
         );
     }
 
