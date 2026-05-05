@@ -63,21 +63,25 @@ impl YtMusic {
 
     pub async fn search(&self, query: SearchQuery) -> Result<crate::Page<SearchResult>, Error> {
         query.validate()?;
+        let filter = query.filter;
 
         let bootstrap_config = self.bootstrap_config().await?;
         if self.browser_auth.is_some() {
             let mut authenticated_search_config = bootstrap_config.clone();
             if let Some(browser_auth) = &self.browser_auth {
-                if let Some(client_version) = browser_auth.headers.get("x-youtube-client-version")
-                {
+                if let Some(client_version) = browser_auth.headers.get("x-youtube-client-version") {
                     authenticated_search_config.client_version = client_version.clone();
                 }
             }
             let authenticated_body = build_search_body(&query, &authenticated_search_config);
-            match self
-                .search_with_transport(bootstrap_config, authenticated_body)
-                .await
-            {
+            let authenticated_result = if filter.is_some() {
+                self.search_with_transport_for_filter(bootstrap_config, authenticated_body, filter)
+                    .await
+            } else {
+                self.search_with_transport(bootstrap_config, authenticated_body)
+                    .await
+            };
+            match authenticated_result {
                 Ok(results) => Ok(results),
                 Err(Error::HttpTransport(_)) | Err(Error::HttpStatus { .. }) => {
                     let anonymous_body = build_search_body(&query, bootstrap_config);
@@ -85,16 +89,31 @@ impl YtMusic {
                         browser_auth: None,
                         ..self.clone()
                     };
-                    anonymous_client
-                        .search_with_transport(bootstrap_config, anonymous_body)
-                        .await
+                    if filter.is_some() {
+                        anonymous_client
+                            .search_with_transport_for_filter(
+                                bootstrap_config,
+                                anonymous_body,
+                                filter,
+                            )
+                            .await
+                    } else {
+                        anonymous_client
+                            .search_with_transport(bootstrap_config, anonymous_body)
+                            .await
+                    }
                 }
                 Err(error) => Err(error),
             }
         } else {
             let anonymous_body = build_search_body(&query, bootstrap_config);
-            self.search_with_transport(bootstrap_config, anonymous_body)
-                .await
+            if filter.is_some() {
+                self.search_with_transport_for_filter(bootstrap_config, anonymous_body, filter)
+                    .await
+            } else {
+                self.search_with_transport(bootstrap_config, anonymous_body)
+                    .await
+            }
         }
     }
 
@@ -102,6 +121,16 @@ impl YtMusic {
         &self,
         bootstrap: &BootstrapConfig,
         body: serde_json::Value,
+    ) -> Result<crate::Page<SearchResult>, Error> {
+        self.search_with_transport_for_filter(bootstrap, body, None)
+            .await
+    }
+
+    async fn search_with_transport_for_filter(
+        &self,
+        bootstrap: &BootstrapConfig,
+        body: serde_json::Value,
+        filter: Option<SearchFilter>,
     ) -> Result<crate::Page<SearchResult>, Error> {
         let url = format!(
             "{}/search?alt=json&key={}",
@@ -131,7 +160,7 @@ impl YtMusic {
             serde_json::from_str(&response_body).map_err(Error::JsonDecode)?;
         validate_search_response_structure(&response_json)?;
 
-        let results = parse_search_response(&response_json, search_filter_from_body(&body))?;
+        let results = parse_search_response(&response_json, filter)?;
         Ok(crate::Page {
             items: results,
             continuation: None,
@@ -621,26 +650,6 @@ impl YtMusic {
         }
 
         serde_json::from_str(&response_body).map_err(Error::JsonDecode)
-    }
-}
-
-fn search_filter_from_body(body: &serde_json::Value) -> Option<SearchFilter> {
-    match body.get("params").and_then(|value| value.as_str()) {
-        Some("EgWKAQIIAWoMEA4QChADEAQQCRAF") | Some("EgWKAQIIAUICCAFqDBAOEAoQAxAEEAkQBQ%3D%3D") => {
-            Some(SearchFilter::Songs)
-        }
-        Some("EgWKAQIQAWoMEA4QChADEAQQCRAF") | Some("EgWKAQIQAUICCAFqDBAOEAoQAxAEEAkQBQ%3D%3D") => {
-            Some(SearchFilter::Videos)
-        }
-        Some("EgWKAQIYAWoMEA4QChADEAQQCRAF") | Some("EgWKAQIYAUICCAFqDBAOEAoQAxAEEAkQBQ%3D%3D") => {
-            Some(SearchFilter::Albums)
-        }
-        Some("EgWKAQIgAWoMEA4QChADEAQQCRAF") | Some("EgWKAQIgAUICCAFqDBAOEAoQAxAEEAkQBQ%3D%3D") => {
-            Some(SearchFilter::Artists)
-        }
-        Some("Eg-KAQwIABAAGAAgACgBMABqChAEEAMQCRAFEAo%3D")
-        | Some("Eg-KAQwIABAAGAAgACgBMABCAggBagoQBBADEAkQBRAK") => Some(SearchFilter::Playlists),
-        _ => None,
     }
 }
 
