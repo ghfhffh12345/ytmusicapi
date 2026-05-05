@@ -212,6 +212,8 @@ async fn get_library_playlists_live_smoke_test() {
             )),
             "expected continuation search results to preserve typed variants"
         );
+    } else {
+        eprintln!("search returned no continuation token for this account");
     }
 
     let songs = client
@@ -245,6 +247,8 @@ async fn get_library_playlists_live_smoke_test() {
                 .all(|item| matches!(item, ytmusicapi::SearchResult::Song(_))),
             "expected filtered song continuation results to remain song-only"
         );
+    } else {
+        eprintln!("filtered songs search returned no continuation token for this account");
     }
 
     let videos = client

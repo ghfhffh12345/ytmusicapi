@@ -70,27 +70,6 @@ fn songs_continuation_response() -> Value {
     })
 }
 
-fn default_mixed_continuation_response() -> Value {
-    let response: Value =
-        serde_json::from_str(include_str!("fixtures/search/raw/default_mixed.json")).unwrap();
-    let contents = response["contents"]["tabbedSearchResultsRenderer"]["tabs"][0]["tabRenderer"]
-        ["content"]["sectionListRenderer"]["contents"][1]["musicShelfRenderer"]["contents"]
-        .clone();
-
-    json!({
-        "continuationContents": {
-            "musicShelfContinuation": {
-                "contents": contents,
-                "continuations": [{
-                    "nextContinuationData": {
-                        "continuation": "search-token-2"
-                    }
-                }]
-            }
-        }
-    })
-}
-
 #[tokio::test]
 async fn authenticated_search_uses_browser_auth_headers_when_available() {
     let server = MockServer::start().await;
@@ -382,9 +361,9 @@ async fn authenticated_search_continuation_uses_browser_auth_headers_and_parses_
                 .and_then(|body| body.get("continuation").cloned())
                 .is_some()
         })
-        .respond_with(
-            ResponseTemplate::new(200).set_body_json(default_mixed_continuation_response()),
-        )
+        .respond_with(ResponseTemplate::new(200).set_body_string(include_str!(
+            "fixtures/search/raw/default_mixed_continuation.json"
+        )))
         .mount(&server)
         .await;
 
