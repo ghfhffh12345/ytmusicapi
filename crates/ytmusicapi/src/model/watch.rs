@@ -44,6 +44,26 @@ impl WatchPlaylistQuery {
         if self
             .video_id
             .as_deref()
+            .is_some_and(|id| id.trim().is_empty())
+        {
+            return Err(Error::InvalidInput(
+                "watch playlist video_id must not be blank".to_owned(),
+            ));
+        }
+
+        if self
+            .playlist_id
+            .as_deref()
+            .is_some_and(|id| id.trim().is_empty())
+        {
+            return Err(Error::InvalidInput(
+                "watch playlist playlist_id must not be blank".to_owned(),
+            ));
+        }
+
+        if self
+            .video_id
+            .as_deref()
             .is_none_or(|id| id.trim().is_empty())
             && self
                 .playlist_id

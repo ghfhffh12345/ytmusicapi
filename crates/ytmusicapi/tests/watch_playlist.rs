@@ -62,8 +62,7 @@ fn watch_playlist_query_rejects_whitespace_only_ids() {
         .unwrap_err();
     assert!(matches!(
         err,
-        Error::InvalidInput(message)
-            if message == "watch playlist query requires video_id or playlist_id"
+        Error::InvalidInput(message) if message == "watch playlist video_id must not be blank"
     ));
 }
 
@@ -87,6 +86,44 @@ fn watch_playlist_query_allows_playlist_id_only() {
     assert_eq!(query.playlist_id.as_deref(), Some("PL123"));
     assert!(!query.radio);
     assert!(!query.shuffle);
+}
+
+#[test]
+fn watch_playlist_query_rejects_blank_video_id_with_valid_playlist_id() {
+    let err = WatchPlaylistQuery::new()
+        .with_video_id("   ")
+        .with_playlist_id("PL123")
+        .validate()
+        .unwrap_err();
+    assert!(matches!(
+        err,
+        Error::InvalidInput(message) if message == "watch playlist video_id must not be blank"
+    ));
+}
+
+#[test]
+fn watch_playlist_query_rejects_blank_playlist_id_with_valid_video_id() {
+    let err = WatchPlaylistQuery::new()
+        .with_video_id("video-1")
+        .with_playlist_id("   ")
+        .validate()
+        .unwrap_err();
+    assert!(matches!(
+        err,
+        Error::InvalidInput(message) if message == "watch playlist playlist_id must not be blank"
+    ));
+}
+
+#[test]
+fn watch_playlist_query_rejects_blank_playlist_id_alone() {
+    let err = WatchPlaylistQuery::new()
+        .with_playlist_id("   ")
+        .validate()
+        .unwrap_err();
+    assert!(matches!(
+        err,
+        Error::InvalidInput(message) if message == "watch playlist playlist_id must not be blank"
+    ));
 }
 
 #[test]
