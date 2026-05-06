@@ -10,6 +10,12 @@ pub struct WatchPlaylistQuery {
     pub shuffle: bool,
 }
 
+impl Default for WatchPlaylistQuery {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl WatchPlaylistQuery {
     pub fn new() -> Self {
         Self {
