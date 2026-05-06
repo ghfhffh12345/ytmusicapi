@@ -293,3 +293,60 @@ async fn get_library_playlists_live_smoke_test() {
         "expected at least one filtered video result to include duration metadata"
     );
 }
+
+#[tokio::test]
+#[ignore = "requires local browser.json generated from browser.txt and live network access"]
+async fn get_watch_playlist_live_smoke_test() {
+    let worktree_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .to_path_buf();
+    let repo_root = worktree_root
+        .parent()
+        .filter(|parent| parent.file_name().is_some_and(|name| name == ".worktrees"))
+        .and_then(|worktrees_dir| worktrees_dir.parent())
+        .map(|shared_root| shared_root.to_path_buf())
+        .unwrap_or(worktree_root);
+    let browser_json = repo_root.join("browser.json");
+
+    assert!(
+        browser_json.exists(),
+        "run `cargo run -p ytmusicapi-cli < browser.txt` from the repo root first"
+    );
+
+    let client = YtMusic::from_browser_auth_file(&browser_json).unwrap();
+    let page = client
+        .get_watch_playlist(ytmusicapi::WatchPlaylistQuery::new().with_video_id("4y33h81phKU"))
+        .await
+        .unwrap();
+
+    assert!(
+        !page.items.is_empty(),
+        "expected live watch playlist to return at least one playable item"
+    );
+    assert!(
+        page.items
+            .iter()
+            .all(|track| !track.video_id.is_empty() && !track.title.is_empty()),
+        "expected each live watch item to include stable identity fields"
+    );
+
+    if let Some(token) = page.continuation.clone() {
+        let continuation = client.get_watch_playlist_continuation(token).await.unwrap();
+        if continuation.items.is_empty() {
+            eprintln!("watch continuation returned 0 items; verified empty-state parsing");
+        } else {
+            assert!(
+                continuation
+                    .items
+                    .iter()
+                    .all(|track| !track.video_id.is_empty() && !track.title.is_empty()),
+                "expected each live watch continuation item to include stable identity fields"
+            );
+        }
+    } else {
+        eprintln!("watch playlist returned no continuation token for this seed");
+    }
+}
