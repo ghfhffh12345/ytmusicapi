@@ -82,13 +82,13 @@ fn parse_watch_track(renderer: &Value) -> Result<WatchTrack, Error> {
         artists: parse_artists(byline_runs),
         album: parse_album(byline_runs),
         like_status: parse_like_status(renderer),
+        is_in_library: parse_in_library(renderer),
         video_type: optional_text(
             renderer,
             "/navigationEndpoint/watchEndpoint/watchEndpointMusicSupportedConfigs/watchEndpointMusicConfig/musicVideoType",
         ),
         year: parse_year(byline_runs),
         views: parse_views(byline_runs),
-        is_in_library: None,
         counterpart: None,
     })
 }
@@ -243,6 +243,28 @@ fn parse_like_status(renderer: &Value) -> Option<LibraryLikeStatus> {
     None
 }
 
+fn parse_in_library(renderer: &Value) -> Option<bool> {
+    let items = renderer
+        .pointer("/menu/menuRenderer/items")
+        .and_then(Value::as_array)?;
+
+    for item in items {
+        let Some(toggle) = item.get("toggleMenuServiceItemRenderer") else {
+            continue;
+        };
+
+        if let Some(icon_type) = optional_text(toggle, "/defaultIcon/iconType") {
+            match icon_type.as_str() {
+                "BOOKMARK" => return Some(true),
+                "BOOKMARK_BORDER" => return Some(false),
+                _ => continue,
+            }
+        }
+    }
+
+    None
+}
+
 fn required_u32(value: &Value, pointer: &str) -> Result<u32, Error> {
     let number = value
         .pointer(pointer)
@@ -300,7 +322,9 @@ fn infer_like_status_from_default_endpoint(status: &str) -> Option<LibraryLikeSt
 
 #[cfg(test)]
 mod tests {
-    use super::{parse_watch_playlist_continuation, parse_watch_playlist_response};
+    use super::{
+        parse_watch_playlist_continuation, parse_watch_playlist_response, parse_watch_track,
+    };
     use crate::{ContinuationToken, LibraryLikeStatus, WatchTrack};
 
     #[test]
@@ -477,5 +501,70 @@ mod tests {
             page.items[0].thumbnails[0].url,
             "https://example.com/plain.jpg"
         );
+    }
+
+    #[test]
+    fn parse_watch_track_sets_library_state_from_menu_icon() {
+        let bookmark_track: serde_json::Value = serde_json::from_str(
+            r#"
+            {
+              "videoId": "in-library-video",
+              "title": { "runs": [{ "text": "In Library Song" }] },
+              "thumbnail": {
+                "thumbnails": [
+                  { "url": "https://example.com/in-library.jpg", "width": 60, "height": 60 }
+                ]
+              },
+              "menu": {
+                "menuRenderer": {
+                  "items": [
+                    {
+                      "toggleMenuServiceItemRenderer": {
+                        "defaultIcon": {
+                          "iconType": "BOOKMARK"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+            "#,
+        )
+        .unwrap();
+
+        let bookmark_border_track: serde_json::Value = serde_json::from_str(
+            r#"
+            {
+              "videoId": "not-in-library-video",
+              "title": { "runs": [{ "text": "Not In Library Song" }] },
+              "thumbnail": {
+                "thumbnails": [
+                  { "url": "https://example.com/not-in-library.jpg", "width": 60, "height": 60 }
+                ]
+              },
+              "menu": {
+                "menuRenderer": {
+                  "items": [
+                    {
+                      "toggleMenuServiceItemRenderer": {
+                        "defaultIcon": {
+                          "iconType": "BOOKMARK_BORDER"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+            "#,
+        )
+        .unwrap();
+
+        let bookmark = parse_watch_track(&bookmark_track).unwrap();
+        let bookmark_border = parse_watch_track(&bookmark_border_track).unwrap();
+
+        assert_eq!(bookmark.is_in_library, Some(true));
+        assert_eq!(bookmark_border.is_in_library, Some(false));
     }
 }
