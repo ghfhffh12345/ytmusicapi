@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use serde_json::Value;
 
 use crate::{
@@ -152,18 +154,30 @@ fn parse_artists(runs: &[Value]) -> Vec<ArtistRef> {
     runs.iter()
         .filter_map(|run| {
             let text = run.pointer("/text").and_then(Value::as_str)?;
-            if text.is_empty()
-                || text == " • "
-                || looks_like_album_run(run)
-                || looks_like_year(text)
-                || looks_like_views(text)
+            let trimmed = text.trim();
+            if trimmed.is_empty()
+                || trimmed == "•"
+                || looks_like_year(trimmed)
+                || looks_like_views(trimmed)
             {
                 return None;
             }
 
+            if let Some(browse_id) =
+                optional_text(run, "/navigationEndpoint/browseEndpoint/browseId")
+            {
+                if is_album_run(run, &browse_id) {
+                    return None;
+                }
+
+                return Some(ArtistRef {
+                    id: browse_id,
+                    name: text.to_owned(),
+                });
+            }
+
             Some(ArtistRef {
-                id: optional_text(run, "/navigationEndpoint/browseEndpoint/browseId")
-                    .unwrap_or_default(),
+                id: String::new(),
                 name: text.to_owned(),
             })
         })
@@ -173,7 +187,7 @@ fn parse_artists(runs: &[Value]) -> Vec<ArtistRef> {
 fn parse_album(runs: &[Value]) -> Option<AlbumRef> {
     runs.iter().find_map(|run| {
         let browse_id = optional_text(run, "/navigationEndpoint/browseEndpoint/browseId")?;
-        if !is_album_browse_id(&browse_id) {
+        if !is_album_run(run, &browse_id) {
             return None;
         }
 
@@ -186,7 +200,7 @@ fn parse_album(runs: &[Value]) -> Option<AlbumRef> {
 
 fn parse_year(runs: &[Value]) -> Option<String> {
     runs.iter().find_map(|run| {
-        let text = run.pointer("/text").and_then(Value::as_str)?;
+        let text = run.pointer("/text").and_then(Value::as_str)?.trim();
         looks_like_year(text).then(|| text.to_owned())
     })
 }
@@ -194,22 +208,36 @@ fn parse_year(runs: &[Value]) -> Option<String> {
 fn parse_views(runs: &[Value]) -> Option<String> {
     runs.iter().find_map(|run| {
         let text = run.pointer("/text").and_then(Value::as_str)?;
-        looks_like_views(text).then(|| text.to_owned())
+        looks_like_views(text.trim()).then(|| text.trim().to_owned())
     })
 }
 
 fn parse_like_status(renderer: &Value) -> Option<LibraryLikeStatus> {
-    match optional_text(
-        renderer,
-        "/menu/menuRenderer/items/0/toggleMenuServiceItemRenderer/defaultServiceEndpoint/likeEndpoint/status",
-    )
-    .as_deref()
-    {
-        Some("LIKE") => Some(LibraryLikeStatus::Like),
-        Some("INDIFFERENT") => Some(LibraryLikeStatus::Indifferent),
-        Some("DISLIKE") => Some(LibraryLikeStatus::Dislike),
-        _ => None,
+    let items = renderer
+        .pointer("/menu/menuRenderer/items")
+        .and_then(Value::as_array)?;
+
+    for item in items {
+        let Some(toggle) = item.get("toggleMenuServiceItemRenderer") else {
+            continue;
+        };
+
+        if let Some(status) = optional_text(toggle, "/toggledServiceEndpoint/likeEndpoint/status")
+            .as_deref()
+            .and_then(parse_like_status_value)
+        {
+            return Some(status);
+        }
+
+        if let Some(status) = optional_text(toggle, "/defaultServiceEndpoint/likeEndpoint/status")
+            .as_deref()
+            .and_then(infer_like_status_from_default_endpoint)
+        {
+            return Some(status);
+        }
     }
+
+    None
 }
 
 fn required_u32(value: &Value, pointer: &str) -> Result<u32, Error> {
@@ -221,13 +249,17 @@ fn required_u32(value: &Value, pointer: &str) -> Result<u32, Error> {
     u32::try_from(number).map_err(|_| Error::Parse(format!("watch response missing {pointer}")))
 }
 
-fn looks_like_album_run(run: &Value) -> bool {
-    optional_text(run, "/navigationEndpoint/browseEndpoint/browseId")
-        .is_some_and(|browse_id| is_album_browse_id(&browse_id))
-}
-
-fn is_album_browse_id(browse_id: &str) -> bool {
-    browse_id.starts_with("MPRE") || browse_id.starts_with("FEmusic_")
+fn is_album_run(run: &Value, browse_id: &str) -> bool {
+    matches!(
+        optional_text(
+            run,
+            "/navigationEndpoint/browseEndpoint/browseEndpointContextSupportedConfigs/browseEndpointContextMusicConfig/pageType",
+        )
+        .as_deref(),
+        Some("MUSIC_PAGE_TYPE_ALBUM") | Some("MUSIC_PAGE_TYPE_AUDIOBOOK")
+    ) || browse_id.starts_with("MPRE")
+        || browse_id.starts_with("FEmusic_")
+        || browse_id.contains("release_detail")
 }
 
 fn looks_like_year(text: &str) -> bool {
@@ -235,7 +267,32 @@ fn looks_like_year(text: &str) -> bool {
 }
 
 fn looks_like_views(text: &str) -> bool {
-    text.ends_with("views")
+    let normalized = text.split_whitespace().collect::<Vec<_>>().join(" ");
+    let Some(first) = normalized.chars().next() else {
+        return false;
+    };
+    let Some(last) = normalized.rsplit(' ').next() else {
+        return false;
+    };
+
+    first.is_ascii_digit() && matches!(last.to_ascii_lowercase().as_str(), "view" | "views")
+}
+
+fn parse_like_status_value(status: &str) -> Option<LibraryLikeStatus> {
+    match status {
+        "LIKE" => Some(LibraryLikeStatus::Like),
+        "INDIFFERENT" => Some(LibraryLikeStatus::Indifferent),
+        "DISLIKE" => Some(LibraryLikeStatus::Dislike),
+        _ => None,
+    }
+}
+
+fn infer_like_status_from_default_endpoint(status: &str) -> Option<LibraryLikeStatus> {
+    match status {
+        "LIKE" => Some(LibraryLikeStatus::Indifferent),
+        "INDIFFERENT" => Some(LibraryLikeStatus::Like),
+        _ => None,
+    }
 }
 
 #[cfg(test)]
@@ -301,7 +358,28 @@ mod tests {
         .unwrap();
 
         let page: crate::Page<WatchTrack> = parse_watch_playlist_response(&response).unwrap();
-        assert!(!page.items.is_empty());
+        assert_eq!(
+            page.continuation,
+            Some(ContinuationToken::new("radio-watch-token-1").unwrap())
+        );
+        assert_eq!(page.items[0].title, "Radio Primary Song");
+        assert_eq!(
+            page.items[0].like_status,
+            Some(LibraryLikeStatus::Indifferent)
+        );
+        assert_eq!(page.items[0].artists[0].id, "");
+        assert_eq!(
+            page.items[0].album.as_ref().map(|album| album.id.as_str()),
+            Some("release_detail_radio_album")
+        );
+        assert_eq!(page.items[0].year.as_deref(), Some("1999"));
+        assert_eq!(
+            page.items[0]
+                .counterpart
+                .as_ref()
+                .and_then(|track| track.views.as_deref()),
+            Some("1 view")
+        );
     }
 
     #[test]
@@ -312,6 +390,25 @@ mod tests {
         .unwrap();
 
         let page: crate::Page<WatchTrack> = parse_watch_playlist_response(&response).unwrap();
-        assert!(!page.items.is_empty());
+        assert_eq!(
+            page.continuation,
+            Some(ContinuationToken::new("shuffle-watch-token-1").unwrap())
+        );
+        assert_eq!(page.items[0].title, "Shuffle Primary Song");
+        assert_eq!(
+            page.items[0].album.as_ref().map(|album| album.id.as_str()),
+            Some("BROWSEshufflealbum1")
+        );
+        assert_eq!(
+            page.items[0].video_type.as_deref(),
+            Some("MUSIC_VIDEO_TYPE_OMV")
+        );
+        assert_eq!(
+            page.items[0]
+                .counterpart
+                .as_ref()
+                .and_then(|track| track.views.as_deref()),
+            Some("987 views")
+        );
     }
 }

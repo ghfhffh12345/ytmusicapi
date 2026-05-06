@@ -17,18 +17,18 @@
                             "playlistPanelVideoWrapperRenderer": {
                               "primaryRenderer": {
                                 "playlistPanelVideoRenderer": {
-                                  "videoId": "video-1",
+                                  "videoId": "radio-video-1",
                                   "title": {
                                     "runs": [
                                       {
-                                        "text": "Primary Song"
+                                        "text": "Radio Primary Song"
                                       }
                                     ]
                                   },
                                   "lengthText": {
                                     "runs": [
                                       {
-                                        "text": "3:45"
+                                        "text": "4:01"
                                       }
                                     ]
                                   },
@@ -37,7 +37,7 @@
                                       "thumbnail": {
                                         "thumbnails": [
                                           {
-                                            "url": "https://example.com/1.jpg",
+                                            "url": "https://example.com/radio-1.jpg",
                                             "width": 640,
                                             "height": 640
                                           }
@@ -48,10 +48,16 @@
                                   "longBylineText": {
                                     "runs": [
                                       {
-                                        "text": "Artist One",
+                                        "text": "Radio Artist"
+                                      },
+                                      {
+                                        "text": " • "
+                                      },
+                                      {
+                                        "text": "Radio Album",
                                         "navigationEndpoint": {
                                           "browseEndpoint": {
-                                            "browseId": "UCartist1"
+                                            "browseId": "release_detail_radio_album"
                                           }
                                         }
                                       },
@@ -59,18 +65,7 @@
                                         "text": " • "
                                       },
                                       {
-                                        "text": "Album One",
-                                        "navigationEndpoint": {
-                                          "browseEndpoint": {
-                                            "browseId": "MPREalbum1"
-                                          }
-                                        }
-                                      },
-                                      {
-                                        "text": " • "
-                                      },
-                                      {
-                                        "text": "2024"
+                                        "text": "1999"
                                       }
                                     ]
                                   },
@@ -78,10 +73,26 @@
                                     "menuRenderer": {
                                       "items": [
                                         {
+                                          "menuServiceItemRenderer": {
+                                            "text": {
+                                              "runs": [
+                                                {
+                                                  "text": "Queue"
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        {
                                           "toggleMenuServiceItemRenderer": {
                                             "defaultServiceEndpoint": {
                                               "likeEndpoint": {
                                                 "status": "LIKE"
+                                              }
+                                            },
+                                            "toggledServiceEndpoint": {
+                                              "likeEndpoint": {
+                                                "status": "INDIFFERENT"
                                               }
                                             }
                                           }
@@ -104,11 +115,11 @@
                                 {
                                   "counterpartRenderer": {
                                     "playlistPanelVideoRenderer": {
-                                      "videoId": "video-1-counterpart",
+                                      "videoId": "radio-video-1-counterpart",
                                       "title": {
                                         "runs": [
                                           {
-                                            "text": "Primary Song (Video)"
+                                            "text": "Radio Primary Song (Video)"
                                           }
                                         ]
                                       },
@@ -117,7 +128,7 @@
                                           "thumbnail": {
                                             "thumbnails": [
                                               {
-                                                "url": "https://example.com/1b.jpg",
+                                                "url": "https://example.com/radio-1b.jpg",
                                                 "width": 640,
                                                 "height": 640
                                               }
@@ -128,13 +139,13 @@
                                       "longBylineText": {
                                         "runs": [
                                           {
-                                            "text": "Artist One"
+                                            "text": "Radio Artist"
                                           },
                                           {
                                             "text": " • "
                                           },
                                           {
-                                            "text": "6.6K views"
+                                            "text": "1 view"
                                           }
                                         ]
                                       }
@@ -146,11 +157,11 @@
                           },
                           {
                             "playlistPanelVideoRenderer": {
-                              "videoId": "video-2",
+                              "videoId": "radio-video-2",
                               "title": {
                                 "runs": [
                                   {
-                                    "text": "Second Song"
+                                    "text": "Radio Next Song"
                                   }
                                 ]
                               },
@@ -159,7 +170,7 @@
                                   "thumbnail": {
                                     "thumbnails": [
                                       {
-                                        "url": "https://example.com/2.jpg",
+                                        "url": "https://example.com/radio-2.jpg",
                                         "width": 640,
                                         "height": 640
                                       }
@@ -170,10 +181,10 @@
                               "longBylineText": {
                                 "runs": [
                                   {
-                                    "text": "Artist Two",
+                                    "text": "Radio Next Artist",
                                     "navigationEndpoint": {
                                       "browseEndpoint": {
-                                        "browseId": "UCartist2"
+                                        "browseId": "UCradio2"
                                       }
                                     }
                                   }
@@ -185,7 +196,7 @@
                         "continuations": [
                           {
                             "nextContinuationData": {
-                              "continuation": "watch-token-1"
+                              "continuation": "radio-watch-token-1"
                             }
                           }
                         ]

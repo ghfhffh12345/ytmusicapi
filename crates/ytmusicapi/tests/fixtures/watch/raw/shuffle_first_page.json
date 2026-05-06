@@ -17,18 +17,18 @@
                             "playlistPanelVideoWrapperRenderer": {
                               "primaryRenderer": {
                                 "playlistPanelVideoRenderer": {
-                                  "videoId": "video-1",
+                                  "videoId": "shuffle-video-1",
                                   "title": {
                                     "runs": [
                                       {
-                                        "text": "Primary Song"
+                                        "text": "Shuffle Primary Song"
                                       }
                                     ]
                                   },
                                   "lengthText": {
                                     "runs": [
                                       {
-                                        "text": "3:45"
+                                        "text": "5:12"
                                       }
                                     ]
                                   },
@@ -37,7 +37,7 @@
                                       "thumbnail": {
                                         "thumbnails": [
                                           {
-                                            "url": "https://example.com/1.jpg",
+                                            "url": "https://example.com/shuffle-1.jpg",
                                             "width": 640,
                                             "height": 640
                                           }
@@ -48,10 +48,10 @@
                                   "longBylineText": {
                                     "runs": [
                                       {
-                                        "text": "Artist One",
+                                        "text": "Shuffle Artist",
                                         "navigationEndpoint": {
                                           "browseEndpoint": {
-                                            "browseId": "UCartist1"
+                                            "browseId": "UCshuffle1"
                                           }
                                         }
                                       },
@@ -59,10 +59,15 @@
                                         "text": " • "
                                       },
                                       {
-                                        "text": "Album One",
+                                        "text": "Shuffle Album",
                                         "navigationEndpoint": {
                                           "browseEndpoint": {
-                                            "browseId": "MPREalbum1"
+                                            "browseId": "BROWSEshufflealbum1",
+                                            "browseEndpointContextSupportedConfigs": {
+                                              "browseEndpointContextMusicConfig": {
+                                                "pageType": "MUSIC_PAGE_TYPE_ALBUM"
+                                              }
+                                            }
                                           }
                                         }
                                       },
@@ -70,7 +75,7 @@
                                         "text": " • "
                                       },
                                       {
-                                        "text": "2024"
+                                        "text": "2001"
                                       }
                                     ]
                                   },
@@ -93,7 +98,7 @@
                                     "watchEndpoint": {
                                       "watchEndpointMusicSupportedConfigs": {
                                         "watchEndpointMusicConfig": {
-                                          "musicVideoType": "MUSIC_VIDEO_TYPE_ATV"
+                                          "musicVideoType": "MUSIC_VIDEO_TYPE_OMV"
                                         }
                                       }
                                     }
@@ -104,11 +109,11 @@
                                 {
                                   "counterpartRenderer": {
                                     "playlistPanelVideoRenderer": {
-                                      "videoId": "video-1-counterpart",
+                                      "videoId": "shuffle-video-1-counterpart",
                                       "title": {
                                         "runs": [
                                           {
-                                            "text": "Primary Song (Video)"
+                                            "text": "Shuffle Primary Song (Video)"
                                           }
                                         ]
                                       },
@@ -117,7 +122,7 @@
                                           "thumbnail": {
                                             "thumbnails": [
                                               {
-                                                "url": "https://example.com/1b.jpg",
+                                                "url": "https://example.com/shuffle-1b.jpg",
                                                 "width": 640,
                                                 "height": 640
                                               }
@@ -128,13 +133,13 @@
                                       "longBylineText": {
                                         "runs": [
                                           {
-                                            "text": "Artist One"
+                                            "text": "Shuffle Artist"
                                           },
                                           {
                                             "text": " • "
                                           },
                                           {
-                                            "text": "6.6K views"
+                                            "text": "987 views"
                                           }
                                         ]
                                       }
@@ -146,11 +151,11 @@
                           },
                           {
                             "playlistPanelVideoRenderer": {
-                              "videoId": "video-2",
+                              "videoId": "shuffle-video-2",
                               "title": {
                                 "runs": [
                                   {
-                                    "text": "Second Song"
+                                    "text": "Shuffle Next Song"
                                   }
                                 ]
                               },
@@ -159,7 +164,7 @@
                                   "thumbnail": {
                                     "thumbnails": [
                                       {
-                                        "url": "https://example.com/2.jpg",
+                                        "url": "https://example.com/shuffle-2.jpg",
                                         "width": 640,
                                         "height": 640
                                       }
@@ -170,10 +175,10 @@
                               "longBylineText": {
                                 "runs": [
                                   {
-                                    "text": "Artist Two",
+                                    "text": "Shuffle Next Artist",
                                     "navigationEndpoint": {
                                       "browseEndpoint": {
-                                        "browseId": "UCartist2"
+                                        "browseId": "UCshuffle2"
                                       }
                                     }
                                   }
@@ -185,7 +190,7 @@
                         "continuations": [
                           {
                             "nextContinuationData": {
-                              "continuation": "watch-token-1"
+                              "continuation": "shuffle-watch-token-1"
                             }
                           }
                         ]

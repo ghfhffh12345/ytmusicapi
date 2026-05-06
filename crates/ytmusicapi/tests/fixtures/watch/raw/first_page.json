@@ -78,8 +78,24 @@
                                     "menuRenderer": {
                                       "items": [
                                         {
+                                          "menuServiceItemRenderer": {
+                                            "text": {
+                                              "runs": [
+                                                {
+                                                  "text": "Start radio"
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        {
                                           "toggleMenuServiceItemRenderer": {
                                             "defaultServiceEndpoint": {
+                                              "likeEndpoint": {
+                                                "status": "INDIFFERENT"
+                                              }
+                                            },
+                                            "toggledServiceEndpoint": {
                                               "likeEndpoint": {
                                                 "status": "LIKE"
                                               }
