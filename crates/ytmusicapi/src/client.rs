@@ -68,11 +68,11 @@ impl YtMusic {
         if self.browser_auth.is_some() {
             let mut authenticated_search_config = bootstrap_config.clone();
             authenticated_search_config.client_version =
-                self.search_client_version(&bootstrap_config);
+                self.search_client_version(bootstrap_config);
             let authenticated_body = build_search_body(&query, &authenticated_search_config);
             let authenticated_result = self
                 .search_with_transport(
-                    &bootstrap_config,
+                    bootstrap_config,
                     authenticated_body,
                     self.browser_auth.as_ref(),
                     query.filter,
@@ -82,19 +82,14 @@ impl YtMusic {
                 Ok(results) => Ok(results),
                 Err(Error::HttpTransport(_)) | Err(Error::HttpStatus { .. }) => {
                     let anonymous_body = build_search_body(&query, bootstrap_config);
-                    self.search_with_transport(
-                        &bootstrap_config,
-                        anonymous_body,
-                        None,
-                        query.filter,
-                    )
-                    .await
+                    self.search_with_transport(bootstrap_config, anonymous_body, None, query.filter)
+                        .await
                 }
                 Err(error) => Err(error),
             }
         } else {
             let anonymous_body = build_search_body(&query, bootstrap_config);
-            self.search_with_transport(&bootstrap_config, anonymous_body, None, query.filter)
+            self.search_with_transport(bootstrap_config, anonymous_body, None, query.filter)
                 .await
         }
     }
@@ -106,11 +101,11 @@ impl YtMusic {
         let bootstrap = self.bootstrap_config().await?;
 
         if self.browser_auth.is_some() {
-            let client_version = self.search_client_version(&bootstrap);
+            let client_version = self.search_client_version(bootstrap);
             let authenticated_body = build_continuation_body(&token, &client_version);
             match self
                 .search_with_transport(
-                    &bootstrap,
+                    bootstrap,
                     authenticated_body,
                     self.browser_auth.as_ref(),
                     None,
@@ -120,14 +115,14 @@ impl YtMusic {
                 Ok(page) => Ok(page),
                 Err(Error::HttpTransport(_)) | Err(Error::HttpStatus { .. }) => {
                     let anonymous_body = build_continuation_body(&token, &bootstrap.client_version);
-                    self.search_with_transport(&bootstrap, anonymous_body, None, None)
+                    self.search_with_transport(bootstrap, anonymous_body, None, None)
                         .await
                 }
                 Err(error) => Err(error),
             }
         } else {
             let body = build_continuation_body(&token, &bootstrap.client_version);
-            self.search_with_transport(&bootstrap, body, None, None)
+            self.search_with_transport(bootstrap, body, None, None)
                 .await
         }
     }
