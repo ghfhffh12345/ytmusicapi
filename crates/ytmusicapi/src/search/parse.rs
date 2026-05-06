@@ -211,13 +211,12 @@ fn extract_search_continuation(
     }
 
     for section in sections {
-        if let Some(shelf) = section.get("musicShelfRenderer") {
-            if let Some(token) = shelf
+        if let Some(shelf) = section.get("musicShelfRenderer")
+            && let Some(token) = shelf
                 .pointer("/continuations/0/nextContinuationData/continuation")
                 .and_then(Value::as_str)
-            {
-                return crate::ContinuationToken::new(token).map(Some);
-            }
+        {
+            return crate::ContinuationToken::new(token).map(Some);
         }
     }
 
