@@ -18,3 +18,4 @@ pub use crate::model::search::{
     AlbumResult, ArtistResult, PlaylistResult, ProfileResult, SearchFilter, SearchQuery,
     SearchResult, SearchResultType, SongResult, VideoResult,
 };
+pub use crate::model::watch::{WatchPlaylistQuery, WatchTrack};
