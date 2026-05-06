@@ -1,7 +1,26 @@
+use std::fs;
+
 use serde_json::{Value, json};
+use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, Request, ResponseTemplate};
-use ytmusicapi::{ContinuationToken, Error, WatchPlaylistQuery, YtMusic};
+use ytmusicapi::{ContinuationToken, Error, WatchPlaylistQuery, YtMusic, setup_browser_auth};
+
+fn browser_auth_json() -> String {
+    setup_browser_auth(
+        "POST /youtubei/v1/next HTTP/3\n\
+Host: music.youtube.com\n\
+User-Agent: Mozilla/5.0\n\
+Accept: */*\n\
+Content-Type: application/json\n\
+X-Goog-AuthUser: 0\n\
+X-Origin: https://music.youtube.com\n\
+X-Youtube-Client-Name: 67\n\
+X-Youtube-Client-Version: 1.20250502.01.00\n\
+Cookie: __Secure-3PAPISID=test-sapisid\n",
+    )
+    .unwrap()
+}
 
 #[test]
 fn watch_playlist_query_requires_video_or_playlist_id() {
@@ -179,7 +198,12 @@ async fn get_watch_playlist_posts_next_body_and_returns_page() {
         .mount(&server)
         .await;
 
+    let dir = tempdir().unwrap();
+    let browser_json = dir.path().join("browser.json");
+    fs::write(&browser_json, browser_auth_json()).unwrap();
+
     let client = YtMusic::builder()
+        .browser_auth_path(&browser_json)
         .homepage_url(server.uri())
         .base_url(format!("{}/youtubei/v1/", server.uri()))
         .build()
@@ -204,11 +228,45 @@ async fn get_watch_playlist_posts_next_body_and_returns_page() {
     let body: Value = serde_json::from_slice(&request.body).unwrap();
 
     assert_eq!(request.url.path(), "/youtubei/v1/next");
+    assert_eq!(request.url.query(), Some("alt=json&key=test-api-key"));
+    assert!(
+        request
+            .headers
+            .get("authorization")
+            .and_then(|value| value.to_str().ok())
+            .map(|value| value.starts_with("SAPISIDHASH "))
+            .unwrap_or(false)
+    );
+    assert_eq!(
+        request
+            .headers
+            .get("cookie")
+            .and_then(|value| value.to_str().ok()),
+        Some("__Secure-3PAPISID=test-sapisid")
+    );
+    assert_eq!(
+        request
+            .headers
+            .get("x-goog-authuser")
+            .and_then(|value| value.to_str().ok()),
+        Some("0")
+    );
+    assert_eq!(
+        request
+            .headers
+            .get("x-goog-visitor-id")
+            .and_then(|value| value.to_str().ok()),
+        Some("visitor-id-123")
+    );
     assert_eq!(body["videoId"], "video-1");
     assert_eq!(body["playlistId"], "RDAMVMvideo-1");
     assert_eq!(body["enablePersistentPlaylistPanel"], true);
     assert_eq!(body["isAudioOnly"], true);
     assert_eq!(body["tunerSettingValue"], "AUTOMIX_SETTING_NORMAL");
+    assert_eq!(
+        body["context"]["client"]["clientVersion"],
+        "1.20250502.01.00"
+    );
 }
 
 #[tokio::test]
@@ -258,6 +316,27 @@ async fn get_watch_playlist_continuation_posts_continuation_body_and_returns_pag
         Some(ContinuationToken::new("watch-token-2").unwrap())
     );
     assert_eq!(page.items[0].video_id, "video-3");
+
+    let requests = server.received_requests().await.unwrap();
+    let request = requests
+        .iter()
+        .find(|request| request.method.as_str() == "POST")
+        .unwrap();
+    let body: Value = serde_json::from_slice(&request.body).unwrap();
+
+    assert_eq!(request.url.path(), "/youtubei/v1/next");
+    assert_eq!(request.url.query(), Some("alt=json&key=test-api-key"));
+    assert_eq!(
+        request
+            .headers
+            .get("x-goog-visitor-id")
+            .and_then(|value| value.to_str().ok()),
+        Some("visitor-id-123")
+    );
+    assert_eq!(
+        body["context"]["client"]["clientVersion"],
+        "1.20250501.03.00"
+    );
 }
 
 #[tokio::test]
@@ -274,10 +353,16 @@ async fn get_watch_playlist_uses_shuffle_and_radio_params() {
 
     Mock::given(method("POST"))
         .and(path("/youtubei/v1/next"))
-        .respond_with(
-            ResponseTemplate::new(200)
-                .set_body_string(include_str!("fixtures/watch/raw/first_page.json")),
-        )
+        .respond_with(|request: &Request| {
+            let body: Value = serde_json::from_slice(&request.body).unwrap();
+            match body.get("params").and_then(Value::as_str) {
+                Some("wAEB8gECKAE%3D") => ResponseTemplate::new(200)
+                    .set_body_string(include_str!("fixtures/watch/raw/shuffle_first_page.json")),
+                Some("wAEB") => ResponseTemplate::new(200)
+                    .set_body_string(include_str!("fixtures/watch/raw/radio_first_page.json")),
+                other => panic!("unexpected watch params: {other:?}"),
+            }
+        })
         .mount(&server)
         .await;
 
@@ -287,7 +372,7 @@ async fn get_watch_playlist_uses_shuffle_and_radio_params() {
         .build()
         .unwrap();
 
-    client
+    let shuffle_page = client
         .get_watch_playlist(
             WatchPlaylistQuery::new()
                 .with_playlist_id("VLPL123")
@@ -295,10 +380,21 @@ async fn get_watch_playlist_uses_shuffle_and_radio_params() {
         )
         .await
         .unwrap();
-    client
+    let radio_page = client
         .get_watch_playlist(WatchPlaylistQuery::new().with_video_id("video-1").radio())
         .await
         .unwrap();
+
+    assert_eq!(shuffle_page.items[0].video_id, "shuffle-video-1");
+    assert_eq!(
+        shuffle_page.continuation,
+        Some(ContinuationToken::new("shuffle-watch-token-1").unwrap())
+    );
+    assert_eq!(radio_page.items[0].video_id, "radio-video-1");
+    assert_eq!(
+        radio_page.continuation,
+        Some(ContinuationToken::new("radio-watch-token-1").unwrap())
+    );
 
     let requests = server.received_requests().await.unwrap();
     let bodies: Vec<Value> = requests
