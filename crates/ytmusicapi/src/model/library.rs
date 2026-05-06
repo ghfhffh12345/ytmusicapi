@@ -159,15 +159,6 @@ pub struct LikedSongItem {
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct LikedSongs {
-    pub playlist_id: String,
-    pub title: String,
-    pub items: Vec<LikedSongItem>,
-    pub thumbnails: Vec<Thumbnail>,
-}
-
-#[derive(Clone, Debug, PartialEq, Serialize)]
-#[serde(rename_all = "camelCase")]
 pub struct LikedSongsPage {
     pub playlist_id: String,
     pub title: String,
@@ -186,15 +177,6 @@ pub struct SavedEpisodeItem {
     pub podcast: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<String>,
-    pub thumbnails: Vec<Thumbnail>,
-}
-
-#[derive(Clone, Debug, PartialEq, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct SavedEpisodes {
-    pub playlist_id: String,
-    pub title: String,
-    pub items: Vec<SavedEpisodeItem>,
     pub thumbnails: Vec<Thumbnail>,
 }
 
