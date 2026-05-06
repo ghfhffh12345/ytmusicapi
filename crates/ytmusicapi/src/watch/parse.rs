@@ -129,19 +129,22 @@ fn optional_runs_text(value: &Value, pointer: &str) -> Option<String> {
 }
 
 fn parse_thumbnails(value: &Value) -> Result<Vec<Thumbnail>, Error> {
-    required_array(
+    let thumbnails = required_array(
         value,
         "/thumbnail/musicThumbnailRenderer/thumbnail/thumbnails",
-    )?
-    .iter()
-    .map(|thumbnail| {
-        Ok(Thumbnail {
-            height: required_u32(thumbnail, "/height")?,
-            url: required_text(thumbnail, "/url")?,
-            width: required_u32(thumbnail, "/width")?,
+    )
+    .or_else(|_| required_array(value, "/thumbnail/thumbnails"))?;
+
+    thumbnails
+        .iter()
+        .map(|thumbnail| {
+            Ok(Thumbnail {
+                height: required_u32(thumbnail, "/height")?,
+                url: required_text(thumbnail, "/url")?,
+                width: required_u32(thumbnail, "/width")?,
+            })
         })
-    })
-    .collect()
+        .collect()
 }
 
 fn extract_continuation(value: &Value) -> Result<Option<ContinuationToken>, Error> {
@@ -409,6 +412,70 @@ mod tests {
                 .as_ref()
                 .and_then(|track| track.views.as_deref()),
             Some("987 views")
+        );
+    }
+
+    #[test]
+    fn parse_watch_playlist_response_handles_plain_queue_thumbnails() {
+        let response: serde_json::Value = serde_json::from_str(
+            r#"
+            {
+              "contents": {
+                "singleColumnMusicWatchNextResultsRenderer": {
+                  "tabbedRenderer": {
+                    "watchNextTabbedResultsRenderer": {
+                      "tabs": [
+                        {
+                          "tabRenderer": {
+                            "content": {
+                              "musicQueueRenderer": {
+                                "content": {
+                                  "playlistPanelRenderer": {
+                                    "contents": [
+                                      {
+                                        "playlistPanelVideoRenderer": {
+                                          "videoId": "plain-thumb-video",
+                                          "title": {
+                                            "runs": [
+                                              { "text": "Plain Thumb Song" }
+                                            ]
+                                          },
+                                          "thumbnail": {
+                                            "thumbnails": [
+                                              {
+                                                "url": "https://example.com/plain.jpg",
+                                                "width": 60,
+                                                "height": 60
+                                              }
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+            "#,
+        )
+        .unwrap();
+
+        let page: crate::Page<WatchTrack> = parse_watch_playlist_response(&response).unwrap();
+
+        assert_eq!(page.items.len(), 1);
+        assert_eq!(page.items[0].video_id, "plain-thumb-video");
+        assert_eq!(page.items[0].thumbnails.len(), 1);
+        assert_eq!(
+            page.items[0].thumbnails[0].url,
+            "https://example.com/plain.jpg"
         );
     }
 }
