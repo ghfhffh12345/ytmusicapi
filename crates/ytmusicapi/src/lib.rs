@@ -4,6 +4,7 @@ mod error;
 pub(crate) mod library;
 mod model;
 pub(crate) mod search;
+pub(crate) mod watch;
 
 pub use crate::auth::setup_browser_auth;
 pub use crate::client::{YtMusic, YtMusicBuilder};
