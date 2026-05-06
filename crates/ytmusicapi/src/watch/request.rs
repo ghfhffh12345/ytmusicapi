@@ -57,7 +57,6 @@ pub fn build_watch_playlist_body(
     Ok(body)
 }
 
-#[allow(dead_code)]
 fn normalize_playlist_id(playlist_id: &str) -> &str {
     playlist_id.strip_prefix("VL").unwrap_or(playlist_id)
 }
@@ -133,7 +132,9 @@ mod tests {
         };
 
         let body = build_watch_playlist_body(
-            &WatchPlaylistQuery::new().with_playlist_id("VLPL123").shuffle(),
+            &WatchPlaylistQuery::new()
+                .with_playlist_id("VLPL123")
+                .shuffle(),
             &bootstrap,
         )
         .unwrap();
