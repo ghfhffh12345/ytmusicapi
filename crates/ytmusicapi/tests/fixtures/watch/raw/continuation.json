@@ -1,0 +1,52 @@
+{
+  "continuationContents": {
+    "playlistPanelContinuation": {
+      "contents": [
+        {
+          "playlistPanelVideoRenderer": {
+            "videoId": "video-3",
+            "title": {
+              "runs": [
+                {
+                  "text": "Third Song"
+                }
+              ]
+            },
+            "thumbnail": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "url": "https://example.com/3.jpg",
+                      "width": 640,
+                      "height": 640
+                    }
+                  ]
+                }
+              }
+            },
+            "longBylineText": {
+              "runs": [
+                {
+                  "text": "Artist Three",
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseId": "UCartist3"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "continuations": [
+        {
+          "nextContinuationData": {
+            "continuation": "watch-token-2"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,210 @@
+{
+  "contents": {
+    "singleColumnMusicWatchNextResultsRenderer": {
+      "tabbedRenderer": {
+        "watchNextTabbedResultsRenderer": {
+          "tabs": [
+            {
+              "tabRenderer": {
+                "title": "Up next",
+                "selected": true,
+                "content": {
+                  "musicQueueRenderer": {
+                    "content": {
+                      "playlistPanelRenderer": {
+                        "contents": [
+                          {
+                            "playlistPanelVideoWrapperRenderer": {
+                              "primaryRenderer": {
+                                "playlistPanelVideoRenderer": {
+                                  "videoId": "video-1",
+                                  "title": {
+                                    "runs": [
+                                      {
+                                        "text": "Primary Song"
+                                      }
+                                    ]
+                                  },
+                                  "lengthText": {
+                                    "runs": [
+                                      {
+                                        "text": "3:45"
+                                      }
+                                    ]
+                                  },
+                                  "thumbnail": {
+                                    "musicThumbnailRenderer": {
+                                      "thumbnail": {
+                                        "thumbnails": [
+                                          {
+                                            "url": "https://example.com/1.jpg",
+                                            "width": 640,
+                                            "height": 640
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  "longBylineText": {
+                                    "runs": [
+                                      {
+                                        "text": "Artist One",
+                                        "navigationEndpoint": {
+                                          "browseEndpoint": {
+                                            "browseId": "UCartist1"
+                                          }
+                                        }
+                                      },
+                                      {
+                                        "text": " • "
+                                      },
+                                      {
+                                        "text": "Album One",
+                                        "navigationEndpoint": {
+                                          "browseEndpoint": {
+                                            "browseId": "MPREalbum1"
+                                          }
+                                        }
+                                      },
+                                      {
+                                        "text": " • "
+                                      },
+                                      {
+                                        "text": "2024"
+                                      }
+                                    ]
+                                  },
+                                  "menu": {
+                                    "menuRenderer": {
+                                      "items": [
+                                        {
+                                          "toggleMenuServiceItemRenderer": {
+                                            "defaultServiceEndpoint": {
+                                              "likeEndpoint": {
+                                                "status": "LIKE"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "navigationEndpoint": {
+                                    "watchEndpoint": {
+                                      "watchEndpointMusicSupportedConfigs": {
+                                        "watchEndpointMusicConfig": {
+                                          "musicVideoType": "MUSIC_VIDEO_TYPE_ATV"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "counterpart": [
+                                {
+                                  "counterpartRenderer": {
+                                    "playlistPanelVideoRenderer": {
+                                      "videoId": "video-1-counterpart",
+                                      "title": {
+                                        "runs": [
+                                          {
+                                            "text": "Primary Song (Video)"
+                                          }
+                                        ]
+                                      },
+                                      "thumbnail": {
+                                        "musicThumbnailRenderer": {
+                                          "thumbnail": {
+                                            "thumbnails": [
+                                              {
+                                                "url": "https://example.com/1b.jpg",
+                                                "width": 640,
+                                                "height": 640
+                                              }
+                                            ]
+                                          }
+                                        }
+                                      },
+                                      "longBylineText": {
+                                        "runs": [
+                                          {
+                                            "text": "Artist One"
+                                          },
+                                          {
+                                            "text": " • "
+                                          },
+                                          {
+                                            "text": "6.6K views"
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "playlistPanelVideoRenderer": {
+                              "videoId": "video-2",
+                              "title": {
+                                "runs": [
+                                  {
+                                    "text": "Second Song"
+                                  }
+                                ]
+                              },
+                              "thumbnail": {
+                                "musicThumbnailRenderer": {
+                                  "thumbnail": {
+                                    "thumbnails": [
+                                      {
+                                        "url": "https://example.com/2.jpg",
+                                        "width": 640,
+                                        "height": 640
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              "longBylineText": {
+                                "runs": [
+                                  {
+                                    "text": "Artist Two",
+                                    "navigationEndpoint": {
+                                      "browseEndpoint": {
+                                        "browseId": "UCartist2"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ],
+                        "continuations": [
+                          {
+                            "nextContinuationData": {
+                              "continuation": "watch-token-1"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "currentVideoEndpoint": {
+    "watchEndpoint": {
+      "videoId": "seed-video-shuffle",
+      "playlistId": "seed-playlist-shuffle",
+      "params": "wAEB8gECKAE%3Dshuffle"
+    }
+  }
+}
