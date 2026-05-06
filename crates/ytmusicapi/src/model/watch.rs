@@ -41,15 +41,26 @@ impl WatchPlaylistQuery {
     }
 
     pub fn validate(&self) -> Result<(), Error> {
-        if self.video_id.as_deref().is_none_or(str::is_empty)
-            && self.playlist_id.as_deref().is_none_or(str::is_empty)
+        if self
+            .video_id
+            .as_deref()
+            .is_none_or(|id| id.trim().is_empty())
+            && self
+                .playlist_id
+                .as_deref()
+                .is_none_or(|id| id.trim().is_empty())
         {
             return Err(Error::InvalidInput(
                 "watch playlist query requires video_id or playlist_id".to_owned(),
             ));
         }
 
-        if self.shuffle && self.playlist_id.as_deref().is_none_or(str::is_empty) {
+        if self.shuffle
+            && self
+                .playlist_id
+                .as_deref()
+                .is_none_or(|id| id.trim().is_empty())
+        {
             return Err(Error::InvalidInput(
                 "watch playlist shuffle requires playlist_id".to_owned(),
             ));
