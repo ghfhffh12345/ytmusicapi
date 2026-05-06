@@ -1,5 +1,7 @@
-use serde_json::json;
-use ytmusicapi::{Error, WatchPlaylistQuery};
+use serde_json::{Value, json};
+use wiremock::matchers::{method, path};
+use wiremock::{Mock, MockServer, Request, ResponseTemplate};
+use ytmusicapi::{ContinuationToken, Error, WatchPlaylistQuery, YtMusic};
 
 #[test]
 fn watch_playlist_query_requires_video_or_playlist_id() {
@@ -153,5 +155,166 @@ fn watch_track_serializes_camel_case_and_omits_empty_fields() {
             "views": "123",
             "isInLibrary": true
         })
+    );
+}
+
+#[tokio::test]
+async fn get_watch_playlist_posts_next_body_and_returns_page() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/next"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/watch/raw/first_page.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .get_watch_playlist(WatchPlaylistQuery::new().with_video_id("video-1"))
+        .await
+        .unwrap();
+
+    assert_eq!(
+        page.continuation,
+        Some(ContinuationToken::new("watch-token-1").unwrap())
+    );
+    assert_eq!(page.items[0].video_id, "video-1");
+
+    let requests = server.received_requests().await.unwrap();
+    let request = requests
+        .iter()
+        .find(|request| request.method.as_str() == "POST")
+        .unwrap();
+    let body: Value = serde_json::from_slice(&request.body).unwrap();
+
+    assert_eq!(request.url.path(), "/youtubei/v1/next");
+    assert_eq!(body["videoId"], "video-1");
+    assert_eq!(body["playlistId"], "RDAMVMvideo-1");
+    assert_eq!(body["enablePersistentPlaylistPanel"], true);
+    assert_eq!(body["isAudioOnly"], true);
+    assert_eq!(body["tunerSettingValue"], "AUTOMIX_SETTING_NORMAL");
+}
+
+#[tokio::test]
+async fn get_watch_playlist_continuation_posts_continuation_body_and_returns_page() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/next"))
+        .and(|request: &Request| {
+            serde_json::from_slice::<Value>(&request.body)
+                .ok()
+                .and_then(|body| {
+                    body.get("continuation")
+                        .and_then(Value::as_str)
+                        .map(str::to_owned)
+                })
+                == Some("watch-token-1".to_owned())
+        })
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/watch/raw/continuation.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .get_watch_playlist_continuation(ContinuationToken::new("watch-token-1").unwrap())
+        .await
+        .unwrap();
+
+    assert_eq!(
+        page.continuation,
+        Some(ContinuationToken::new("watch-token-2").unwrap())
+    );
+    assert_eq!(page.items[0].video_id, "video-3");
+}
+
+#[tokio::test]
+async fn get_watch_playlist_uses_shuffle_and_radio_params() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/next"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/watch/raw/first_page.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    client
+        .get_watch_playlist(
+            WatchPlaylistQuery::new()
+                .with_playlist_id("VLPL123")
+                .shuffle(),
+        )
+        .await
+        .unwrap();
+    client
+        .get_watch_playlist(WatchPlaylistQuery::new().with_video_id("video-1").radio())
+        .await
+        .unwrap();
+
+    let requests = server.received_requests().await.unwrap();
+    let bodies: Vec<Value> = requests
+        .iter()
+        .filter(|request| request.method.as_str() == "POST")
+        .map(|request| serde_json::from_slice::<Value>(&request.body).unwrap())
+        .collect();
+
+    assert!(
+        bodies
+            .iter()
+            .any(|body| body["playlistId"] == "PL123" && body["params"] == "wAEB8gECKAE%3D")
+    );
+    assert!(
+        bodies
+            .iter()
+            .any(|body| body["videoId"] == "video-1" && body["params"] == "wAEB")
     );
 }

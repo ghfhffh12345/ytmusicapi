@@ -15,6 +15,10 @@ use crate::{
             build_saved_episodes_body, build_search_body,
         },
     },
+    watch::{
+        parse::{parse_watch_playlist_continuation, parse_watch_playlist_response},
+        request::build_watch_playlist_body,
+    },
 };
 
 #[derive(Clone)]
@@ -125,6 +129,43 @@ impl YtMusic {
             self.search_with_transport(bootstrap, body, None, None)
                 .await
         }
+    }
+
+    pub async fn get_watch_playlist(
+        &self,
+        query: crate::WatchPlaylistQuery,
+    ) -> Result<crate::Page<crate::WatchTrack>, Error> {
+        query.validate()?;
+
+        let bootstrap_config = self.bootstrap_config().await?;
+        let client_version = self
+            .browser_auth
+            .as_ref()
+            .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
+            .map(String::as_str)
+            .unwrap_or(&bootstrap_config.client_version);
+        let mut watch_config = bootstrap_config.clone();
+        watch_config.client_version = client_version.to_owned();
+
+        let body = build_watch_playlist_body(&query, &watch_config)?;
+        let response = self.post_next(body).await?;
+        parse_watch_playlist_response(&response)
+    }
+
+    pub async fn get_watch_playlist_continuation(
+        &self,
+        token: crate::ContinuationToken,
+    ) -> Result<crate::Page<crate::WatchTrack>, Error> {
+        let bootstrap_config = self.bootstrap_config().await?;
+        let client_version = self
+            .browser_auth
+            .as_ref()
+            .and_then(|browser_auth| browser_auth.headers.get("x-youtube-client-version"))
+            .map(String::as_str)
+            .unwrap_or(&bootstrap_config.client_version);
+        let body = crate::search::request::build_continuation_body(&token, client_version);
+        let response = self.post_next(body).await?;
+        parse_watch_playlist_continuation(&response)
     }
 
     async fn search_with_transport(
@@ -632,6 +673,10 @@ impl YtMusic {
 
     async fn post_browse(&self, body: serde_json::Value) -> Result<serde_json::Value, Error> {
         self.post_authenticated_json("browse", body).await
+    }
+
+    async fn post_next(&self, body: serde_json::Value) -> Result<serde_json::Value, Error> {
+        self.post_authenticated_json("next", body).await
     }
 
     async fn post_authenticated_json(
