@@ -68,7 +68,7 @@ pub(crate) fn build_library_body(browse_id: &str, bootstrap_config: &BootstrapCo
 }
 
 pub(crate) fn build_continuation_body(
-    continuation: &impl crate::model::library::ContinuationTokenValue,
+    continuation: &impl crate::model::library::ContinuationValue,
     client_version: &str,
 ) -> Value {
     json!({

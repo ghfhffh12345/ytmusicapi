@@ -10,7 +10,7 @@ pub enum LibraryLikeStatus {
     Dislike,
 }
 
-pub(crate) trait ContinuationTokenValue {
+pub(crate) trait ContinuationValue {
     fn as_str(&self) -> &str;
 }
 
@@ -30,7 +30,7 @@ macro_rules! continuation_token {
             }
         }
 
-        impl ContinuationTokenValue for $name {
+        impl ContinuationValue for $name {
             fn as_str(&self) -> &str {
                 self.as_str()
             }
