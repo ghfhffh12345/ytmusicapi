@@ -52,18 +52,23 @@ pub(crate) fn library_grid_continuation<C>(
         library_tab,
         "/tabRenderer/content/sectionListRenderer/contents",
     )?;
+    let mut saw_empty_library_message = false;
 
     for section in sections {
-        let Some(renderer) = section.get("gridRenderer") else {
-            continue;
-        };
-
-        if let Some(token) = extract_continuation_token(renderer, make_token) {
-            return Ok(Some(token));
+        if let Some(renderer) = section_grid_renderer(section) {
+            return Ok(extract_continuation_token(renderer, make_token));
         }
+
+        saw_empty_library_message |= section_empty_library_message(section);
     }
 
-    Ok(None)
+    if saw_empty_library_message {
+        return Ok(None);
+    }
+
+    Err(Error::Parse(
+        "library response missing grid items in selected library tab".to_owned(),
+    ))
 }
 
 pub(crate) fn library_shelf_contents(response: &Value) -> Result<&[Value], Error> {
@@ -100,18 +105,23 @@ pub(crate) fn library_shelf_continuation<C>(
         library_tab,
         "/tabRenderer/content/sectionListRenderer/contents",
     )?;
+    let mut saw_empty_library_message = false;
 
     for section in sections {
-        let Some(renderer) = section.get("musicShelfRenderer") else {
-            continue;
-        };
-
-        if let Some(token) = extract_continuation_token(renderer, make_token) {
-            return Ok(Some(token));
+        if let Some(renderer) = section_shelf_renderer(section) {
+            return Ok(extract_continuation_token(renderer, make_token));
         }
+
+        saw_empty_library_message |= section_empty_library_message(section);
     }
 
-    Ok(None)
+    if saw_empty_library_message {
+        return Ok(None);
+    }
+
+    Err(Error::Parse(
+        "library response missing shelf contents in selected library tab".to_owned(),
+    ))
 }
 
 pub(crate) fn extract_continuation_token<C>(
@@ -532,6 +542,136 @@ mod tests {
             library_shelf_continuation(&response, str::to_owned).expect("continuation parse");
 
         assert_eq!(continuation.as_deref(), Some("SHELF_TOKEN"));
+    }
+
+    #[test]
+    fn library_grid_continuation_reads_item_section_renderer_path() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "itemSectionRenderer": {
+                                            "contents": [{
+                                                "gridRenderer": {
+                                                    "continuations": [{
+                                                        "nextContinuationData": {
+                                                            "continuation": "WRAPPED_GRID_TOKEN"
+                                                        }
+                                                    }]
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let continuation =
+            library_grid_continuation(&response, str::to_owned).expect("continuation parse");
+
+        assert_eq!(continuation.as_deref(), Some("WRAPPED_GRID_TOKEN"));
+    }
+
+    #[test]
+    fn library_shelf_continuation_reads_item_section_renderer_path() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "itemSectionRenderer": {
+                                            "contents": [{
+                                                "musicShelfRenderer": {
+                                                    "continuations": [{
+                                                        "nextContinuationData": {
+                                                            "continuation": "WRAPPED_SHELF_TOKEN"
+                                                        }
+                                                    }]
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let continuation =
+            library_shelf_continuation(&response, str::to_owned).expect("continuation parse");
+
+        assert_eq!(continuation.as_deref(), Some("WRAPPED_SHELF_TOKEN"));
+    }
+
+    #[test]
+    fn library_grid_continuation_errors_for_wrong_renderer_section() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "musicShelfRenderer": {
+                                            "contents": []
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let error = library_grid_continuation(&response, str::to_owned).unwrap_err();
+
+        assert!(matches!(error, crate::Error::Parse(_)));
+    }
+
+    #[test]
+    fn library_shelf_continuation_errors_for_wrong_renderer_section() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "gridRenderer": {
+                                            "items": []
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let error = library_shelf_continuation(&response, str::to_owned).unwrap_err();
+
+        assert!(matches!(error, crate::Error::Parse(_)));
     }
 
     #[test]
