@@ -4,6 +4,9 @@ mod error;
 pub(crate) mod library;
 mod model;
 pub(crate) mod search;
+#[allow(dead_code)]
+#[path = "model/song.rs"]
+pub(crate) mod song;
 pub(crate) mod watch;
 
 pub use crate::auth::setup_browser_auth;
@@ -23,5 +26,9 @@ pub use crate::model::library::{
 pub use crate::model::search::{
     AlbumResult, ArtistResult, PlaylistResult, ProfileResult, SearchFilter, SearchQuery,
     SearchResult, SearchResultType, SongResult, VideoResult,
+};
+pub use crate::model::song::{
+    GetSongResponse, SongByteRange, SongColorInfo, SongMicroformat, SongPlayabilityStatus,
+    SongStreamFormat, SongStreamingData, SongVideoDetails,
 };
 pub use crate::model::watch::{WatchPlaylistQuery, WatchTrack};
