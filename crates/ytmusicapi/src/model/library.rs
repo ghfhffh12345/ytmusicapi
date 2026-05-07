@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::{AlbumRef, ArtistRef, Error, Thumbnail};
+use crate::{AlbumRef, ArtistRef, Thumbnail};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -10,33 +10,52 @@ pub enum LibraryLikeStatus {
     Dislike,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
-#[serde(transparent)]
-pub struct ContinuationToken(String);
+pub(crate) trait ContinuationTokenValue {
+    fn as_str(&self) -> &str;
+}
 
-impl ContinuationToken {
-    pub fn new(token: impl Into<String>) -> Result<Self, Error> {
-        let token = token.into();
-        if token.trim().is_empty() {
-            return Err(Error::InvalidInput(
-                "continuation token must not be empty".to_owned(),
-            ));
+macro_rules! continuation_token {
+    ($name:ident) => {
+        #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+        #[serde(transparent)]
+        pub struct $name(String);
+
+        impl $name {
+            pub fn new(token: impl Into<String>) -> Self {
+                Self(token.into())
+            }
+
+            pub fn as_str(&self) -> &str {
+                &self.0
+            }
         }
 
-        Ok(Self(token))
-    }
-
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
+        impl ContinuationTokenValue for $name {
+            fn as_str(&self) -> &str {
+                self.as_str()
+            }
+        }
+    };
 }
+
+continuation_token!(SearchContinuationToken);
+continuation_token!(WatchPlaylistContinuationToken);
+continuation_token!(LibraryPlaylistsContinuationToken);
+continuation_token!(LibraryArtistsContinuationToken);
+continuation_token!(LibraryAlbumsContinuationToken);
+continuation_token!(LibrarySubscriptionsContinuationToken);
+continuation_token!(LibraryChannelsContinuationToken);
+continuation_token!(LibraryPodcastsContinuationToken);
+continuation_token!(LibrarySongsContinuationToken);
+continuation_token!(LikedSongsContinuationToken);
+continuation_token!(SavedEpisodesContinuationToken);
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Page<T> {
+pub struct Page<T, C> {
     pub items: Vec<T>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub continuation: Option<ContinuationToken>,
+    pub continuation: Option<C>,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
@@ -165,7 +184,7 @@ pub struct LikedSongsPage {
     pub items: Vec<LikedSongItem>,
     pub thumbnails: Vec<Thumbnail>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub continuation: Option<ContinuationToken>,
+    pub continuation: Option<LikedSongsContinuationToken>,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
@@ -188,5 +207,5 @@ pub struct SavedEpisodesPage {
     pub items: Vec<SavedEpisodeItem>,
     pub thumbnails: Vec<Thumbnail>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub continuation: Option<ContinuationToken>,
+    pub continuation: Option<SavedEpisodesContinuationToken>,
 }

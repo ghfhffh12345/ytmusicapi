@@ -5,7 +5,7 @@ use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 use ytmusicapi::{
-    ArtistRef, ContinuationToken, Error, LibraryPlaylist, Page, Thumbnail, YtMusic,
+    ArtistRef, Error, LibraryPlaylist, LibraryPlaylistsContinuationToken, Page, Thumbnail, YtMusic,
     setup_browser_auth,
 };
 
@@ -271,10 +271,26 @@ async fn get_library_playlists_continuation_returns_page_and_posts_token_body() 
 }
 
 #[test]
-fn continuation_token_rejects_empty_string() {
-    let result = ContinuationToken::new("");
+fn library_playlist_continuation_token_constructor_preserves_raw_value() {
+    let token = LibraryPlaylistsContinuationToken::new("");
 
-    assert!(matches!(result, Err(Error::InvalidInput(_))));
+    assert_eq!(token.as_str(), "");
+}
+
+#[test]
+fn page_serializes_typed_continuation_token_as_plain_string() {
+    let page = Page {
+        items: Vec::<LibraryPlaylist>::new(),
+        continuation: Some(LibraryPlaylistsContinuationToken::new("playlist-token-1")),
+    };
+
+    assert_eq!(
+        serde_json::to_value(page).unwrap(),
+        serde_json::json!({
+            "items": [],
+            "continuation": "playlist-token-1"
+        })
+    );
 }
 
 #[tokio::test]
