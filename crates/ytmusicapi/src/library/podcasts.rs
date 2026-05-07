@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use crate::{Error, LibraryPodcast, LibraryPodcastChannel, Page};
+use crate::{Error, LibraryPodcast, LibraryPodcastChannel, LibraryPodcastsContinuationToken, Page};
 
 use super::core::{
     continuation_grid, continuation_grid_items, extract_continuation_token,
@@ -9,19 +9,23 @@ use super::core::{
 
 pub(crate) fn parse_library_podcasts_response(
     response: &Value,
-) -> Result<Page<LibraryPodcast>, Error> {
+) -> Result<Page<LibraryPodcast, LibraryPodcastsContinuationToken>, Error> {
     Ok(Page {
         items: parse_podcast_items(library_grid_items(response)?)?,
-        continuation: library_grid_continuation(response)?,
+        continuation: library_grid_continuation(response, |token| {
+            crate::LibraryPodcastsContinuationToken::new(token)
+        })?,
     })
 }
 
 pub(crate) fn parse_library_podcasts_continuation(
     response: &Value,
-) -> Result<Page<LibraryPodcast>, Error> {
+) -> Result<Page<LibraryPodcast, LibraryPodcastsContinuationToken>, Error> {
     Ok(Page {
         items: parse_podcast_items(continuation_grid_items(response)?)?,
-        continuation: extract_continuation_token(continuation_grid(response)?)?,
+        continuation: extract_continuation_token(continuation_grid(response)?, |token| {
+            crate::LibraryPodcastsContinuationToken::new(token)
+        }),
     })
 }
 

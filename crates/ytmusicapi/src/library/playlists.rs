@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use crate::{ArtistRef, Error, LibraryPlaylist, Page};
+use crate::{ArtistRef, Error, LibraryPlaylist, LibraryPlaylistsContinuationToken, Page};
 
 use super::core::{
     continuation_grid, continuation_grid_items, extract_continuation_token,
@@ -9,9 +9,11 @@ use super::core::{
 
 pub(crate) fn parse_library_playlists_response(
     response: &Value,
-) -> Result<Page<LibraryPlaylist>, Error> {
+) -> Result<Page<LibraryPlaylist, LibraryPlaylistsContinuationToken>, Error> {
     let items = super::core::library_grid_items(response)?;
-    let continuation = library_grid_continuation(response)?;
+    let continuation = library_grid_continuation(response, |token| {
+        crate::LibraryPlaylistsContinuationToken::new(token)
+    })?;
 
     Ok(Page {
         items: parse_playlist_items(items)?,
@@ -21,9 +23,11 @@ pub(crate) fn parse_library_playlists_response(
 
 pub(crate) fn parse_library_playlists_continuation(
     response: &Value,
-) -> Result<Page<LibraryPlaylist>, Error> {
+) -> Result<Page<LibraryPlaylist, LibraryPlaylistsContinuationToken>, Error> {
     let items = continuation_grid_items(response)?;
-    let continuation = extract_continuation_token(continuation_grid(response)?)?;
+    let continuation = extract_continuation_token(continuation_grid(response)?, |token| {
+        crate::LibraryPlaylistsContinuationToken::new(token)
+    });
 
     Ok(Page {
         items: parse_playlist_items(items)?,

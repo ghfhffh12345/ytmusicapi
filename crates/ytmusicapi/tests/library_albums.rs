@@ -5,7 +5,8 @@ use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 use ytmusicapi::{
-    ArtistRef, ContinuationToken, Error, LibraryAlbum, Thumbnail, YtMusic, setup_browser_auth,
+    ArtistRef, Error, LibraryAlbum, LibraryAlbumsContinuationToken, Thumbnail, YtMusic,
+    setup_browser_auth,
 };
 
 fn browser_auth_json() -> String {
@@ -261,7 +262,7 @@ async fn get_library_albums_returns_first_page_results() {
     );
     assert_eq!(
         albums.continuation,
-        Some(ContinuationToken::new("album-token-1").unwrap())
+        Some(LibraryAlbumsContinuationToken::new("album-token-1"))
     );
 
     let requests = server.received_requests().await.unwrap();

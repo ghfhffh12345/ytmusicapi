@@ -1,6 +1,9 @@
 use serde_json::Value;
 
-use crate::{AlbumRef, ArtistRef, Error, LibraryLikeStatus, LibrarySong, Page, Thumbnail};
+use crate::{
+    AlbumRef, ArtistRef, Error, LibraryLikeStatus, LibrarySong, LibrarySongsContinuationToken,
+    Page, Thumbnail,
+};
 
 use super::core::{
     continuation_shelf, continuation_shelf_contents, extract_continuation_token,
@@ -8,19 +11,25 @@ use super::core::{
     required_text,
 };
 
-pub(crate) fn parse_library_songs_response(response: &Value) -> Result<Page<LibrarySong>, Error> {
+pub(crate) fn parse_library_songs_response(
+    response: &Value,
+) -> Result<Page<LibrarySong, LibrarySongsContinuationToken>, Error> {
     Ok(Page {
         items: parse_library_song_items(library_shelf_contents(response)?)?,
-        continuation: library_shelf_continuation(response)?,
+        continuation: library_shelf_continuation(response, |token| {
+            crate::LibrarySongsContinuationToken::new(token)
+        })?,
     })
 }
 
 pub(crate) fn parse_library_songs_continuation(
     response: &Value,
-) -> Result<Page<LibrarySong>, Error> {
+) -> Result<Page<LibrarySong, LibrarySongsContinuationToken>, Error> {
     Ok(Page {
         items: parse_library_song_items(continuation_shelf_contents(response)?)?,
-        continuation: extract_continuation_token(continuation_shelf(response)?)?,
+        continuation: extract_continuation_token(continuation_shelf(response)?, |token| {
+            crate::LibrarySongsContinuationToken::new(token)
+        }),
     })
 }
 

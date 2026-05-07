@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use crate::{Error, LibrarySubscription, Page};
+use crate::{Error, LibrarySubscription, LibrarySubscriptionsContinuationToken, Page};
 
 use super::core::{
     continuation_shelf, continuation_shelf_contents, extract_continuation_token,
@@ -9,25 +9,29 @@ use super::core::{
 
 pub(crate) fn parse_library_subscriptions_response(
     response: &Value,
-) -> Result<Page<LibrarySubscription>, Error> {
+) -> Result<Page<LibrarySubscription, LibrarySubscriptionsContinuationToken>, Error> {
     Ok(Page {
         items: library_shelf_contents(response)?
             .iter()
             .map(parse_library_subscription)
             .collect::<Result<Vec<_>, _>>()?,
-        continuation: library_shelf_continuation(response)?,
+        continuation: library_shelf_continuation(response, |token| {
+            crate::LibrarySubscriptionsContinuationToken::new(token)
+        })?,
     })
 }
 
 pub(crate) fn parse_library_subscriptions_continuation(
     response: &Value,
-) -> Result<Page<LibrarySubscription>, Error> {
+) -> Result<Page<LibrarySubscription, LibrarySubscriptionsContinuationToken>, Error> {
     Ok(Page {
         items: continuation_shelf_contents(response)?
             .iter()
             .map(parse_library_subscription)
             .collect::<Result<Vec<_>, _>>()?,
-        continuation: extract_continuation_token(continuation_shelf(response)?)?,
+        continuation: extract_continuation_token(continuation_shelf(response)?, |token| {
+            crate::LibrarySubscriptionsContinuationToken::new(token)
+        }),
     })
 }
 

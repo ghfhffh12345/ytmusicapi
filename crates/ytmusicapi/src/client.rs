@@ -230,7 +230,8 @@ impl YtMusic {
 
     pub async fn get_library_playlists(
         &self,
-    ) -> Result<crate::Page<crate::LibraryPlaylist>, Error> {
+    ) -> Result<crate::Page<crate::LibraryPlaylist, crate::LibraryPlaylistsContinuationToken>, Error>
+    {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
                 "get_library_playlists requires browser authentication".to_owned(),
@@ -254,8 +255,9 @@ impl YtMusic {
 
     pub async fn get_library_playlists_continuation(
         &self,
-        token: crate::ContinuationToken,
-    ) -> Result<crate::Page<crate::LibraryPlaylist>, Error> {
+        token: crate::LibraryPlaylistsContinuationToken,
+    ) -> Result<crate::Page<crate::LibraryPlaylist, crate::LibraryPlaylistsContinuationToken>, Error>
+    {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
                 "get_library_playlists_continuation requires browser authentication".to_owned(),
@@ -304,7 +306,10 @@ impl YtMusic {
         crate::library::account::parse_account_info_response(&response)
     }
 
-    pub async fn get_library_artists(&self) -> Result<crate::Page<crate::LibraryArtist>, Error> {
+    pub async fn get_library_artists(
+        &self,
+    ) -> Result<crate::Page<crate::LibraryArtist, crate::LibraryArtistsContinuationToken>, Error>
+    {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
                 "get_library_artists requires browser authentication".to_owned(),
@@ -328,8 +333,9 @@ impl YtMusic {
 
     pub async fn get_library_artists_continuation(
         &self,
-        token: crate::ContinuationToken,
-    ) -> Result<crate::Page<crate::LibraryArtist>, Error> {
+        token: crate::LibraryArtistsContinuationToken,
+    ) -> Result<crate::Page<crate::LibraryArtist, crate::LibraryArtistsContinuationToken>, Error>
+    {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
                 "get_library_artists_continuation requires browser authentication".to_owned(),
@@ -349,7 +355,10 @@ impl YtMusic {
         crate::library::artists::parse_library_artists_continuation(&response)
     }
 
-    pub async fn get_library_albums(&self) -> Result<crate::Page<crate::LibraryAlbum>, Error> {
+    pub async fn get_library_albums(
+        &self,
+    ) -> Result<crate::Page<crate::LibraryAlbum, crate::LibraryAlbumsContinuationToken>, Error>
+    {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
                 "get_library_albums requires browser authentication".to_owned(),
@@ -373,8 +382,9 @@ impl YtMusic {
 
     pub async fn get_library_albums_continuation(
         &self,
-        token: crate::ContinuationToken,
-    ) -> Result<crate::Page<crate::LibraryAlbum>, Error> {
+        token: crate::LibraryAlbumsContinuationToken,
+    ) -> Result<crate::Page<crate::LibraryAlbum, crate::LibraryAlbumsContinuationToken>, Error>
+    {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
                 "get_library_albums_continuation requires browser authentication".to_owned(),
@@ -396,7 +406,10 @@ impl YtMusic {
 
     pub async fn get_library_subscriptions(
         &self,
-    ) -> Result<crate::Page<crate::LibrarySubscription>, Error> {
+    ) -> Result<
+        crate::Page<crate::LibrarySubscription, crate::LibrarySubscriptionsContinuationToken>,
+        Error,
+    > {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
                 "get_library_subscriptions requires browser authentication".to_owned(),
@@ -420,8 +433,11 @@ impl YtMusic {
 
     pub async fn get_library_subscriptions_continuation(
         &self,
-        token: crate::ContinuationToken,
-    ) -> Result<crate::Page<crate::LibrarySubscription>, Error> {
+        token: crate::LibrarySubscriptionsContinuationToken,
+    ) -> Result<
+        crate::Page<crate::LibrarySubscription, crate::LibrarySubscriptionsContinuationToken>,
+        Error,
+    > {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
                 "get_library_subscriptions_continuation requires browser authentication".to_owned(),
@@ -441,7 +457,10 @@ impl YtMusic {
         crate::library::subscriptions::parse_library_subscriptions_continuation(&response)
     }
 
-    pub async fn get_library_channels(&self) -> Result<crate::Page<crate::LibraryChannel>, Error> {
+    pub async fn get_library_channels(
+        &self,
+    ) -> Result<crate::Page<crate::LibraryChannel, crate::LibraryChannelsContinuationToken>, Error>
+    {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
                 "get_library_channels requires browser authentication".to_owned(),
@@ -465,8 +484,9 @@ impl YtMusic {
 
     pub async fn get_library_channels_continuation(
         &self,
-        token: crate::ContinuationToken,
-    ) -> Result<crate::Page<crate::LibraryChannel>, Error> {
+        token: crate::LibraryChannelsContinuationToken,
+    ) -> Result<crate::Page<crate::LibraryChannel, crate::LibraryChannelsContinuationToken>, Error>
+    {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
                 "get_library_channels_continuation requires browser authentication".to_owned(),
@@ -486,7 +506,10 @@ impl YtMusic {
         crate::library::channels::parse_library_channels_continuation(&response)
     }
 
-    pub async fn get_library_podcasts(&self) -> Result<crate::Page<crate::LibraryPodcast>, Error> {
+    pub async fn get_library_podcasts(
+        &self,
+    ) -> Result<crate::Page<crate::LibraryPodcast, crate::LibraryPodcastsContinuationToken>, Error>
+    {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
                 "get_library_podcasts requires browser authentication".to_owned(),
@@ -510,8 +533,9 @@ impl YtMusic {
 
     pub async fn get_library_podcasts_continuation(
         &self,
-        token: crate::ContinuationToken,
-    ) -> Result<crate::Page<crate::LibraryPodcast>, Error> {
+        token: crate::LibraryPodcastsContinuationToken,
+    ) -> Result<crate::Page<crate::LibraryPodcast, crate::LibraryPodcastsContinuationToken>, Error>
+    {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
                 "get_library_podcasts_continuation requires browser authentication".to_owned(),
@@ -531,7 +555,9 @@ impl YtMusic {
         crate::library::podcasts::parse_library_podcasts_continuation(&response)
     }
 
-    pub async fn get_library_songs(&self) -> Result<crate::Page<crate::LibrarySong>, Error> {
+    pub async fn get_library_songs(
+        &self,
+    ) -> Result<crate::Page<crate::LibrarySong, crate::LibrarySongsContinuationToken>, Error> {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
                 "get_library_songs requires browser authentication".to_owned(),
@@ -555,8 +581,8 @@ impl YtMusic {
 
     pub async fn get_library_songs_continuation(
         &self,
-        token: crate::ContinuationToken,
-    ) -> Result<crate::Page<crate::LibrarySong>, Error> {
+        token: crate::LibrarySongsContinuationToken,
+    ) -> Result<crate::Page<crate::LibrarySong, crate::LibrarySongsContinuationToken>, Error> {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
                 "get_library_songs_continuation requires browser authentication".to_owned(),

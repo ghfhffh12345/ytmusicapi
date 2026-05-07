@@ -177,7 +177,7 @@ async fn get_library_playlists_returns_page_and_continuation() {
                     thumbnails: vec![],
                 }
             ],
-            continuation: Some(ContinuationToken::new("playlist-token-1").unwrap()),
+            continuation: Some(LibraryPlaylistsContinuationToken::new("playlist-token-1")),
         }
     );
 }
@@ -225,7 +225,9 @@ async fn get_library_playlists_continuation_returns_page_and_posts_token_body() 
         .unwrap();
 
     let playlists = client
-        .get_library_playlists_continuation(ContinuationToken::new("playlist-token-1").unwrap())
+        .get_library_playlists_continuation(LibraryPlaylistsContinuationToken::new(
+            "playlist-token-1",
+        ))
         .await
         .unwrap();
     assert_eq!(
@@ -245,7 +247,7 @@ async fn get_library_playlists_continuation_returns_page_and_posts_token_body() 
                     height: 300,
                 }],
             }],
-            continuation: Some(ContinuationToken::new("playlist-token-2").unwrap()),
+            continuation: Some(LibraryPlaylistsContinuationToken::new("playlist-token-2")),
         }
     );
 

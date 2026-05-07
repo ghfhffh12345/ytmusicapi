@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use crate::{Error, LibraryArtist, Page};
+use crate::{Error, LibraryArtist, LibraryArtistsContinuationToken, Page};
 
 use super::core::{
     continuation_shelf, continuation_shelf_contents, extract_continuation_token,
@@ -9,25 +9,29 @@ use super::core::{
 
 pub(crate) fn parse_library_artists_response(
     response: &Value,
-) -> Result<Page<LibraryArtist>, Error> {
+) -> Result<Page<LibraryArtist, LibraryArtistsContinuationToken>, Error> {
     Ok(Page {
         items: library_shelf_contents(response)?
             .iter()
             .map(parse_library_artist)
             .collect::<Result<Vec<_>, _>>()?,
-        continuation: library_shelf_continuation(response)?,
+        continuation: library_shelf_continuation(response, |token| {
+            crate::LibraryArtistsContinuationToken::new(token)
+        })?,
     })
 }
 
 pub(crate) fn parse_library_artists_continuation(
     response: &Value,
-) -> Result<Page<LibraryArtist>, Error> {
+) -> Result<Page<LibraryArtist, LibraryArtistsContinuationToken>, Error> {
     Ok(Page {
         items: continuation_shelf_contents(response)?
             .iter()
             .map(parse_library_artist)
             .collect::<Result<Vec<_>, _>>()?,
-        continuation: extract_continuation_token(continuation_shelf(response)?)?,
+        continuation: extract_continuation_token(continuation_shelf(response)?, |token| {
+            crate::LibraryArtistsContinuationToken::new(token)
+        }),
     })
 }
 
