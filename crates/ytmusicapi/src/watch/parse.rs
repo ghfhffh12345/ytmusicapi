@@ -3,23 +3,26 @@
 use serde_json::Value;
 
 use crate::{
-    AlbumRef, ArtistRef, ContinuationToken, Error, LibraryLikeStatus, Page, Thumbnail, WatchTrack,
+    AlbumRef, ArtistRef, Error, LibraryLikeStatus, Page, Thumbnail, WatchPlaylistContinuationToken,
+    WatchTrack,
 };
 
-pub(crate) fn parse_watch_playlist_response(response: &Value) -> Result<Page<WatchTrack>, Error> {
+pub(crate) fn parse_watch_playlist_response(
+    response: &Value,
+) -> Result<Page<WatchTrack, WatchPlaylistContinuationToken>, Error> {
     let renderer = response
         .pointer("/contents/singleColumnMusicWatchNextResultsRenderer/tabbedRenderer/watchNextTabbedResultsRenderer/tabs/0/tabRenderer/content/musicQueueRenderer/content/playlistPanelRenderer")
         .ok_or_else(|| Error::Parse("watch response missing playlistPanelRenderer".to_owned()))?;
 
     Ok(Page {
         items: parse_watch_tracks(required_array(renderer, "/contents")?)?,
-        continuation: extract_continuation(renderer)?,
+        continuation: extract_continuation(renderer),
     })
 }
 
 pub(crate) fn parse_watch_playlist_continuation(
     response: &Value,
-) -> Result<Page<WatchTrack>, Error> {
+) -> Result<Page<WatchTrack, WatchPlaylistContinuationToken>, Error> {
     let renderer = response
         .pointer("/continuationContents/playlistPanelContinuation")
         .ok_or_else(|| {
@@ -28,7 +31,7 @@ pub(crate) fn parse_watch_playlist_continuation(
 
     Ok(Page {
         items: parse_watch_tracks(required_array(renderer, "/contents")?)?,
-        continuation: extract_continuation(renderer)?,
+        continuation: extract_continuation(renderer),
     })
 }
 
@@ -147,7 +150,7 @@ fn parse_thumbnails(value: &Value) -> Result<Vec<Thumbnail>, Error> {
         .collect()
 }
 
-fn extract_continuation(value: &Value) -> Result<Option<ContinuationToken>, Error> {
+fn extract_continuation(value: &Value) -> Option<WatchPlaylistContinuationToken> {
     optional_text(value, "/continuations/0/nextContinuationData/continuation")
         .or_else(|| {
             optional_text(
@@ -155,8 +158,7 @@ fn extract_continuation(value: &Value) -> Result<Option<ContinuationToken>, Erro
                 "/continuations/0/nextRadioContinuationData/continuation",
             )
         })
-        .map(ContinuationToken::new)
-        .transpose()
+        .map(WatchPlaylistContinuationToken::new)
 }
 
 fn parse_artists(runs: &[Value]) -> Vec<ArtistRef> {
@@ -331,7 +333,7 @@ mod tests {
     use super::{
         parse_watch_playlist_continuation, parse_watch_playlist_response, parse_watch_track,
     };
-    use crate::{ContinuationToken, LibraryLikeStatus, WatchTrack};
+    use crate::{LibraryLikeStatus, WatchPlaylistContinuationToken, WatchTrack};
 
     #[test]
     fn parse_watch_playlist_response_returns_items_counterpart_and_continuation() {
@@ -340,11 +342,12 @@ mod tests {
         ))
         .unwrap();
 
-        let page: crate::Page<WatchTrack> = parse_watch_playlist_response(&response).unwrap();
+        let page: crate::Page<WatchTrack, WatchPlaylistContinuationToken> =
+            parse_watch_playlist_response(&response).unwrap();
 
         assert_eq!(
             page.continuation,
-            Some(ContinuationToken::new("watch-token-1").unwrap())
+            Some(WatchPlaylistContinuationToken::new("watch-token-1"))
         );
         assert_eq!(page.items.len(), 2);
         assert_eq!(page.items[0].video_id, "video-1");
@@ -372,11 +375,12 @@ mod tests {
         ))
         .unwrap();
 
-        let page: crate::Page<WatchTrack> = parse_watch_playlist_continuation(&response).unwrap();
+        let page: crate::Page<WatchTrack, WatchPlaylistContinuationToken> =
+            parse_watch_playlist_continuation(&response).unwrap();
 
         assert_eq!(
             page.continuation,
-            Some(ContinuationToken::new("watch-token-2").unwrap())
+            Some(WatchPlaylistContinuationToken::new("watch-token-2"))
         );
         assert_eq!(page.items.len(), 1);
         assert_eq!(page.items[0].video_id, "video-3");
@@ -390,10 +394,11 @@ mod tests {
         ))
         .unwrap();
 
-        let page: crate::Page<WatchTrack> = parse_watch_playlist_response(&response).unwrap();
+        let page: crate::Page<WatchTrack, WatchPlaylistContinuationToken> =
+            parse_watch_playlist_response(&response).unwrap();
         assert_eq!(
             page.continuation,
-            Some(ContinuationToken::new("radio-watch-token-1").unwrap())
+            Some(WatchPlaylistContinuationToken::new("radio-watch-token-1"))
         );
         assert_eq!(page.items[0].title, "Radio Primary Song");
         assert_eq!(
@@ -458,11 +463,12 @@ mod tests {
             }
         });
 
-        let page: crate::Page<WatchTrack> = parse_watch_playlist_response(&response).unwrap();
+        let page: crate::Page<WatchTrack, WatchPlaylistContinuationToken> =
+            parse_watch_playlist_response(&response).unwrap();
 
         assert_eq!(
             page.continuation,
-            Some(ContinuationToken::new("radio-live-token").unwrap())
+            Some(WatchPlaylistContinuationToken::new("radio-live-token"))
         );
         assert_eq!(page.items.len(), 1);
         assert_eq!(page.items[0].video_id, "radio-video");
@@ -475,10 +481,11 @@ mod tests {
         ))
         .unwrap();
 
-        let page: crate::Page<WatchTrack> = parse_watch_playlist_response(&response).unwrap();
+        let page: crate::Page<WatchTrack, WatchPlaylistContinuationToken> =
+            parse_watch_playlist_response(&response).unwrap();
         assert_eq!(
             page.continuation,
-            Some(ContinuationToken::new("shuffle-watch-token-1").unwrap())
+            Some(WatchPlaylistContinuationToken::new("shuffle-watch-token-1"))
         );
         assert_eq!(page.items[0].title, "Shuffle Primary Song");
         assert_eq!(
@@ -551,7 +558,8 @@ mod tests {
         )
         .unwrap();
 
-        let page: crate::Page<WatchTrack> = parse_watch_playlist_response(&response).unwrap();
+        let page: crate::Page<WatchTrack, WatchPlaylistContinuationToken> =
+            parse_watch_playlist_response(&response).unwrap();
 
         assert_eq!(page.items.len(), 1);
         assert_eq!(page.items[0].video_id, "plain-thumb-video");

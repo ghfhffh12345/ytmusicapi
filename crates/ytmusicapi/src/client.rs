@@ -137,7 +137,7 @@ impl YtMusic {
     pub async fn get_watch_playlist(
         &self,
         query: crate::WatchPlaylistQuery,
-    ) -> Result<crate::Page<crate::WatchTrack>, Error> {
+    ) -> Result<crate::Page<crate::WatchTrack, crate::WatchPlaylistContinuationToken>, Error> {
         query.validate()?;
 
         let bootstrap_config = self.bootstrap_config().await?;
@@ -157,8 +157,8 @@ impl YtMusic {
 
     pub async fn get_watch_playlist_continuation(
         &self,
-        token: crate::ContinuationToken,
-    ) -> Result<crate::Page<crate::WatchTrack>, Error> {
+        token: crate::WatchPlaylistContinuationToken,
+    ) -> Result<crate::Page<crate::WatchTrack, crate::WatchPlaylistContinuationToken>, Error> {
         let bootstrap_config = self.bootstrap_config().await?;
         let client_version = self
             .browser_auth

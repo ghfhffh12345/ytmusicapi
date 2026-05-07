@@ -4,7 +4,9 @@ use serde_json::{Value, json};
 use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, Request, ResponseTemplate};
-use ytmusicapi::{ContinuationToken, Error, WatchPlaylistQuery, YtMusic, setup_browser_auth};
+use ytmusicapi::{
+    Error, WatchPlaylistContinuationToken, WatchPlaylistQuery, YtMusic, setup_browser_auth,
+};
 
 fn browser_auth_json() -> String {
     setup_browser_auth(
@@ -216,7 +218,7 @@ async fn get_watch_playlist_posts_next_body_and_returns_page() {
 
     assert_eq!(
         page.continuation,
-        Some(ContinuationToken::new("watch-token-1").unwrap())
+        Some(WatchPlaylistContinuationToken::new("watch-token-1"))
     );
     assert_eq!(page.items[0].video_id, "video-1");
 
@@ -307,13 +309,13 @@ async fn get_watch_playlist_continuation_posts_continuation_body_and_returns_pag
         .unwrap();
 
     let page = client
-        .get_watch_playlist_continuation(ContinuationToken::new("watch-token-1").unwrap())
+        .get_watch_playlist_continuation(WatchPlaylistContinuationToken::new("watch-token-1"))
         .await
         .unwrap();
 
     assert_eq!(
         page.continuation,
-        Some(ContinuationToken::new("watch-token-2").unwrap())
+        Some(WatchPlaylistContinuationToken::new("watch-token-2"))
     );
     assert_eq!(page.items[0].video_id, "video-3");
 
@@ -388,12 +390,12 @@ async fn get_watch_playlist_uses_shuffle_and_radio_params() {
     assert_eq!(shuffle_page.items[0].video_id, "shuffle-video-1");
     assert_eq!(
         shuffle_page.continuation,
-        Some(ContinuationToken::new("shuffle-watch-token-1").unwrap())
+        Some(WatchPlaylistContinuationToken::new("shuffle-watch-token-1"))
     );
     assert_eq!(radio_page.items[0].video_id, "radio-video-1");
     assert_eq!(
         radio_page.continuation,
-        Some(ContinuationToken::new("radio-watch-token-1").unwrap())
+        Some(WatchPlaylistContinuationToken::new("radio-watch-token-1"))
     );
 
     let requests = server.received_requests().await.unwrap();
