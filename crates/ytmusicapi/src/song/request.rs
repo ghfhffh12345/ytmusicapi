@@ -7,9 +7,7 @@ pub(crate) fn build_get_song_body(
     signature_timestamp: u32,
     bootstrap: &BootstrapConfig,
 ) -> Result<Value, Error> {
-    let video_id = video_id.trim();
-
-    if video_id.is_empty() {
+    if video_id.trim().is_empty() {
         return Err(Error::InvalidInput("video_id must not be blank".to_owned()));
     }
 
@@ -78,7 +76,7 @@ mod tests {
     }
 
     #[test]
-    fn build_get_song_body_trims_surrounding_video_id_whitespace() {
+    fn build_get_song_body_preserves_surrounding_video_id_whitespace() {
         let bootstrap = BootstrapConfig {
             visitor_id: "visitor-id-123".to_owned(),
             innertube_api_key: "test-api-key".to_owned(),
@@ -87,6 +85,6 @@ mod tests {
 
         let body = build_get_song_body("  video-1 \n", 20_000, &bootstrap).unwrap();
 
-        assert_eq!(body["videoId"], "video-1");
+        assert_eq!(body["videoId"], "  video-1 \n");
     }
 }
