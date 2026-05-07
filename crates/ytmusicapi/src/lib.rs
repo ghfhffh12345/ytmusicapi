@@ -4,8 +4,6 @@ mod error;
 pub(crate) mod library;
 mod model;
 pub(crate) mod search;
-#[allow(dead_code)]
-#[path = "model/song.rs"]
 pub(crate) mod song;
 pub(crate) mod watch;
 
