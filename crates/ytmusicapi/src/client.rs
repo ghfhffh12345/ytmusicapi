@@ -65,7 +65,10 @@ impl YtMusic {
         &self.homepage_url
     }
 
-    pub async fn search(&self, query: SearchQuery) -> Result<crate::Page<SearchResult>, Error> {
+    pub async fn search(
+        &self,
+        query: SearchQuery,
+    ) -> Result<crate::Page<SearchResult, crate::SearchContinuationToken>, Error> {
         query.validate()?;
 
         let bootstrap_config = self.bootstrap_config().await?;
@@ -100,8 +103,8 @@ impl YtMusic {
 
     pub async fn search_continuation(
         &self,
-        token: crate::ContinuationToken,
-    ) -> Result<crate::Page<crate::SearchResult>, Error> {
+        token: crate::SearchContinuationToken,
+    ) -> Result<crate::Page<crate::SearchResult, crate::SearchContinuationToken>, Error> {
         let bootstrap = self.bootstrap_config().await?;
 
         if self.browser_auth.is_some() {
@@ -174,7 +177,7 @@ impl YtMusic {
         body: serde_json::Value,
         browser_auth: Option<&crate::auth::BrowserAuthHeaders>,
         filter: Option<SearchFilter>,
-    ) -> Result<crate::Page<SearchResult>, Error> {
+    ) -> Result<crate::Page<SearchResult, crate::SearchContinuationToken>, Error> {
         let response_json = self
             .search_raw_transport(bootstrap, body, browser_auth)
             .await?;
@@ -777,7 +780,7 @@ impl YtMusicBuilder {
 fn parse_search_page(
     response_json: &serde_json::Value,
     filter: Option<SearchFilter>,
-) -> Result<crate::Page<SearchResult>, Error> {
+) -> Result<crate::Page<SearchResult, crate::SearchContinuationToken>, Error> {
     if response_json
         .pointer("/continuationContents/musicShelfContinuation")
         .is_some()

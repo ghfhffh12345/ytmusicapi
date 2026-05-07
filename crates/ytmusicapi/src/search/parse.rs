@@ -11,10 +11,10 @@ use crate::{
     },
 };
 
-pub fn parse_search_response(
+pub(crate) fn parse_search_response(
     response: &Value,
     filter: Option<SearchFilter>,
-) -> Result<crate::Page<SearchResult>, Error> {
+) -> Result<crate::Page<crate::SearchResult, crate::SearchContinuationToken>, Error> {
     let tabs = required_array_at(response, "/contents/tabbedSearchResultsRenderer/tabs")?;
     if tabs.is_empty() {
         return Ok(crate::Page {
@@ -41,13 +41,13 @@ pub fn parse_search_response(
 
     Ok(crate::Page {
         items,
-        continuation: extract_search_continuation(response, sections)?,
+        continuation: extract_search_continuation(response, sections),
     })
 }
 
 pub(crate) fn parse_search_continuation_response(
     response: &Value,
-) -> Result<crate::Page<crate::SearchResult>, Error> {
+) -> Result<crate::Page<crate::SearchResult, crate::SearchContinuationToken>, Error> {
     let shelf = response
         .pointer("/continuationContents/musicShelfContinuation")
         .ok_or_else(|| {
@@ -67,8 +67,7 @@ pub(crate) fn parse_search_continuation_response(
     let continuation = shelf
         .pointer("/continuations/0/nextContinuationData/continuation")
         .and_then(Value::as_str)
-        .map(crate::ContinuationToken::new)
-        .transpose()?;
+        .map(crate::SearchContinuationToken::new);
 
     Ok(crate::Page {
         items,
@@ -201,12 +200,12 @@ fn parse_filtered_sections(
 fn extract_search_continuation(
     response: &Value,
     sections: &[Value],
-) -> Result<Option<crate::ContinuationToken>, Error> {
+) -> Option<crate::SearchContinuationToken> {
     for path in [
         "/contents/tabbedSearchResultsRenderer/tabs/0/tabRenderer/content/sectionListRenderer/continuations/0/nextContinuationData/continuation",
     ] {
         if let Some(token) = response.pointer(path).and_then(Value::as_str) {
-            return crate::ContinuationToken::new(token).map(Some);
+            return Some(crate::SearchContinuationToken::new(token));
         }
     }
 
@@ -216,11 +215,11 @@ fn extract_search_continuation(
                 .pointer("/continuations/0/nextContinuationData/continuation")
                 .and_then(Value::as_str)
         {
-            return crate::ContinuationToken::new(token).map(Some);
+            return Some(crate::SearchContinuationToken::new(token));
         }
     }
 
-    Ok(None)
+    None
 }
 
 fn parse_top_result(card: &Value) -> Result<SearchResult, Error> {
@@ -790,7 +789,7 @@ fn required_value_at<'a>(value: &'a Value, pointer: &str) -> Result<&'a Value, E
 #[cfg(test)]
 mod tests {
     use super::{parse_search_continuation_response, parse_search_response};
-    use crate::{ContinuationToken, SearchFilter, SearchResult};
+    use crate::{SearchContinuationToken, SearchFilter, SearchResult};
     use serde_json::{Value, json};
 
     fn parse_raw_fixture(raw_fixture: &str, filter: Option<SearchFilter>) -> Vec<SearchResult> {
@@ -944,7 +943,7 @@ mod tests {
     fn parse_inline_page(
         sections: Vec<Value>,
         filter: Option<SearchFilter>,
-    ) -> crate::Page<SearchResult> {
+    ) -> crate::Page<SearchResult, SearchContinuationToken> {
         parse_search_response(
             &json!({
                 "contents": {
@@ -1017,7 +1016,7 @@ mod tests {
 
         assert_eq!(
             parsed.continuation,
-            Some(ContinuationToken::new("search-token-1").unwrap())
+            Some(SearchContinuationToken::new("search-token-1"))
         );
     }
 
@@ -1142,7 +1141,7 @@ mod tests {
         );
         assert_eq!(
             parsed.continuation,
-            Some(ContinuationToken::new("songs-token-1").unwrap())
+            Some(SearchContinuationToken::new("songs-token-1"))
         );
     }
 
@@ -1159,7 +1158,7 @@ mod tests {
         );
         assert_eq!(
             parsed.continuation,
-            Some(ContinuationToken::new("songs-token-2").unwrap())
+            Some(SearchContinuationToken::new("songs-token-2"))
         );
     }
 
@@ -1178,7 +1177,7 @@ mod tests {
         ));
         assert_eq!(
             parsed.continuation,
-            Some(ContinuationToken::new("artists-token-1").unwrap())
+            Some(SearchContinuationToken::new("artists-token-1"))
         );
     }
 
@@ -1197,7 +1196,7 @@ mod tests {
         ));
         assert_eq!(
             parsed.continuation,
-            Some(ContinuationToken::new("search-token-2").unwrap())
+            Some(SearchContinuationToken::new("search-token-2"))
         );
     }
 

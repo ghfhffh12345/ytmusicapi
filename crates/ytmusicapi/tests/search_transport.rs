@@ -5,7 +5,7 @@ use tempfile::tempdir;
 use wiremock::matchers::{method, path, query_param};
 use wiremock::{Mock, MockServer, Request, ResponseTemplate};
 use ytmusicapi::setup_browser_auth;
-use ytmusicapi::{ContinuationToken, Error, SearchFilter, SearchQuery, YtMusic};
+use ytmusicapi::{Error, SearchContinuationToken, SearchFilter, SearchQuery, YtMusic};
 
 const BROWSER_USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36";
 
@@ -197,7 +197,7 @@ async fn unfiltered_search_returns_page_and_continuation() {
     assert!(!result.items.is_empty());
     assert_eq!(
         result.continuation,
-        Some(ContinuationToken::new("search-token-1").unwrap())
+        Some(SearchContinuationToken::new("search-token-1"))
     );
 }
 
@@ -237,7 +237,7 @@ async fn filtered_songs_search_returns_page_and_continuation() {
     );
     assert_eq!(
         page.continuation,
-        Some(ContinuationToken::new("songs-token-1").unwrap())
+        Some(SearchContinuationToken::new("songs-token-1"))
     );
 }
 
@@ -272,7 +272,7 @@ async fn anonymous_search_continuation_posts_continuation_body_and_parses_songs_
         .unwrap();
 
     let page = client
-        .search_continuation(ContinuationToken::new("songs-token-1").unwrap())
+        .search_continuation(SearchContinuationToken::new("songs-token-1"))
         .await
         .unwrap();
 
@@ -291,7 +291,7 @@ async fn anonymous_search_continuation_posts_continuation_body_and_parses_songs_
     )));
     assert_eq!(
         page.continuation,
-        Some(ContinuationToken::new("songs-token-2").unwrap())
+        Some(SearchContinuationToken::new("songs-token-2"))
     );
 
     let requests = server.received_requests().await.unwrap();
@@ -362,7 +362,7 @@ async fn authenticated_search_continuation_uses_browser_auth_headers_and_parses_
         .unwrap();
 
     let page = client
-        .search_continuation(ContinuationToken::new("search-token-1").unwrap())
+        .search_continuation(SearchContinuationToken::new("search-token-1"))
         .await
         .unwrap();
 
@@ -398,7 +398,7 @@ async fn authenticated_search_continuation_uses_browser_auth_headers_and_parses_
     )));
     assert_eq!(
         page.continuation,
-        Some(ContinuationToken::new("search-token-2").unwrap())
+        Some(SearchContinuationToken::new("search-token-2"))
     );
 
     let requests = server.received_requests().await.unwrap();
@@ -497,7 +497,7 @@ async fn authenticated_search_continuation_falls_back_to_anonymous_transport_on_
         .unwrap();
 
     let page = client
-        .search_continuation(ContinuationToken::new("songs-token-1").unwrap())
+        .search_continuation(SearchContinuationToken::new("songs-token-1"))
         .await
         .unwrap();
 
@@ -508,7 +508,7 @@ async fn authenticated_search_continuation_falls_back_to_anonymous_transport_on_
     );
     assert_eq!(
         page.continuation,
-        Some(ContinuationToken::new("songs-token-2").unwrap())
+        Some(SearchContinuationToken::new("songs-token-2"))
     );
 
     let requests = server.received_requests().await.unwrap();
@@ -576,7 +576,7 @@ async fn authenticated_songs_search_continuation_parses_non_empty_song_results()
         .unwrap();
 
     let page = client
-        .search_continuation(ContinuationToken::new("songs-token-1").unwrap())
+        .search_continuation(SearchContinuationToken::new("songs-token-1"))
         .await
         .unwrap();
 
@@ -596,7 +596,7 @@ async fn authenticated_songs_search_continuation_parses_non_empty_song_results()
     )));
     assert_eq!(
         page.continuation,
-        Some(ContinuationToken::new("songs-token-2").unwrap())
+        Some(SearchContinuationToken::new("songs-token-2"))
     );
 }
 
@@ -640,7 +640,7 @@ async fn authenticated_videos_search_continuation_parses_non_empty_video_results
         .unwrap();
 
     let page = client
-        .search_continuation(ContinuationToken::new("videos-token-1").unwrap())
+        .search_continuation(SearchContinuationToken::new("videos-token-1"))
         .await
         .unwrap();
 
@@ -659,7 +659,7 @@ async fn authenticated_videos_search_continuation_parses_non_empty_video_results
     )));
     assert_eq!(
         page.continuation,
-        Some(ContinuationToken::new("videos-token-2").unwrap())
+        Some(SearchContinuationToken::new("videos-token-2"))
     );
 }
 
