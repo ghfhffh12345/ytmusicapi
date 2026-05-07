@@ -2,7 +2,6 @@ use serde_json::{Value, json};
 
 use crate::{Error, search::request::BootstrapConfig};
 
-#[allow(dead_code)]
 pub(crate) fn build_get_song_body(
     video_id: &str,
     signature_timestamp: u32,
