@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use crate::{ContinuationToken, Error, Thumbnail};
+use crate::{Error, Thumbnail};
 
 pub(crate) struct ArtistLikeRow {
     pub(crate) browse_id: String,
@@ -43,31 +43,24 @@ pub(crate) fn library_grid_items(response: &Value) -> Result<&[Value], Error> {
     ))
 }
 
-pub(crate) fn library_grid_continuation(
+pub(crate) fn library_grid_continuation<C>(
     response: &Value,
-) -> Result<Option<ContinuationToken>, Error> {
+    make_token: impl FnOnce(&str) -> C + Copy,
+) -> Result<Option<C>, Error> {
     let library_tab = selected_library_tab(response)?;
-    let sections = required_array_at(
-        library_tab,
-        "/tabRenderer/content/sectionListRenderer/contents",
-    )?;
-    let mut saw_empty_library_message = false;
+    let sections = required_array_at(library_tab, "/content/sectionListRenderer/contents")?;
 
     for section in sections {
-        if let Some(renderer) = section_grid_renderer(section) {
-            return extract_continuation_token(renderer);
+        let Some(renderer) = section.get("gridRenderer") else {
+            continue;
+        };
+
+        if let Some(token) = extract_continuation_token(renderer, make_token) {
+            return Ok(Some(token));
         }
-
-        saw_empty_library_message |= section_empty_library_message(section);
     }
 
-    if saw_empty_library_message {
-        return Ok(None);
-    }
-
-    Err(Error::Parse(
-        "library response missing grid items in selected library tab".to_owned(),
-    ))
+    Ok(None)
 }
 
 pub(crate) fn library_shelf_contents(response: &Value) -> Result<&[Value], Error> {
@@ -95,40 +88,33 @@ pub(crate) fn library_shelf_contents(response: &Value) -> Result<&[Value], Error
     ))
 }
 
-pub(crate) fn library_shelf_continuation(
+pub(crate) fn library_shelf_continuation<C>(
     response: &Value,
-) -> Result<Option<ContinuationToken>, Error> {
+    make_token: impl FnOnce(&str) -> C + Copy,
+) -> Result<Option<C>, Error> {
     let library_tab = selected_library_tab(response)?;
-    let sections = required_array_at(
-        library_tab,
-        "/tabRenderer/content/sectionListRenderer/contents",
-    )?;
-    let mut saw_empty_library_message = false;
+    let sections = required_array_at(library_tab, "/content/sectionListRenderer/contents")?;
 
     for section in sections {
-        if let Some(renderer) = section_shelf_renderer(section) {
-            return extract_continuation_token(renderer);
+        let Some(renderer) = section.get("musicShelfRenderer") else {
+            continue;
+        };
+
+        if let Some(token) = extract_continuation_token(renderer, make_token) {
+            return Ok(Some(token));
         }
-
-        saw_empty_library_message |= section_empty_library_message(section);
     }
 
-    if saw_empty_library_message {
-        return Ok(None);
-    }
-
-    Err(Error::Parse(
-        "library response missing shelf contents in selected library tab".to_owned(),
-    ))
+    Ok(None)
 }
 
-pub(crate) fn extract_continuation_token(
+pub(crate) fn extract_continuation_token<C>(
     value: &Value,
-) -> Result<Option<ContinuationToken>, Error> {
-    match optional_text(value, "/continuations/0/nextContinuationData/continuation") {
-        Some(token) => ContinuationToken::new(token).map(Some),
-        None => Ok(None),
-    }
+    make_token: impl FnOnce(&str) -> C,
+) -> Option<C> {
+    optional_text(value, "/continuations/0/nextContinuationData/continuation")
+        .as_deref()
+        .map(make_token)
 }
 
 pub(crate) fn continuation_grid(response: &Value) -> Result<&Value, Error> {
