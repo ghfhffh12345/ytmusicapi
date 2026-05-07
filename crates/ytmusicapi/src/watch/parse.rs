@@ -149,6 +149,12 @@ fn parse_thumbnails(value: &Value) -> Result<Vec<Thumbnail>, Error> {
 
 fn extract_continuation(value: &Value) -> Result<Option<ContinuationToken>, Error> {
     optional_text(value, "/continuations/0/nextContinuationData/continuation")
+        .or_else(|| {
+            optional_text(
+                value,
+                "/continuations/0/nextRadioContinuationData/continuation",
+            )
+        })
         .map(ContinuationToken::new)
         .transpose()
 }
@@ -407,6 +413,59 @@ mod tests {
                 .and_then(|track| track.views.as_deref()),
             Some("1 view")
         );
+    }
+
+    #[test]
+    fn parse_watch_playlist_response_handles_radio_continuation_shape() {
+        let response = serde_json::json!({
+            "contents": {
+                "singleColumnMusicWatchNextResultsRenderer": {
+                    "tabbedRenderer": {
+                        "watchNextTabbedResultsRenderer": {
+                            "tabs": [{
+                                "tabRenderer": {
+                                    "content": {
+                                        "musicQueueRenderer": {
+                                            "content": {
+                                                "playlistPanelRenderer": {
+                                                    "contents": [{
+                                                        "playlistPanelVideoRenderer": {
+                                                            "videoId": "radio-video",
+                                                            "title": { "runs": [{ "text": "Radio Song" }] },
+                                                            "thumbnail": {
+                                                                "thumbnails": [{
+                                                                    "url": "https://example.com/radio.jpg",
+                                                                    "width": 60,
+                                                                    "height": 60
+                                                                }]
+                                                            }
+                                                        }
+                                                    }],
+                                                    "continuations": [{
+                                                        "nextRadioContinuationData": {
+                                                            "continuation": "radio-live-token"
+                                                        }
+                                                    }]
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }]
+                        }
+                    }
+                }
+            }
+        });
+
+        let page: crate::Page<WatchTrack> = parse_watch_playlist_response(&response).unwrap();
+
+        assert_eq!(
+            page.continuation,
+            Some(ContinuationToken::new("radio-live-token").unwrap())
+        );
+        assert_eq!(page.items.len(), 1);
+        assert_eq!(page.items[0].video_id, "radio-video");
     }
 
     #[test]
