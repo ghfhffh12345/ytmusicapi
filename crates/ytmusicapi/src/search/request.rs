@@ -68,7 +68,7 @@ pub(crate) fn build_library_body(browse_id: &str, bootstrap_config: &BootstrapCo
 }
 
 pub(crate) fn build_continuation_body(
-    continuation: &crate::ContinuationToken,
+    continuation: &impl crate::model::library::ContinuationTokenValue,
     client_version: &str,
 ) -> Value {
     json!({
@@ -225,7 +225,7 @@ mod tests {
         build_library_podcasts_body, build_library_songs_body, build_library_subscriptions_body,
         build_liked_songs_body, build_saved_episodes_body,
     };
-    use crate::ContinuationToken;
+    use crate::SearchContinuationToken;
 
     #[test]
     fn build_library_playlists_body_includes_bootstrap_context() {
@@ -248,7 +248,7 @@ mod tests {
     #[test]
     fn build_continuation_body_includes_token_and_context() {
         let body = build_continuation_body(
-            &ContinuationToken::new("next-page-token").unwrap(),
+            &SearchContinuationToken::new("next-page-token"),
             "1.20250501.02.00",
         );
 
