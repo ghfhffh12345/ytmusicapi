@@ -15,6 +15,7 @@ use crate::{
             build_saved_episodes_body, build_search_body,
         },
     },
+    song::{parse::parse_get_song_response, request::build_get_song_body},
     watch::{
         parse::{parse_watch_playlist_continuation, parse_watch_playlist_response},
         request::build_watch_playlist_body,
@@ -169,6 +170,18 @@ impl YtMusic {
         let body = crate::search::request::build_continuation_body(&token, client_version);
         let response = self.post_next(body).await?;
         parse_watch_playlist_continuation(&response)
+    }
+
+    pub async fn get_song(
+        &self,
+        video_id: impl Into<String>,
+        signature_timestamp: u32,
+    ) -> Result<crate::GetSongResponse, Error> {
+        let video_id = video_id.into();
+        let bootstrap_config = self.bootstrap_config().await?;
+        let body = build_get_song_body(&video_id, signature_timestamp, bootstrap_config)?;
+        let response = self.post_player(body).await?;
+        parse_get_song_response(&response)
     }
 
     async fn search_with_transport(
@@ -706,6 +719,10 @@ impl YtMusic {
 
     async fn post_next(&self, body: serde_json::Value) -> Result<serde_json::Value, Error> {
         self.post_authenticated_json("next", body).await
+    }
+
+    async fn post_player(&self, body: serde_json::Value) -> Result<serde_json::Value, Error> {
+        self.post_authenticated_json("player", body).await
     }
 
     async fn post_authenticated_json(

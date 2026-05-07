@@ -1,7 +1,10 @@
+use serde_json::Value;
 use serde_json::json;
+use wiremock::matchers::{method, path};
+use wiremock::{Mock, MockServer, ResponseTemplate};
 use ytmusicapi::{
-    GetSongResponse, SongByteRange, SongColorInfo, SongMicroformat, SongPlayabilityStatus,
-    SongStreamFormat, SongStreamingData, SongVideoDetails, Thumbnail,
+    Error, GetSongResponse, SongByteRange, SongColorInfo, SongMicroformat, SongPlayabilityStatus,
+    SongStreamFormat, SongStreamingData, SongVideoDetails, Thumbnail, YtMusic,
 };
 
 #[test]
@@ -134,5 +137,83 @@ fn get_song_response_serializes_camel_case_and_omits_optional_fields() {
     assert_eq!(
         value["microformat"]["availableCountries"],
         json!(["KR", "US"])
+    );
+}
+
+#[tokio::test]
+async fn get_song_rejects_blank_video_id() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let err = client.get_song("   ", 20_000).await.unwrap_err();
+    assert!(matches!(
+        err,
+        Error::InvalidInput(message) if message == "video_id must not be blank"
+    ));
+}
+
+#[tokio::test]
+async fn get_song_posts_player_body_and_returns_typed_response() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/player"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/song/raw/response1.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let response = client.get_song("0rilIYWiJ7M", 20_000).await.unwrap();
+
+    assert_eq!(response.video_details.video_id, "0rilIYWiJ7M");
+    assert_eq!(response.streaming_data.formats.len(), 1);
+
+    let requests = server.received_requests().await.unwrap();
+    let request = requests
+        .iter()
+        .find(|request| request.method.as_str() == "POST")
+        .unwrap();
+    let body: Value = serde_json::from_slice(&request.body).unwrap();
+
+    assert_eq!(request.url.path(), "/youtubei/v1/player");
+    assert_eq!(request.url.query(), Some("alt=json&key=test-api-key"));
+    assert_eq!(body["videoId"], "0rilIYWiJ7M");
+    assert_eq!(
+        body["playbackContext"]["contentPlaybackContext"]["signatureTimestamp"],
+        20_000
+    );
+    assert_eq!(body["context"]["client"]["clientName"], "WEB_REMIX");
+    assert_eq!(
+        body["context"]["client"]["clientVersion"],
+        "1.20250501.01.00"
     );
 }
