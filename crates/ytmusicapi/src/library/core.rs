@@ -48,7 +48,10 @@ pub(crate) fn library_grid_continuation<C>(
     make_token: impl FnOnce(&str) -> C + Copy,
 ) -> Result<Option<C>, Error> {
     let library_tab = selected_library_tab(response)?;
-    let sections = required_array_at(library_tab, "/content/sectionListRenderer/contents")?;
+    let sections = required_array_at(
+        library_tab,
+        "/tabRenderer/content/sectionListRenderer/contents",
+    )?;
 
     for section in sections {
         let Some(renderer) = section.get("gridRenderer") else {
@@ -93,7 +96,10 @@ pub(crate) fn library_shelf_continuation<C>(
     make_token: impl FnOnce(&str) -> C + Copy,
 ) -> Result<Option<C>, Error> {
     let library_tab = selected_library_tab(response)?;
-    let sections = required_array_at(library_tab, "/content/sectionListRenderer/contents")?;
+    let sections = required_array_at(
+        library_tab,
+        "/tabRenderer/content/sectionListRenderer/contents",
+    )?;
 
     for section in sections {
         let Some(renderer) = section.get("musicShelfRenderer") else {
@@ -386,7 +392,10 @@ fn required_u32(value: &Value, pointer: &str) -> Result<u32, Error> {
 mod tests {
     use serde_json::json;
 
-    use super::{library_grid_items, library_shelf_contents, selected_library_tab};
+    use super::{
+        library_grid_continuation, library_grid_items, library_shelf_contents,
+        library_shelf_continuation, selected_library_tab,
+    };
     use crate::Error;
 
     #[test]
@@ -457,6 +466,72 @@ mod tests {
                 .pointer("/tabRenderer/content/sectionListRenderer/contents/0/gridRenderer")
                 .is_none()
         );
+    }
+
+    #[test]
+    fn library_grid_continuation_reads_selected_tab_renderer_path() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "gridRenderer": {
+                                            "continuations": [{
+                                                "nextContinuationData": {
+                                                    "continuation": "GRID_TOKEN"
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let continuation =
+            library_grid_continuation(&response, str::to_owned).expect("continuation parse");
+
+        assert_eq!(continuation.as_deref(), Some("GRID_TOKEN"));
+    }
+
+    #[test]
+    fn library_shelf_continuation_reads_selected_tab_renderer_path() {
+        let response = json!({
+            "contents": {
+                "singleColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                        "tabRenderer": {
+                            "selected": true,
+                            "content": {
+                                "sectionListRenderer": {
+                                    "contents": [{
+                                        "musicShelfRenderer": {
+                                            "continuations": [{
+                                                "nextContinuationData": {
+                                                    "continuation": "SHELF_TOKEN"
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let continuation =
+            library_shelf_continuation(&response, str::to_owned).expect("continuation parse");
+
+        assert_eq!(continuation.as_deref(), Some("SHELF_TOKEN"));
     }
 
     #[test]
