@@ -5,7 +5,7 @@ use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 use ytmusicapi::{
-    ContinuationToken, Error, SavedEpisodeItem, SavedEpisodesPage, Thumbnail, YtMusic,
+    Error, SavedEpisodeItem, SavedEpisodesContinuationToken, SavedEpisodesPage, Thumbnail, YtMusic,
     setup_browser_auth,
 };
 
@@ -517,7 +517,7 @@ async fn get_saved_episodes_continuation_preserves_wrapper_metadata() {
         .unwrap();
 
     let saved_episodes = client
-        .get_saved_episodes_continuation(ContinuationToken::new("saved-token-1").unwrap())
+        .get_saved_episodes_continuation(SavedEpisodesContinuationToken::new("saved-token-1"))
         .await
         .unwrap();
     assert_eq!(
@@ -534,7 +534,7 @@ async fn get_saved_episodes_continuation_preserves_wrapper_metadata() {
                 thumbnails: vec![],
             }],
             thumbnails: vec![],
-            continuation: Some(ContinuationToken::new("saved-token-2").unwrap()),
+            continuation: Some(SavedEpisodesContinuationToken::new("saved-token-2")),
         }
     );
 }

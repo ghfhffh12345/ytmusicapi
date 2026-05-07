@@ -51,7 +51,9 @@ pub(crate) fn parse_saved_episodes_continuation(
             .map(parse_saved_episode_item)
             .collect::<Result<Vec<_>, _>>()?,
         thumbnails: vec![],
-        continuation: extract_continuation_token(continuation_shelf(response)?)?,
+        continuation: extract_continuation_token(continuation_shelf(response)?, |token| {
+            crate::SavedEpisodesContinuationToken::new(token)
+        }),
     })
 }
 
@@ -89,13 +91,15 @@ fn shelf_contents_or_empty<'a>(
 fn shelf_continuation_or_empty(
     sections: &[Value],
     missing_message: &str,
-) -> Result<Option<crate::ContinuationToken>, Error> {
+) -> Result<Option<crate::SavedEpisodesContinuationToken>, Error> {
     let mut saw_message_only_section = false;
     let mut saw_non_header_section = false;
 
     for section in sections {
         if let Some(renderer) = section.get("musicPlaylistShelfRenderer") {
-            return extract_continuation_token(renderer);
+            return Ok(extract_continuation_token(renderer, |token| {
+                crate::SavedEpisodesContinuationToken::new(token)
+            }));
         }
 
         let is_header_section = section.get("musicResponsiveHeaderRenderer").is_some();

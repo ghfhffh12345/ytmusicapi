@@ -5,7 +5,7 @@ use tempfile::tempdir;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 use ytmusicapi::{
-    AlbumRef, ArtistRef, ContinuationToken, Error, LibraryLikeStatus, LikedSongItem,
+    AlbumRef, ArtistRef, Error, LibraryLikeStatus, LikedSongItem, LikedSongsContinuationToken,
     LikedSongsPage, Thumbnail, YtMusic, setup_browser_auth,
 };
 
@@ -502,7 +502,7 @@ async fn get_liked_songs_returns_typed_wrapper_and_uses_vllm_browse_id() {
                 width: 512,
                 height: 512,
             }],
-            continuation: Some(ContinuationToken::new("liked-token-1").unwrap()),
+            continuation: Some(LikedSongsContinuationToken::new("liked-token-1")),
         }
     );
 
@@ -556,7 +556,7 @@ async fn get_liked_songs_continuation_preserves_wrapper_metadata() {
         .unwrap();
 
     let liked_songs = client
-        .get_liked_songs_continuation(ContinuationToken::new("liked-token-1").unwrap())
+        .get_liked_songs_continuation(LikedSongsContinuationToken::new("liked-token-1"))
         .await
         .unwrap();
     assert_eq!(
@@ -577,7 +577,7 @@ async fn get_liked_songs_continuation_preserves_wrapper_metadata() {
                 like_status: None,
             }],
             thumbnails: vec![],
-            continuation: Some(ContinuationToken::new("liked-token-2").unwrap()),
+            continuation: Some(LikedSongsContinuationToken::new("liked-token-2")),
         }
     );
 }

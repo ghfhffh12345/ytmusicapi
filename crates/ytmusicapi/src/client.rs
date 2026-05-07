@@ -626,7 +626,7 @@ impl YtMusic {
 
     pub async fn get_liked_songs_continuation(
         &self,
-        token: crate::ContinuationToken,
+        token: crate::LikedSongsContinuationToken,
     ) -> Result<crate::LikedSongsPage, Error> {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
@@ -671,7 +671,7 @@ impl YtMusic {
 
     pub async fn get_saved_episodes_continuation(
         &self,
-        token: crate::ContinuationToken,
+        token: crate::SavedEpisodesContinuationToken,
     ) -> Result<crate::SavedEpisodesPage, Error> {
         if self.browser_auth.is_none() {
             return Err(Error::UnsupportedFeature(
