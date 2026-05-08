@@ -1,4 +1,5 @@
 mod auth;
+pub mod capture;
 mod client;
 mod error;
 pub(crate) mod library;
