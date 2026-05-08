@@ -414,11 +414,8 @@ fn parse_song_result(
     let mut metadata = parse_media_metadata(metadata_parts);
     if metadata.album.is_none()
         && metadata.artists.len() > 1
-        && (metadata.duration.is_some()
-            || metadata
-                .artists
-                .iter()
-                .all(|artist| artist.id == "REDACTED_ID"))
+        && category.is_none()
+        && required_video_id(renderer).is_ok()
     {
         if let Some(album) = metadata.artists.pop() {
             metadata.album = Some(AlbumRef {
@@ -1247,6 +1244,73 @@ mod tests {
             parsed.continuation,
             Some(SearchContinuationToken::new("songs-token-2"))
         );
+    }
+
+    #[test]
+    fn filtered_song_continuation_treats_last_unknown_browse_link_as_album() {
+        let response = json!({
+            "continuationContents": {
+                "musicShelfContinuation": {
+                    "contents": [{
+                        "musicResponsiveListItemRenderer": {
+                            "flexColumns": [
+                                {
+                                    "musicResponsiveListItemFlexColumnRenderer": {
+                                        "text": { "runs": [{ "text": "Structural Song" }] }
+                                    }
+                                },
+                                {
+                                    "musicResponsiveListItemFlexColumnRenderer": {
+                                        "text": {
+                                            "runs": [
+                                                {
+                                                    "text": "Structural Artist",
+                                                    "navigationEndpoint": { "browseEndpoint": { "browseId": "UCstructuralartist" } }
+                                                },
+                                                { "text": " • " },
+                                                {
+                                                    "text": "Structural Album",
+                                                    "navigationEndpoint": { "browseEndpoint": { "browseId": "BROWSEstructuralalbum" } }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            "overlay": {
+                                "musicItemThumbnailOverlayRenderer": {
+                                    "content": {
+                                        "musicPlayButtonRenderer": {
+                                            "playNavigationEndpoint": {
+                                                "watchEndpoint": { "videoId": "structural-song-video" }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "thumbnail": {
+                                "musicThumbnailRenderer": {
+                                    "thumbnail": {
+                                        "thumbnails": [{ "url": "https://example.com/structural-song.jpg", "width": 60, "height": 60 }]
+                                    }
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let parsed = parse_search_continuation_response(&response).unwrap();
+
+        assert!(matches!(
+            &parsed.items[0],
+            SearchResult::Song(result)
+                if result.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
+                    == vec!["Structural Artist"]
+                    && result.album.as_ref().map(|album| (album.id.as_str(), album.name.as_str()))
+                        == Some(("BROWSEstructuralalbum", "Structural Album"))
+        ));
     }
 
     #[test]

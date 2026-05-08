@@ -29,15 +29,22 @@ pub(crate) fn parse_watch_playlist_continuation(
             Error::Parse("watch continuation missing playlistPanelContinuation".to_owned())
         })?;
 
-    let contents = renderer
-        .pointer("/contents")
-        .and_then(Value::as_array)
-        .map(Vec::as_slice)
-        .unwrap_or(&[]);
+    let continuation = extract_continuation(renderer);
+    let contents = match renderer.get("contents") {
+        Some(contents) => contents.as_array().map(Vec::as_slice).ok_or_else(|| {
+            Error::Parse("watch continuation contents must be an array".to_owned())
+        })?,
+        None if continuation.is_some() => &[],
+        None => {
+            return Err(Error::Parse(
+                "watch continuation missing contents and continuation token".to_owned(),
+            ));
+        }
+    };
 
     Ok(Page {
         items: parse_watch_tracks(contents)?,
-        continuation: extract_continuation(renderer),
+        continuation,
     })
 }
 
@@ -352,7 +359,7 @@ mod tests {
     use super::{
         parse_watch_playlist_continuation, parse_watch_playlist_response, parse_watch_track,
     };
-    use crate::{LibraryLikeStatus, WatchPlaylistContinuationToken, WatchTrack};
+    use crate::{Error, LibraryLikeStatus, WatchPlaylistContinuationToken, WatchTrack};
 
     #[test]
     fn parse_watch_playlist_response_returns_items_counterpart_and_continuation() {
@@ -404,6 +411,70 @@ mod tests {
         assert_eq!(page.items.len(), 1);
         assert_eq!(page.items[0].video_id, "video-3");
         assert_eq!(page.items[0].artists[0].id, "UCartist3");
+    }
+
+    #[test]
+    fn parse_watch_playlist_continuation_allows_missing_contents_with_next_token() {
+        let response = serde_json::json!({
+            "continuationContents": {
+                "playlistPanelContinuation": {
+                    "continuations": [{
+                        "nextContinuationData": {
+                            "continuation": "watch-token-empty"
+                        }
+                    }]
+                }
+            }
+        });
+
+        let page: crate::Page<WatchTrack, WatchPlaylistContinuationToken> =
+            parse_watch_playlist_continuation(&response).unwrap();
+
+        assert!(page.items.is_empty());
+        assert_eq!(
+            page.continuation,
+            Some(WatchPlaylistContinuationToken::new("watch-token-empty"))
+        );
+    }
+
+    #[test]
+    fn parse_watch_playlist_continuation_rejects_missing_contents_without_next_token() {
+        let response = serde_json::json!({
+            "continuationContents": {
+                "playlistPanelContinuation": {}
+            }
+        });
+
+        let err = parse_watch_playlist_continuation(&response).unwrap_err();
+
+        assert!(matches!(
+            err,
+            Error::Parse(message)
+                if message == "watch continuation missing contents and continuation token"
+        ));
+    }
+
+    #[test]
+    fn parse_watch_playlist_continuation_rejects_malformed_contents() {
+        let response = serde_json::json!({
+            "continuationContents": {
+                "playlistPanelContinuation": {
+                    "contents": {},
+                    "continuations": [{
+                        "nextContinuationData": {
+                            "continuation": "watch-token-empty"
+                        }
+                    }]
+                }
+            }
+        });
+
+        let err = parse_watch_playlist_continuation(&response).unwrap_err();
+
+        assert!(matches!(
+            err,
+            Error::Parse(message) if message == "watch continuation contents must be an array"
+        ));
     }
 
     #[test]
