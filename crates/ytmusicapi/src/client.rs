@@ -237,7 +237,6 @@ impl YtMusic {
 
         let response_json: serde_json::Value =
             serde_json::from_str(&response_body).map_err(Error::JsonDecode)?;
-        crate::capture::write_raw_response("search", &response_json)?;
         validate_search_response_structure(&response_json)?;
         Ok(response_json)
     }
@@ -760,7 +759,6 @@ impl YtMusic {
 
         let response_json: serde_json::Value =
             serde_json::from_str(&response_body).map_err(Error::JsonDecode)?;
-        crate::capture::write_raw_response(endpoint.trim_start_matches('/'), &response_json)?;
         Ok(response_json)
     }
 }
