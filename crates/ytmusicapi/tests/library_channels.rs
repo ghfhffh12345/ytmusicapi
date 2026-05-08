@@ -152,6 +152,39 @@ fn empty_library_channels_response() -> serde_json::Value {
     })
 }
 
+async fn audit_client_with_browse_response(
+    body: &'static str,
+) -> (MockServer, tempfile::TempDir, YtMusic) {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(body))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    (server, dir, client)
+}
+
 #[tokio::test]
 async fn get_library_channels_requires_browser_auth() {
     let client = YtMusic::builder().build().unwrap();
@@ -162,6 +195,38 @@ async fn get_library_channels_requires_browser_auth() {
         Error::UnsupportedFeature(message)
             if message == "get_library_channels requires browser authentication"
     ));
+}
+
+#[tokio::test]
+async fn get_library_channels_parses_audit_first_page() {
+    let (_server, _dir, client) = audit_client_with_browse_response(include_str!(
+        "fixtures/audit/raw/library/channels/first_page.json"
+    ))
+    .await;
+
+    let channels = client.get_library_channels().await.unwrap();
+
+    assert_eq!(channels.items.len(), 25);
+    assert_eq!(
+        channels.continuation,
+        Some(LibraryChannelsContinuationToken::new("REDACTED_TOKEN"))
+    );
+}
+
+#[tokio::test]
+async fn get_library_channels_audit_continuation_is_terminal() {
+    let (_server, _dir, client) = audit_client_with_browse_response(include_str!(
+        "fixtures/audit/raw/library/channels/continuation.json"
+    ))
+    .await;
+
+    let channels = client
+        .get_library_channels_continuation(LibraryChannelsContinuationToken::new("channel-token-1"))
+        .await
+        .unwrap();
+
+    assert_eq!(channels.items.len(), 12);
+    assert_eq!(channels.continuation, None);
 }
 
 #[tokio::test]

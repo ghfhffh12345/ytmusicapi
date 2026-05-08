@@ -153,6 +153,39 @@ fn empty_library_subscriptions_response() -> serde_json::Value {
     })
 }
 
+async fn audit_client_with_browse_response(
+    body: &'static str,
+) -> (MockServer, tempfile::TempDir, YtMusic) {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(body))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    (server, dir, client)
+}
+
 #[tokio::test]
 async fn get_library_subscriptions_requires_browser_auth() {
     let client = YtMusic::builder().build().unwrap();
@@ -163,6 +196,40 @@ async fn get_library_subscriptions_requires_browser_auth() {
         Error::UnsupportedFeature(message)
             if message == "get_library_subscriptions requires browser authentication"
     ));
+}
+
+#[tokio::test]
+async fn get_library_subscriptions_parses_audit_first_page() {
+    let (_server, _dir, client) = audit_client_with_browse_response(include_str!(
+        "fixtures/audit/raw/library/subscriptions/first_page.json"
+    ))
+    .await;
+
+    let subscriptions = client.get_library_subscriptions().await.unwrap();
+
+    assert_eq!(subscriptions.items.len(), 25);
+    assert_eq!(
+        subscriptions.continuation,
+        Some(LibrarySubscriptionsContinuationToken::new("REDACTED_TOKEN"))
+    );
+}
+
+#[tokio::test]
+async fn get_library_subscriptions_audit_continuation_is_terminal() {
+    let (_server, _dir, client) = audit_client_with_browse_response(include_str!(
+        "fixtures/audit/raw/library/subscriptions/continuation.json"
+    ))
+    .await;
+
+    let subscriptions = client
+        .get_library_subscriptions_continuation(LibrarySubscriptionsContinuationToken::new(
+            "subscription-token-1",
+        ))
+        .await
+        .unwrap();
+
+    assert_eq!(subscriptions.items.len(), 10);
+    assert_eq!(subscriptions.continuation, None);
 }
 
 #[tokio::test]

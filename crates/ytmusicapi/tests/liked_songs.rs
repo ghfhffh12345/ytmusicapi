@@ -417,6 +417,39 @@ fn generic_error_liked_songs_response() -> serde_json::Value {
     })
 }
 
+async fn audit_client_with_browse_response(
+    body: &'static str,
+) -> (MockServer, tempfile::TempDir, YtMusic) {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(body))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    (server, dir, client)
+}
+
 #[tokio::test]
 async fn get_liked_songs_requires_browser_auth() {
     let client = YtMusic::builder().build().unwrap();
@@ -427,6 +460,23 @@ async fn get_liked_songs_requires_browser_auth() {
         Error::UnsupportedFeature(message)
             if message == "get_liked_songs requires browser authentication"
     ));
+}
+
+#[tokio::test]
+async fn get_liked_songs_parses_audit_split_first_page() {
+    let (_server, _dir, client) = audit_client_with_browse_response(include_str!(
+        "fixtures/audit/raw/library/liked_songs/first_page.json"
+    ))
+    .await;
+
+    let liked_songs = client.get_liked_songs().await.unwrap();
+
+    assert_eq!(liked_songs.title, "REDACTED_TEXT");
+    assert_eq!(liked_songs.items.len(), 100);
+    assert_eq!(
+        liked_songs.continuation,
+        Some(LikedSongsContinuationToken::new("REDACTED_TOKEN"))
+    );
 }
 
 #[tokio::test]

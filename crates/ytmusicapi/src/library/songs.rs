@@ -99,6 +99,13 @@ fn is_leading_non_song_control_row(item: &Value) -> bool {
 }
 
 fn is_control_row_without_video_id(renderer: &Value) -> bool {
+    if renderer
+        .pointer("/navigationEndpoint/watchPlaylistEndpoint")
+        .is_some()
+    {
+        return true;
+    }
+
     flex_columns(renderer)
         .first()
         .and_then(column_title_text)
