@@ -82,7 +82,7 @@ pub fn observed_status(
     let mut fixture_count = 0usize;
     let mut fixtures_with_values = 0usize;
     let mut value_count = 0usize;
-    let mut missing_terminal_count = 0usize;
+    let mut missing_path_count = 0usize;
     let mut observed_kinds = HashSet::new();
 
     for fixture in &expectation.fixtures {
@@ -105,7 +105,7 @@ pub fn observed_status(
         }
 
         value_count += values.len();
-        missing_terminal_count += count_missing_terminal_keys(&payload, &segments);
+        missing_path_count += count_missing_path_segments_under_arrays(&payload, &segments);
         observed_kinds.extend(values.into_iter().map(json_kind));
         fixture_count += 1;
     }
@@ -122,7 +122,7 @@ pub fn observed_status(
         return Ok(ShapeStatus::TypeUnstable);
     }
 
-    if missing_terminal_count > 0 {
+    if missing_path_count > 0 {
         return Ok(ShapeStatus::ItemOptional);
     }
 
@@ -201,23 +201,35 @@ fn collect_values_at_path<'a>(
     }
 }
 
-fn count_missing_terminal_keys(value: &Value, segments: &[PathSegment]) -> usize {
-    let Some((PathSegment::Key(terminal_key), parent_segments)) = segments.split_last() else {
-        return 0;
-    };
-    let mut parents = Vec::new();
+fn count_missing_path_segments_under_arrays(value: &Value, segments: &[PathSegment]) -> usize {
+    count_missing_path_segments_under_arrays_inner(value, segments, false)
+}
 
-    collect_values_at_path(value, parent_segments, &mut parents);
-
-    parents
-        .iter()
-        .filter(|parent| {
-            parent
-                .as_object()
-                .map(|object| !object.contains_key(terminal_key))
-                .unwrap_or(false)
-        })
-        .count()
+fn count_missing_path_segments_under_arrays_inner(
+    value: &Value,
+    segments: &[PathSegment],
+    under_array_item: bool,
+) -> usize {
+    match segments.split_first() {
+        None => 0,
+        Some((PathSegment::Key(key), rest)) => match value {
+            Value::Object(object) => match object.get(key) {
+                Some(next) => {
+                    count_missing_path_segments_under_arrays_inner(next, rest, under_array_item)
+                }
+                None if under_array_item => 1,
+                None => 0,
+            },
+            _ => 0,
+        },
+        Some((PathSegment::ArrayItems, rest)) => match value {
+            Value::Array(items) => items
+                .iter()
+                .map(|item| count_missing_path_segments_under_arrays_inner(item, rest, true))
+                .sum(),
+            _ => 0,
+        },
+    }
 }
 
 fn json_kind(value: &Value) -> JsonKind {
@@ -228,5 +240,66 @@ fn json_kind(value: &Value) -> JsonKind {
         Value::String(_) => JsonKind::String,
         Value::Array(_) => JsonKind::Array,
         Value::Object(_) => JsonKind::Object,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::fs;
+
+    use tempfile::tempdir;
+
+    use super::*;
+
+    #[test]
+    fn classifies_missing_intermediate_keys_under_arrays_as_item_optional() {
+        let dir = tempdir().unwrap();
+        fs::write(
+            dir.path().join("fixture.json"),
+            r#"{
+  "items": [
+    { "renderer": { "title": "Present" } },
+    { "otherRenderer": { "title": "Different item shape" } }
+  ]
+}"#,
+        )
+        .unwrap();
+        let fixtures = audit_fixture_paths(dir.path()).unwrap();
+        let expectation = AuditExpectation {
+            description: "sibling item lacks the intermediate renderer key".to_owned(),
+            fixtures: vec!["fixture.json".to_owned()],
+            path: "items[].renderer.title".to_owned(),
+            status: ShapeStatus::ItemOptional,
+        };
+
+        let observed = observed_status(dir.path(), &fixtures, &expectation).unwrap();
+
+        assert_eq!(observed, ShapeStatus::ItemOptional);
+    }
+
+    #[test]
+    fn classifies_mixed_value_kinds_as_type_unstable() {
+        let dir = tempdir().unwrap();
+        fs::write(
+            dir.path().join("string.json"),
+            r#"{ "item": { "id": "abc" } }"#,
+        )
+        .unwrap();
+        fs::write(
+            dir.path().join("number.json"),
+            r#"{ "item": { "id": 123 } }"#,
+        )
+        .unwrap();
+        let fixtures = audit_fixture_paths(dir.path()).unwrap();
+        let expectation = AuditExpectation {
+            description: "same path changes JSON value kind".to_owned(),
+            fixtures: vec!["number.json".to_owned(), "string.json".to_owned()],
+            path: "item.id".to_owned(),
+            status: ShapeStatus::TypeUnstable,
+        };
+
+        let observed = observed_status(dir.path(), &fixtures, &expectation).unwrap();
+
+        assert_eq!(observed, ShapeStatus::TypeUnstable);
     }
 }
