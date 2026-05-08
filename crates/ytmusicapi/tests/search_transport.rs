@@ -601,6 +601,64 @@ async fn authenticated_songs_search_continuation_parses_non_empty_song_results()
 }
 
 #[tokio::test]
+async fn audit_authenticated_songs_search_continuation_infers_album_from_redacted_browse_links() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| {
+            serde_json::from_slice::<Value>(&request.body)
+                .ok()
+                .and_then(|body| body.get("continuation").cloned())
+                .is_some()
+        })
+        .respond_with(ResponseTemplate::new(200).set_body_string(include_str!(
+            "fixtures/audit/raw/search/songs_authenticated_continuation.json"
+        )))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let browser_json: PathBuf = dir.path().join("browser.json");
+    fs::write(&browser_json, firefox_search_headers()).unwrap();
+
+    let client = YtMusic::builder()
+        .browser_auth_path(&browser_json)
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .search_continuation(SearchContinuationToken::new("songs-token-1"))
+        .await
+        .unwrap();
+
+    assert!(!page.items.is_empty());
+    assert!(
+        page.items
+            .iter()
+            .all(|item| matches!(item, ytmusicapi::SearchResult::Song(_)))
+    );
+    assert!(matches!(
+        &page.items[0],
+        ytmusicapi::SearchResult::Song(song)
+            if !song.artists.is_empty()
+                && song.album.as_ref().map(|album| album.name.as_str()) == Some("REDACTED_TEXT")
+    ));
+}
+
+#[tokio::test]
 async fn authenticated_videos_search_continuation_parses_non_empty_video_results() {
     let server = MockServer::start().await;
 
@@ -661,6 +719,62 @@ async fn authenticated_videos_search_continuation_parses_non_empty_video_results
         page.continuation,
         Some(SearchContinuationToken::new("videos-token-2"))
     );
+}
+
+#[tokio::test]
+async fn audit_authenticated_videos_search_continuation_infers_videos_structurally() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| {
+            serde_json::from_slice::<Value>(&request.body)
+                .ok()
+                .and_then(|body| body.get("continuation").cloned())
+                .is_some()
+        })
+        .respond_with(ResponseTemplate::new(200).set_body_string(include_str!(
+            "fixtures/audit/raw/search/videos_authenticated_continuation.json"
+        )))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let browser_json: PathBuf = dir.path().join("browser.json");
+    fs::write(&browser_json, firefox_search_headers()).unwrap();
+
+    let client = YtMusic::builder()
+        .browser_auth_path(&browser_json)
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .search_continuation(SearchContinuationToken::new("videos-token-1"))
+        .await
+        .unwrap();
+
+    assert!(!page.items.is_empty());
+    assert!(
+        page.items
+            .iter()
+            .all(|item| matches!(item, ytmusicapi::SearchResult::Video(_)))
+    );
+    assert!(matches!(
+        &page.items[0],
+        ytmusicapi::SearchResult::Video(video) if !video.artists.is_empty()
+    ));
 }
 
 #[tokio::test]
@@ -1251,6 +1365,147 @@ async fn anonymous_songs_filtered_search_returns_current_no_results_fixture() {
 }
 
 #[tokio::test]
+async fn audit_anonymous_album_search_parses_position_tolerant_album_metadata() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.07.25" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(query_param("alt", "json"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/audit/raw/search/albums.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let result = client
+        .search(SearchQuery::new("abba").with_filter(SearchFilter::Albums))
+        .await
+        .unwrap();
+
+    assert_eq!(result.items.len(), 20);
+    assert!(matches!(
+        &result.items[15],
+        ytmusicapi::SearchResult::Album(album)
+            if album.title == "André Rieu Celebrates ABBA"
+                && album.year.as_deref() == Some("2013")
+                && album.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
+                    == vec!["André Rieu", "Johann Strauss Orchestra"]
+    ));
+    assert!(matches!(
+        &result.items[19],
+        ytmusicapi::SearchResult::Album(album)
+            if album.title == "Dance on Abba - Remix Cover Collection, Vol. 2"
+                && album.year.as_deref() == Some("2017")
+                && album.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
+                    == vec!["Various Artists"]
+    ));
+}
+
+#[tokio::test]
+async fn audit_default_mixed_search_preserves_artist_subscribers() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.07.35" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(query_param("alt", "json"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/audit/raw/search/default_mixed.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let result = client.search(SearchQuery::new("abba")).await.unwrap();
+
+    assert!(result.items.iter().any(|item| matches!(
+        item,
+        ytmusicapi::SearchResult::Artist(artist)
+            if artist.artist.as_deref() == Some("Ivan Molina & Abba Padre Band")
+                && artist.subscribers.as_deref() == Some("10.6K subscribers")
+    )));
+}
+
+#[tokio::test]
+async fn audit_artists_search_continuation_preserves_subscribers() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.07.45" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(|request: &Request| {
+            serde_json::from_slice::<Value>(&request.body)
+                .ok()
+                .and_then(|body| body.get("continuation").cloned())
+                .is_some()
+        })
+        .respond_with(ResponseTemplate::new(200).set_body_string(include_str!(
+            "fixtures/audit/raw/search/artists_continuation.json"
+        )))
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .search_continuation(SearchContinuationToken::new("artists-token-1"))
+        .await
+        .unwrap();
+
+    assert!(matches!(
+        &page.items[0],
+        ytmusicapi::SearchResult::Artist(artist)
+            if artist.artist.as_deref() == Some("Abba Music")
+                && artist.subscribers.as_deref() == Some("9 subscribers")
+    ));
+}
+
+#[tokio::test]
 async fn anonymous_videos_filtered_search_parses_legacy_fixture() {
     let server = MockServer::start().await;
 
@@ -1304,6 +1559,51 @@ async fn anonymous_videos_filtered_search_parses_legacy_fixture() {
     assert_eq!(search_body["params"], "EgWKAQIQAWoMEA4QChADEAQQCRAF");
     assert!(search_request.headers.get("authorization").is_none());
     assert!(search_request.headers.get("cookie").is_none());
+}
+
+#[tokio::test]
+async fn audit_anonymous_videos_filtered_search_preserves_publish_dates() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_string(
+                r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.07.60" });"#,
+            ),
+        )
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/search"))
+        .and(query_param("alt", "json"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/audit/raw/search/videos.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let result = client
+        .search(SearchQuery::new("abba").with_filter(SearchFilter::Videos))
+        .await
+        .unwrap();
+
+    assert_eq!(result.items.len(), 3);
+    assert!(matches!(
+        &result.items[0],
+        ytmusicapi::SearchResult::Video(video)
+            if video.title == "Abba - Lay all your love on me - 0riginal Video"
+                && video.date.as_deref() == Some("Mar 5, 2021")
+                && video.artists[0].name == "LONNIE"
+    ));
 }
 
 #[tokio::test]

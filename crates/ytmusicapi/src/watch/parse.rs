@@ -29,8 +29,14 @@ pub(crate) fn parse_watch_playlist_continuation(
             Error::Parse("watch continuation missing playlistPanelContinuation".to_owned())
         })?;
 
+    let contents = renderer
+        .pointer("/contents")
+        .and_then(Value::as_array)
+        .map(Vec::as_slice)
+        .unwrap_or(&[]);
+
     Ok(Page {
-        items: parse_watch_tracks(required_array(renderer, "/contents")?)?,
+        items: parse_watch_tracks(contents)?,
         continuation: extract_continuation(renderer),
     })
 }
@@ -170,6 +176,7 @@ fn parse_artists(runs: &[Value]) -> Vec<ArtistRef> {
                 || trimmed == "•"
                 || looks_like_year(trimmed)
                 || looks_like_views(trimmed)
+                || looks_like_likes(trimmed)
             {
                 return None;
             }
@@ -309,6 +316,18 @@ fn looks_like_views(text: &str) -> bool {
     };
 
     first.is_ascii_digit() && matches!(last.to_ascii_lowercase().as_str(), "view" | "views")
+}
+
+fn looks_like_likes(text: &str) -> bool {
+    let normalized = text.split_whitespace().collect::<Vec<_>>().join(" ");
+    let Some(first) = normalized.chars().next() else {
+        return false;
+    };
+    let Some(last) = normalized.rsplit(' ').next() else {
+        return false;
+    };
+
+    first.is_ascii_digit() && matches!(last.to_ascii_lowercase().as_str(), "like" | "likes")
 }
 
 fn parse_like_status_value(status: &str) -> Option<LibraryLikeStatus> {
