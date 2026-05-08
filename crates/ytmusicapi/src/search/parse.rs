@@ -411,19 +411,7 @@ fn parse_song_result(
     title: String,
     metadata_parts: &[&Value],
 ) -> Result<SearchResult, Error> {
-    let mut metadata = parse_media_metadata(metadata_parts);
-    if metadata.album.is_none()
-        && metadata.artists.len() > 1
-        && category.is_none()
-        && required_video_id(renderer).is_ok()
-    {
-        if let Some(album) = metadata.artists.pop() {
-            metadata.album = Some(AlbumRef {
-                id: album.id,
-                name: album.name,
-            });
-        }
-    }
+    let metadata = parse_media_metadata(metadata_parts);
 
     Ok(SearchResult::Song(SongResult {
         category,
@@ -1260,7 +1248,7 @@ mod tests {
     }
 
     #[test]
-    fn filtered_song_continuation_treats_last_unknown_browse_link_as_album() {
+    fn filtered_song_continuation_keeps_unknown_browse_links_as_artists() {
         let response = json!({
             "continuationContents": {
                 "musicShelfContinuation": {
@@ -1282,8 +1270,8 @@ mod tests {
                                                 },
                                                 { "text": " • " },
                                                 {
-                                                    "text": "Structural Album",
-                                                    "navigationEndpoint": { "browseEndpoint": { "browseId": "BROWSEstructuralalbum" } }
+                                                    "text": "Structural Collaborator",
+                                                    "navigationEndpoint": { "browseEndpoint": { "browseId": "BROWSEstructuralcollaborator" } }
                                                 }
                                             ]
                                         }
@@ -1320,9 +1308,8 @@ mod tests {
             &parsed.items[0],
             SearchResult::Song(result)
                 if result.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
-                    == vec!["Structural Artist"]
-                    && result.album.as_ref().map(|album| (album.id.as_str(), album.name.as_str()))
-                        == Some(("BROWSEstructuralalbum", "Structural Album"))
+                    == vec!["Structural Artist", "Structural Collaborator"]
+                    && result.album.is_none()
         ));
     }
 

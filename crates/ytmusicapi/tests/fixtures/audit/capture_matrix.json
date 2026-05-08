@@ -1,10 +1,9 @@
 {
   "schemaVersion": 1,
-  "harness": "crates/ytmusicapi/examples/capture_raw_fixtures.rs",
   "fixtureRoot": "crates/ytmusicapi/tests/fixtures",
   "auditRawRoot": "crates/ytmusicapi/tests/fixtures/audit/raw",
   "notes": [
-    "Temporary Rust-first live capture matrix for response-shape audit work.",
+    "Historical live capture matrix retained as durable response-shape audit metadata.",
     "Authenticated captures use repo-root browser.json when present.",
     "Continuation fixtures are captured only after a public first-page method returns its matching typed continuation token.",
     "get_song captures use signatureTimestamp 20577."

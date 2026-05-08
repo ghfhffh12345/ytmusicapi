@@ -601,7 +601,7 @@ async fn authenticated_songs_search_continuation_parses_non_empty_song_results()
 }
 
 #[tokio::test]
-async fn audit_authenticated_songs_search_continuation_infers_album_from_trailing_browse_link() {
+async fn audit_authenticated_songs_search_continuation_keeps_redacted_links_conservative() {
     let server = MockServer::start().await;
 
     Mock::given(method("GET"))
@@ -653,7 +653,7 @@ async fn audit_authenticated_songs_search_continuation_infers_album_from_trailin
     assert!(matches!(
         &page.items[0],
         ytmusicapi::SearchResult::Song(song)
-            if !song.artists.is_empty() && song.album.is_some()
+            if !song.artists.is_empty() && song.album.is_none()
     ));
 }
 
