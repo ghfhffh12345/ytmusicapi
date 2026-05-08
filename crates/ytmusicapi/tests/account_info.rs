@@ -54,12 +54,64 @@ fn account_menu_response() -> serde_json::Value {
     })
 }
 
+async fn audit_client_with_account_menu_response(
+    body: &'static str,
+) -> (MockServer, tempfile::TempDir, YtMusic) {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/account/account_menu"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(body))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    (server, dir, client)
+}
+
 #[tokio::test]
 async fn get_account_info_requires_browser_auth() {
     let client = YtMusic::builder().build().unwrap();
 
     let error = client.get_account_info().await.unwrap_err();
     assert!(matches!(error, Error::UnsupportedFeature(_)));
+}
+
+#[tokio::test]
+async fn get_account_info_parses_audit_fixture() {
+    let (_server, _dir, client) = audit_client_with_account_menu_response(include_str!(
+        "fixtures/audit/raw/account/account_info.json"
+    ))
+    .await;
+
+    let account_info = client.get_account_info().await.unwrap();
+
+    assert_eq!(
+        account_info,
+        AccountInfo {
+            account_name: "REDACTED_TEXT".to_owned(),
+            channel_handle: Some("REDACTED_TEXT".to_owned()),
+            account_photo_url: "https://example.invalid/redacted".to_owned(),
+        }
+    );
 }
 
 #[tokio::test]

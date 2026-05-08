@@ -1,0 +1,442 @@
+{
+  "adBreakHeartbeatParams": "Q0FBJTNE",
+  "microformat": {
+    "microformatDataRenderer": {
+      "androidPackage": "com.google.android.apps.youtube.music",
+      "appName": "YouTube Music",
+      "availableCountries": [
+        "AD",
+        "AE",
+        "AF",
+        "AG",
+        "AI",
+        "AL",
+        "AM",
+        "AO",
+        "AQ",
+        "AR",
+        "AS",
+        "AT",
+        "AU",
+        "AW",
+        "AX",
+        "AZ",
+        "BA",
+        "BB",
+        "BD",
+        "BE",
+        "BF",
+        "BG",
+        "BH",
+        "BI",
+        "BJ",
+        "BL",
+        "BM",
+        "BN",
+        "BO",
+        "BQ",
+        "BR",
+        "BS",
+        "BT",
+        "BV",
+        "BW",
+        "BY",
+        "BZ",
+        "CA",
+        "CC",
+        "CD",
+        "CF",
+        "CG",
+        "CH",
+        "CI",
+        "CK",
+        "CL",
+        "CM",
+        "CN",
+        "CO",
+        "CR",
+        "CU",
+        "CV",
+        "CW",
+        "CX",
+        "CY",
+        "CZ",
+        "DE",
+        "DJ",
+        "DK",
+        "DM",
+        "DO",
+        "DZ",
+        "EC",
+        "EE",
+        "EG",
+        "EH",
+        "ER",
+        "ES",
+        "ET",
+        "FI",
+        "FJ",
+        "FK",
+        "FM",
+        "FO",
+        "FR",
+        "GA",
+        "GB",
+        "GD",
+        "GE",
+        "GF",
+        "GG",
+        "GH",
+        "GI",
+        "GL",
+        "GM",
+        "GN",
+        "GP",
+        "GQ",
+        "GR",
+        "GS",
+        "GT",
+        "GU",
+        "GW",
+        "GY",
+        "HK",
+        "HM",
+        "HN",
+        "HR",
+        "HT",
+        "HU",
+        "ID",
+        "IE",
+        "IL",
+        "IM",
+        "IN",
+        "IO",
+        "IQ",
+        "IR",
+        "IS",
+        "IT",
+        "JE",
+        "JM",
+        "JO",
+        "JP",
+        "KE",
+        "KG",
+        "KH",
+        "KI",
+        "KM",
+        "KN",
+        "KP",
+        "KR",
+        "KW",
+        "KY",
+        "KZ",
+        "LA",
+        "LB",
+        "LC",
+        "LI",
+        "LK",
+        "LR",
+        "LS",
+        "LT",
+        "LU",
+        "LV",
+        "LY",
+        "MA",
+        "MC",
+        "MD",
+        "ME",
+        "MF",
+        "MG",
+        "MH",
+        "MK",
+        "ML",
+        "MM",
+        "MN",
+        "MO",
+        "MP",
+        "MQ",
+        "MR",
+        "MS",
+        "MT",
+        "MU",
+        "MV",
+        "MW",
+        "MX",
+        "MY",
+        "MZ",
+        "NA",
+        "NC",
+        "NE",
+        "NF",
+        "NG",
+        "NI",
+        "NL",
+        "NO",
+        "NP",
+        "NR",
+        "NU",
+        "NZ",
+        "OM",
+        "PA",
+        "PE",
+        "PF",
+        "PG",
+        "PH",
+        "PK",
+        "PL",
+        "PM",
+        "PN",
+        "PR",
+        "PS",
+        "PT",
+        "PW",
+        "PY",
+        "QA",
+        "RE",
+        "RO",
+        "RS",
+        "RU",
+        "RW",
+        "SA",
+        "SB",
+        "SC",
+        "SD",
+        "SE",
+        "SG",
+        "SH",
+        "SI",
+        "SJ",
+        "SK",
+        "SL",
+        "SM",
+        "SN",
+        "SO",
+        "SR",
+        "SS",
+        "ST",
+        "SV",
+        "SX",
+        "SY",
+        "SZ",
+        "TC",
+        "TD",
+        "TF",
+        "TG",
+        "TH",
+        "TJ",
+        "TK",
+        "TL",
+        "TM",
+        "TN",
+        "TO",
+        "TR",
+        "TT",
+        "TV",
+        "TW",
+        "TZ",
+        "UA",
+        "UG",
+        "UM",
+        "US",
+        "UY",
+        "UZ",
+        "VA",
+        "VC",
+        "VE",
+        "VG",
+        "VI",
+        "VN",
+        "VU",
+        "WF",
+        "WS",
+        "YE",
+        "YT",
+        "ZA",
+        "ZM",
+        "ZW"
+      ],
+      "category": "Music",
+      "description": "Patrik Pietschmann",
+      "familySafe": true,
+      "iosAppArguments": "https://music.youtube.com/watch?v=4y33h81phKU",
+      "iosAppStoreId": "1017492454",
+      "linkAlternates": [
+        {
+          "hrefUrl": "android-app://com.google.android.youtube/http/youtube.com/watch?v=4y33h81phKU"
+        },
+        {
+          "hrefUrl": "ios-app://544007664/http/youtube.com/watch?v=4y33h81phKU"
+        },
+        {
+          "alternateType": "application/json+oembed",
+          "hrefUrl": "https://www.youtube.com/oembed?format=json&url=https%3A%2F%2Fmusic.youtube.com%2Fwatch%3Fv%3D4y33h81phKU",
+          "title": "Hans Zimmer - Interstellar - Main Theme (Piano Version) + Sheet Music"
+        },
+        {
+          "alternateType": "text/xml+oembed",
+          "hrefUrl": "https://www.youtube.com/oembed?format=xml&url=https%3A%2F%2Fmusic.youtube.com%2Fwatch%3Fv%3D4y33h81phKU",
+          "title": "Hans Zimmer - Interstellar - Main Theme (Piano Version) + Sheet Music"
+        }
+      ],
+      "noindex": false,
+      "ogType": "video.other",
+      "pageOwnerDetails": {
+        "externalChannelId": "UCs7O9sOUQiBGBxaaAguIwig",
+        "name": "Patrik Pietschmann",
+        "youtubeProfileUrl": "http://www.youtube.com/@PatrikPietschmann"
+      },
+      "paid": false,
+      "publishDate": "2016-08-23T07:54:03-07:00",
+      "schemaDotOrgType": "http://schema.org/VideoObject",
+      "siteName": "YouTube Music",
+      "tags": [
+        "Hans Zimmer",
+        "Interstellar",
+        "Main Theme",
+        "Soundtrack",
+        "Piano",
+        "Patrik Pietschmann",
+        "Cover"
+      ],
+      "thumbnail": {
+        "thumbnails": [
+          {
+            "height": 720,
+            "url": "https://i.ytimg.com/vi/4y33h81phKU/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGGUgTig_MA8=&rs=AOn4CLAjS8rkP5pJsnvaho-Slpflk5j0gw",
+            "width": 1280
+          }
+        ]
+      },
+      "title": "Interstellar (Main Theme) - Piano Version",
+      "twitterCardType": "summary",
+      "twitterSiteHandle": "@YouTubeMusic",
+      "unlisted": false,
+      "uploadDate": "2016-08-23T07:54:03-07:00",
+      "urlApplinksAndroid": "vnd.youtube.music://music.youtube.com/watch?v=4y33h81phKU&feature=applinks",
+      "urlApplinksIos": "vnd.youtube.music://music.youtube.com/watch?v=4y33h81phKU&feature=applinks",
+      "urlCanonical": "https://music.youtube.com/watch?v=4y33h81phKU",
+      "urlTwitterAndroid": "vnd.youtube.music://music.youtube.com/watch?v=4y33h81phKU&feature=twitter-deep-link",
+      "urlTwitterIos": "vnd.youtube.music://music.youtube.com/watch?v=4y33h81phKU&feature=twitter-deep-link",
+      "videoDetails": {
+        "durationIso8601": "PT4M47S",
+        "durationSeconds": "287",
+        "externalVideoId": "4y33h81phKU"
+      },
+      "viewCount": "108045543"
+    }
+  },
+  "playabilityStatus": {
+    "contextParams": "Q0FFU0FnZ0I=",
+    "errorScreen": {
+      "playerErrorMessageRenderer": {
+        "icon": {
+          "iconType": "ERROR_OUTLINE"
+        }
+      }
+    },
+    "playableInEmbed": true,
+    "reason": "This video is only available to Music Premium members",
+    "status": "UNPLAYABLE"
+  },
+  "responseContext": {
+    "maxAgeSeconds": 0,
+    "responseId": "IhMIwvWPpeKplAMVOILpBR2LTguR",
+    "serviceTrackingParams": [
+      {
+        "params": [
+          {
+            "key": "is_viewed_live",
+            "value": "False"
+          },
+          {
+            "key": "is_alc_surface",
+            "value": "false"
+          },
+          {
+            "key": "ipcc",
+            "value": "0"
+          },
+          {
+            "key": "wh_paused",
+            "value": "0"
+          },
+          {
+            "key": "logged_in",
+            "value": "0"
+          }
+        ],
+        "service": "GFEEDBACK"
+      },
+      {
+        "params": [
+          {
+            "key": "c",
+            "value": "WEB_REMIX"
+          },
+          {
+            "key": "cver",
+            "value": "1.20260505.09.00"
+          },
+          {
+            "key": "yt_li",
+            "value": "0"
+          },
+          {
+            "key": "GetPlayer_rid",
+            "value": "0xe93bb92df2621a4d"
+          }
+        ],
+        "service": "CSI"
+      },
+      {
+        "params": [
+          {
+            "key": "client.version",
+            "value": "1.20000101"
+          },
+          {
+            "key": "client.name",
+            "value": "WEB_REMIX"
+          }
+        ],
+        "service": "ECATCHER"
+      }
+    ]
+  },
+  "trackingParams": "CAAQu2kiEwjC9Y-l4qmUAxU4gukFHYtOC5HKAQRLu8Y8",
+  "videoDetails": {
+    "allowRatings": true,
+    "author": "Patrik Pietschmann",
+    "channelId": "UCs7O9sOUQiBGBxaaAguIwig",
+    "isCrawlable": true,
+    "isLiveContent": false,
+    "isOwnerViewing": false,
+    "isPrivate": false,
+    "isTvfilmVideo": false,
+    "isUnpluggedCorpus": false,
+    "lengthSeconds": "286",
+    "musicVideoType": "MUSIC_VIDEO_TYPE_OMV",
+    "thumbnail": {
+      "thumbnails": [
+        {
+          "height": 225,
+          "url": "https://i.ytimg.com/vi/4y33h81phKU/sddefault.jpg?sqp=-oaymwEWCJADEOEBIAQqCghqEJQEGHgg6AJIWg&rs=AOn4CLCnVZNqh4B3Otnu6Zk7JlsFt7LpWg",
+          "width": 400
+        },
+        {
+          "height": 450,
+          "url": "https://i.ytimg.com/vi/4y33h81phKU/hq720.jpg?sqp=-oaymwEXCKAGEMIDIAQqCwjVARCqCBh4INgESFo&rs=AOn4CLBVRWNXYHrJl2ze16vHXiuVP3Pikw",
+          "width": 800
+        },
+        {
+          "height": 480,
+          "url": "https://i.ytimg.com/vi/4y33h81phKU/hq720.jpg?sqp=-oaymwEXCNUGEOADIAQqCwjVARCqCBh4INgESFo&rs=AOn4CLDYbCAg_1BWHxJdzQmLV1ePZXtXMQ",
+          "width": 853
+        }
+      ]
+    },
+    "title": "Interstellar (Main Theme) - Piano Version",
+    "videoId": "4y33h81phKU",
+    "viewCount": "108045543"
+  }
+}

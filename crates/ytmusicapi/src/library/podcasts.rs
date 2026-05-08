@@ -4,7 +4,8 @@ use crate::{Error, LibraryPodcast, LibraryPodcastChannel, LibraryPodcastsContinu
 
 use super::core::{
     continuation_grid, continuation_grid_items, extract_continuation_token,
-    library_grid_continuation, library_grid_items, optional_text, parse_thumbnails, required_text,
+    library_grid_continuation, library_grid_items, optional_text, parse_thumbnails,
+    required_runs_text, required_text,
 };
 
 pub(crate) fn parse_library_podcasts_response(
@@ -55,7 +56,7 @@ fn parse_library_podcast(item: &Value) -> Result<LibraryPodcast, Error> {
                 renderer,
                 "/subtitle/runs/0/navigationEndpoint/browseEndpoint/browseId",
             ),
-            name: required_text(renderer, "/subtitle/runs/0/text")?,
+            name: required_runs_text(renderer, "/subtitle/runs")?,
         },
         thumbnails: parse_thumbnails(renderer)?,
     })

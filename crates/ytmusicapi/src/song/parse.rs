@@ -6,13 +6,23 @@ use crate::{
 };
 
 pub(crate) fn parse_get_song_response(response: &Value) -> Result<GetSongResponse, Error> {
+    let playability_status =
+        parse_playability_status(required_value(response, "/playabilityStatus")?)?;
+    let streaming_data = response
+        .pointer("/streamingData")
+        .map(parse_streaming_data)
+        .transpose()?;
+
+    if playability_status.status == "OK" && streaming_data.is_none() {
+        return Err(Error::Parse(
+            "song response missing /streamingData".to_owned(),
+        ));
+    }
+
     Ok(GetSongResponse {
         video_details: parse_video_details(required_value(response, "/videoDetails")?)?,
-        playability_status: parse_playability_status(required_value(
-            response,
-            "/playabilityStatus",
-        )?)?,
-        streaming_data: parse_streaming_data(required_value(response, "/streamingData")?)?,
+        playability_status,
+        streaming_data,
         microformat: response
             .pointer("/microformat/microformatDataRenderer")
             .map(parse_microformat)
@@ -44,6 +54,7 @@ fn parse_playability_status(value: &Value) -> Result<SongPlayabilityStatus, Erro
     Ok(SongPlayabilityStatus {
         status: required_text(value, "/status")?,
         playable_in_embed: required_bool(value, "/playableInEmbed")?,
+        reason: optional_text(value, "/reason"),
         context_params: optional_text(value, "/contextParams"),
         audio_only_availability: optional_text(
             value,
@@ -300,10 +311,11 @@ mod tests {
         assert_eq!(parsed.video_details.video_id, "0rilIYWiJ7M");
         assert_eq!(parsed.video_details.length_seconds, 267);
         assert_eq!(parsed.playability_status.status, "OK");
-        assert_eq!(parsed.streaming_data.formats.len(), 1);
-        assert_eq!(parsed.streaming_data.adaptive_formats.len(), 18);
+        let streaming_data = parsed.streaming_data.as_ref().unwrap();
+        assert_eq!(streaming_data.formats.len(), 1);
+        assert_eq!(streaming_data.adaptive_formats.len(), 18);
         assert_eq!(
-            parsed.streaming_data.formats[0].signature_cipher,
+            streaming_data.formats[0].signature_cipher,
             response["streamingData"]["formats"][0]["signatureCipher"]
                 .as_str()
                 .unwrap()
@@ -329,12 +341,10 @@ mod tests {
 
         let parsed = parse_get_song_response(&response).unwrap();
 
+        let streaming_data = parsed.streaming_data.as_ref().unwrap();
+        assert_eq!(streaming_data.formats[0].content_length, Some(2_399_880));
         assert_eq!(
-            parsed.streaming_data.formats[0].content_length,
-            Some(2_399_880)
-        );
-        assert_eq!(
-            parsed.streaming_data.formats[0].xtags.as_deref(),
+            streaming_data.formats[0].xtags.as_deref(),
             Some("Cg8KB2hlYXVkaW8SBHRydWU")
         );
         assert_eq!(
@@ -350,14 +360,17 @@ mod tests {
                 .unwrap();
 
         let parsed = parse_get_song_response(&response).unwrap();
+        let streaming_data = parsed.streaming_data.as_ref().unwrap();
         let audio = parsed
             .streaming_data
+            .as_ref()
+            .unwrap()
             .adaptive_formats
             .iter()
             .find(|format| format.itag == 140)
             .unwrap();
 
-        assert_eq!(parsed.streaming_data.adaptive_formats.len(), 16);
+        assert_eq!(streaming_data.adaptive_formats.len(), 16);
         assert_eq!(audio.audio_quality.as_deref(), Some("AUDIO_QUALITY_MEDIUM"));
         assert_eq!(audio.audio_channels, Some(2));
         assert_eq!(audio.high_replication, Some(true));
@@ -398,5 +411,25 @@ mod tests {
             err,
             Error::Parse(message) if message == "song response missing /streamingData"
         ));
+    }
+
+    #[test]
+    fn parse_get_song_response_accepts_audit_unplayable_metadata_without_streaming_data() {
+        for raw_fixture in [
+            include_str!("../../tests/fixtures/audit/raw/song/response1.json"),
+            include_str!("../../tests/fixtures/audit/raw/song/response2.json"),
+            include_str!("../../tests/fixtures/audit/raw/song/response3.json"),
+        ] {
+            let response: Value = serde_json::from_str(raw_fixture).unwrap();
+
+            let parsed = parse_get_song_response(&response).unwrap();
+
+            assert_eq!(parsed.playability_status.status, "UNPLAYABLE");
+            assert_eq!(
+                parsed.playability_status.reason.as_deref(),
+                Some("This video is only available to Music Premium members")
+            );
+            assert!(parsed.streaming_data.is_none());
+        }
     }
 }

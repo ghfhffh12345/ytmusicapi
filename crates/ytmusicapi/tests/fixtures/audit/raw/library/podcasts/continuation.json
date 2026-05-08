@@ -1,0 +1,3567 @@
+{
+  "continuationContents": {
+    "gridContinuation": {
+      "itemSize": "REDACTED_TEXT",
+      "items": [
+        {
+          "musicTwoRowItemRenderer": {
+            "aspectRatio": "REDACTED_TEXT",
+            "menu": {
+              "menuRenderer": {
+                "accessibility": {
+                  "accessibilityData": {
+                    "label": "REDACTED_TEXT"
+                  }
+                },
+                "items": [
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "actions": [
+                            {
+                              "clickTrackingParams": "REDACTED_TOKEN",
+                              "hideEnclosingAction": {
+                                "hack": true
+                              }
+                            }
+                          ],
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "menuNavigationItemRenderer": {
+                      "icon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "shareEntityEndpoint": {
+                          "serializedShareEntity": "REDACTED_TEXT",
+                          "sharePanelType": "REDACTED_TEXT"
+                        }
+                      },
+                      "text": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "musicItemRendererDisplayPolicy": "REDACTED_TEXT",
+            "navigationEndpoint": {
+              "browseEndpoint": {
+                "browseEndpointContextSupportedConfigs": {
+                  "browseEndpointContextMusicConfig": {
+                    "pageType": "REDACTED_TEXT"
+                  }
+                },
+                "browseId": "REDACTED_ID"
+              },
+              "clickTrackingParams": "REDACTED_TOKEN"
+            },
+            "subtitle": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "thumbnailOverlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "background": {
+                  "verticalGradient": {
+                    "gradientLayerColors": [
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT"
+                    ]
+                  }
+                },
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "accessibilityPauseData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "accessibilityPlayData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "activeBackgroundColor": 4278190080,
+                    "activeScaleFactor": 1.2,
+                    "backgroundColor": 2566914048,
+                    "buttonSize": "REDACTED_TEXT",
+                    "iconColor": 4294967295,
+                    "iconLoadingColor": 1308622847,
+                    "loadingIndicatorColor": 14745645,
+                    "pauseIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playNavigationEndpoint": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "watchPlaylistEndpoint": {
+                        "playlistId": "REDACTED_ID"
+                      }
+                    },
+                    "playingIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "rippleTarget": "REDACTED_TEXT",
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "contentPosition": "REDACTED_TEXT",
+                "displayStyle": "REDACTED_TEXT"
+              }
+            },
+            "thumbnailRenderer": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "height": 226,
+                      "url": "https://example.invalid/redacted",
+                      "width": 226
+                    },
+                    {
+                      "height": 544,
+                      "url": "https://example.invalid/redacted",
+                      "width": 544
+                    }
+                  ]
+                },
+                "thumbnailCrop": "REDACTED_TEXT",
+                "thumbnailScale": "REDACTED_TEXT",
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "title": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        {
+          "musicTwoRowItemRenderer": {
+            "aspectRatio": "REDACTED_TEXT",
+            "menu": {
+              "menuRenderer": {
+                "accessibility": {
+                  "accessibilityData": {
+                    "label": "REDACTED_TEXT"
+                  }
+                },
+                "items": [
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "actions": [
+                            {
+                              "clickTrackingParams": "REDACTED_TOKEN",
+                              "hideEnclosingAction": {
+                                "hack": true
+                              }
+                            }
+                          ],
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "menuNavigationItemRenderer": {
+                      "icon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "shareEntityEndpoint": {
+                          "serializedShareEntity": "REDACTED_TEXT",
+                          "sharePanelType": "REDACTED_TEXT"
+                        }
+                      },
+                      "text": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "musicItemRendererDisplayPolicy": "REDACTED_TEXT",
+            "navigationEndpoint": {
+              "browseEndpoint": {
+                "browseEndpointContextSupportedConfigs": {
+                  "browseEndpointContextMusicConfig": {
+                    "pageType": "REDACTED_TEXT"
+                  }
+                },
+                "browseId": "REDACTED_ID"
+              },
+              "clickTrackingParams": "REDACTED_TOKEN"
+            },
+            "subtitle": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "thumbnailOverlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "background": {
+                  "verticalGradient": {
+                    "gradientLayerColors": [
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT"
+                    ]
+                  }
+                },
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "accessibilityPauseData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "accessibilityPlayData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "activeBackgroundColor": 4278190080,
+                    "activeScaleFactor": 1.2,
+                    "backgroundColor": 2566914048,
+                    "buttonSize": "REDACTED_TEXT",
+                    "iconColor": 4294967295,
+                    "iconLoadingColor": 1308622847,
+                    "loadingIndicatorColor": 14745645,
+                    "pauseIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playNavigationEndpoint": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "watchPlaylistEndpoint": {
+                        "playlistId": "REDACTED_ID"
+                      }
+                    },
+                    "playingIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "rippleTarget": "REDACTED_TEXT",
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "contentPosition": "REDACTED_TEXT",
+                "displayStyle": "REDACTED_TEXT"
+              }
+            },
+            "thumbnailRenderer": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "height": 226,
+                      "url": "https://example.invalid/redacted",
+                      "width": 226
+                    },
+                    {
+                      "height": 544,
+                      "url": "https://example.invalid/redacted",
+                      "width": 544
+                    }
+                  ]
+                },
+                "thumbnailCrop": "REDACTED_TEXT",
+                "thumbnailScale": "REDACTED_TEXT",
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "title": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        {
+          "musicTwoRowItemRenderer": {
+            "aspectRatio": "REDACTED_TEXT",
+            "menu": {
+              "menuRenderer": {
+                "accessibility": {
+                  "accessibilityData": {
+                    "label": "REDACTED_TEXT"
+                  }
+                },
+                "items": [
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "actions": [
+                            {
+                              "clickTrackingParams": "REDACTED_TOKEN",
+                              "hideEnclosingAction": {
+                                "hack": true
+                              }
+                            }
+                          ],
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "menuNavigationItemRenderer": {
+                      "icon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "shareEntityEndpoint": {
+                          "serializedShareEntity": "REDACTED_TEXT",
+                          "sharePanelType": "REDACTED_TEXT"
+                        }
+                      },
+                      "text": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "musicItemRendererDisplayPolicy": "REDACTED_TEXT",
+            "navigationEndpoint": {
+              "browseEndpoint": {
+                "browseEndpointContextSupportedConfigs": {
+                  "browseEndpointContextMusicConfig": {
+                    "pageType": "REDACTED_TEXT"
+                  }
+                },
+                "browseId": "REDACTED_ID"
+              },
+              "clickTrackingParams": "REDACTED_TOKEN"
+            },
+            "subtitle": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "thumbnailOverlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "background": {
+                  "verticalGradient": {
+                    "gradientLayerColors": [
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT"
+                    ]
+                  }
+                },
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "accessibilityPauseData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "accessibilityPlayData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "activeBackgroundColor": 4278190080,
+                    "activeScaleFactor": 1.2,
+                    "backgroundColor": 2566914048,
+                    "buttonSize": "REDACTED_TEXT",
+                    "iconColor": 4294967295,
+                    "iconLoadingColor": 1308622847,
+                    "loadingIndicatorColor": 14745645,
+                    "pauseIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playNavigationEndpoint": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "watchPlaylistEndpoint": {
+                        "playlistId": "REDACTED_ID"
+                      }
+                    },
+                    "playingIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "rippleTarget": "REDACTED_TEXT",
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "contentPosition": "REDACTED_TEXT",
+                "displayStyle": "REDACTED_TEXT"
+              }
+            },
+            "thumbnailRenderer": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "height": 226,
+                      "url": "https://example.invalid/redacted",
+                      "width": 226
+                    },
+                    {
+                      "height": 544,
+                      "url": "https://example.invalid/redacted",
+                      "width": 544
+                    }
+                  ]
+                },
+                "thumbnailCrop": "REDACTED_TEXT",
+                "thumbnailScale": "REDACTED_TEXT",
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "title": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        {
+          "musicTwoRowItemRenderer": {
+            "aspectRatio": "REDACTED_TEXT",
+            "menu": {
+              "menuRenderer": {
+                "accessibility": {
+                  "accessibilityData": {
+                    "label": "REDACTED_TEXT"
+                  }
+                },
+                "items": [
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "actions": [
+                            {
+                              "clickTrackingParams": "REDACTED_TOKEN",
+                              "hideEnclosingAction": {
+                                "hack": true
+                              }
+                            }
+                          ],
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "menuNavigationItemRenderer": {
+                      "icon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "shareEntityEndpoint": {
+                          "serializedShareEntity": "REDACTED_TEXT",
+                          "sharePanelType": "REDACTED_TEXT"
+                        }
+                      },
+                      "text": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "musicItemRendererDisplayPolicy": "REDACTED_TEXT",
+            "navigationEndpoint": {
+              "browseEndpoint": {
+                "browseEndpointContextSupportedConfigs": {
+                  "browseEndpointContextMusicConfig": {
+                    "pageType": "REDACTED_TEXT"
+                  }
+                },
+                "browseId": "REDACTED_ID"
+              },
+              "clickTrackingParams": "REDACTED_TOKEN"
+            },
+            "subtitle": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "thumbnailOverlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "background": {
+                  "verticalGradient": {
+                    "gradientLayerColors": [
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT"
+                    ]
+                  }
+                },
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "accessibilityPauseData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "accessibilityPlayData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "activeBackgroundColor": 4278190080,
+                    "activeScaleFactor": 1.2,
+                    "backgroundColor": 2566914048,
+                    "buttonSize": "REDACTED_TEXT",
+                    "iconColor": 4294967295,
+                    "iconLoadingColor": 1308622847,
+                    "loadingIndicatorColor": 14745645,
+                    "pauseIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playNavigationEndpoint": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "watchPlaylistEndpoint": {
+                        "playlistId": "REDACTED_ID"
+                      }
+                    },
+                    "playingIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "rippleTarget": "REDACTED_TEXT",
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "contentPosition": "REDACTED_TEXT",
+                "displayStyle": "REDACTED_TEXT"
+              }
+            },
+            "thumbnailRenderer": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "height": 226,
+                      "url": "https://example.invalid/redacted",
+                      "width": 226
+                    },
+                    {
+                      "height": 544,
+                      "url": "https://example.invalid/redacted",
+                      "width": 544
+                    }
+                  ]
+                },
+                "thumbnailCrop": "REDACTED_TEXT",
+                "thumbnailScale": "REDACTED_TEXT",
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "title": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        {
+          "musicTwoRowItemRenderer": {
+            "aspectRatio": "REDACTED_TEXT",
+            "menu": {
+              "menuRenderer": {
+                "accessibility": {
+                  "accessibilityData": {
+                    "label": "REDACTED_TEXT"
+                  }
+                },
+                "items": [
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "actions": [
+                            {
+                              "clickTrackingParams": "REDACTED_TOKEN",
+                              "hideEnclosingAction": {
+                                "hack": true
+                              }
+                            }
+                          ],
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "menuNavigationItemRenderer": {
+                      "icon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "shareEntityEndpoint": {
+                          "serializedShareEntity": "REDACTED_TEXT",
+                          "sharePanelType": "REDACTED_TEXT"
+                        }
+                      },
+                      "text": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "musicItemRendererDisplayPolicy": "REDACTED_TEXT",
+            "navigationEndpoint": {
+              "browseEndpoint": {
+                "browseEndpointContextSupportedConfigs": {
+                  "browseEndpointContextMusicConfig": {
+                    "pageType": "REDACTED_TEXT"
+                  }
+                },
+                "browseId": "REDACTED_ID"
+              },
+              "clickTrackingParams": "REDACTED_TOKEN"
+            },
+            "subtitle": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "thumbnailOverlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "background": {
+                  "verticalGradient": {
+                    "gradientLayerColors": [
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT"
+                    ]
+                  }
+                },
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "accessibilityPauseData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "accessibilityPlayData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "activeBackgroundColor": 4278190080,
+                    "activeScaleFactor": 1.2,
+                    "backgroundColor": 2566914048,
+                    "buttonSize": "REDACTED_TEXT",
+                    "iconColor": 4294967295,
+                    "iconLoadingColor": 1308622847,
+                    "loadingIndicatorColor": 14745645,
+                    "pauseIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playNavigationEndpoint": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "watchPlaylistEndpoint": {
+                        "playlistId": "REDACTED_ID"
+                      }
+                    },
+                    "playingIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "rippleTarget": "REDACTED_TEXT",
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "contentPosition": "REDACTED_TEXT",
+                "displayStyle": "REDACTED_TEXT"
+              }
+            },
+            "thumbnailRenderer": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "height": 226,
+                      "url": "https://example.invalid/redacted",
+                      "width": 226
+                    },
+                    {
+                      "height": 544,
+                      "url": "https://example.invalid/redacted",
+                      "width": 544
+                    }
+                  ]
+                },
+                "thumbnailCrop": "REDACTED_TEXT",
+                "thumbnailScale": "REDACTED_TEXT",
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "title": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        {
+          "musicTwoRowItemRenderer": {
+            "aspectRatio": "REDACTED_TEXT",
+            "menu": {
+              "menuRenderer": {
+                "accessibility": {
+                  "accessibilityData": {
+                    "label": "REDACTED_TEXT"
+                  }
+                },
+                "items": [
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "actions": [
+                            {
+                              "clickTrackingParams": "REDACTED_TOKEN",
+                              "hideEnclosingAction": {
+                                "hack": true
+                              }
+                            }
+                          ],
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "menuNavigationItemRenderer": {
+                      "icon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "shareEntityEndpoint": {
+                          "serializedShareEntity": "REDACTED_TEXT",
+                          "sharePanelType": "REDACTED_TEXT"
+                        }
+                      },
+                      "text": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "musicItemRendererDisplayPolicy": "REDACTED_TEXT",
+            "navigationEndpoint": {
+              "browseEndpoint": {
+                "browseEndpointContextSupportedConfigs": {
+                  "browseEndpointContextMusicConfig": {
+                    "pageType": "REDACTED_TEXT"
+                  }
+                },
+                "browseId": "REDACTED_ID"
+              },
+              "clickTrackingParams": "REDACTED_TOKEN"
+            },
+            "subtitle": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "thumbnailOverlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "background": {
+                  "verticalGradient": {
+                    "gradientLayerColors": [
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT"
+                    ]
+                  }
+                },
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "accessibilityPauseData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "accessibilityPlayData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "activeBackgroundColor": 4278190080,
+                    "activeScaleFactor": 1.2,
+                    "backgroundColor": 2566914048,
+                    "buttonSize": "REDACTED_TEXT",
+                    "iconColor": 4294967295,
+                    "iconLoadingColor": 1308622847,
+                    "loadingIndicatorColor": 14745645,
+                    "pauseIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playNavigationEndpoint": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "watchPlaylistEndpoint": {
+                        "playlistId": "REDACTED_ID"
+                      }
+                    },
+                    "playingIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "rippleTarget": "REDACTED_TEXT",
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "contentPosition": "REDACTED_TEXT",
+                "displayStyle": "REDACTED_TEXT"
+              }
+            },
+            "thumbnailRenderer": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "height": 226,
+                      "url": "https://example.invalid/redacted",
+                      "width": 226
+                    },
+                    {
+                      "height": 544,
+                      "url": "https://example.invalid/redacted",
+                      "width": 544
+                    }
+                  ]
+                },
+                "thumbnailCrop": "REDACTED_TEXT",
+                "thumbnailScale": "REDACTED_TEXT",
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "title": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        {
+          "musicTwoRowItemRenderer": {
+            "aspectRatio": "REDACTED_TEXT",
+            "menu": {
+              "menuRenderer": {
+                "accessibility": {
+                  "accessibilityData": {
+                    "label": "REDACTED_TEXT"
+                  }
+                },
+                "items": [
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "actions": [
+                            {
+                              "clickTrackingParams": "REDACTED_TOKEN",
+                              "hideEnclosingAction": {
+                                "hack": true
+                              }
+                            }
+                          ],
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "menuNavigationItemRenderer": {
+                      "icon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "shareEntityEndpoint": {
+                          "serializedShareEntity": "REDACTED_TEXT",
+                          "sharePanelType": "REDACTED_TEXT"
+                        }
+                      },
+                      "text": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "musicItemRendererDisplayPolicy": "REDACTED_TEXT",
+            "navigationEndpoint": {
+              "browseEndpoint": {
+                "browseEndpointContextSupportedConfigs": {
+                  "browseEndpointContextMusicConfig": {
+                    "pageType": "REDACTED_TEXT"
+                  }
+                },
+                "browseId": "REDACTED_ID"
+              },
+              "clickTrackingParams": "REDACTED_TOKEN"
+            },
+            "subtitle": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "thumbnailOverlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "background": {
+                  "verticalGradient": {
+                    "gradientLayerColors": [
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT"
+                    ]
+                  }
+                },
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "accessibilityPauseData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "accessibilityPlayData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "activeBackgroundColor": 4278190080,
+                    "activeScaleFactor": 1.2,
+                    "backgroundColor": 2566914048,
+                    "buttonSize": "REDACTED_TEXT",
+                    "iconColor": 4294967295,
+                    "iconLoadingColor": 1308622847,
+                    "loadingIndicatorColor": 14745645,
+                    "pauseIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playNavigationEndpoint": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "watchPlaylistEndpoint": {
+                        "playlistId": "REDACTED_ID"
+                      }
+                    },
+                    "playingIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "rippleTarget": "REDACTED_TEXT",
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "contentPosition": "REDACTED_TEXT",
+                "displayStyle": "REDACTED_TEXT"
+              }
+            },
+            "thumbnailRenderer": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "height": 226,
+                      "url": "https://example.invalid/redacted",
+                      "width": 226
+                    },
+                    {
+                      "height": 544,
+                      "url": "https://example.invalid/redacted",
+                      "width": 544
+                    }
+                  ]
+                },
+                "thumbnailCrop": "REDACTED_TEXT",
+                "thumbnailScale": "REDACTED_TEXT",
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "title": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        {
+          "musicTwoRowItemRenderer": {
+            "aspectRatio": "REDACTED_TEXT",
+            "menu": {
+              "menuRenderer": {
+                "accessibility": {
+                  "accessibilityData": {
+                    "label": "REDACTED_TEXT"
+                  }
+                },
+                "items": [
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "actions": [
+                            {
+                              "clickTrackingParams": "REDACTED_TOKEN",
+                              "hideEnclosingAction": {
+                                "hack": true
+                              }
+                            }
+                          ],
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "menuNavigationItemRenderer": {
+                      "icon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "shareEntityEndpoint": {
+                          "serializedShareEntity": "REDACTED_TEXT",
+                          "sharePanelType": "REDACTED_TEXT"
+                        }
+                      },
+                      "text": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "musicItemRendererDisplayPolicy": "REDACTED_TEXT",
+            "navigationEndpoint": {
+              "browseEndpoint": {
+                "browseEndpointContextSupportedConfigs": {
+                  "browseEndpointContextMusicConfig": {
+                    "pageType": "REDACTED_TEXT"
+                  }
+                },
+                "browseId": "REDACTED_ID"
+              },
+              "clickTrackingParams": "REDACTED_TOKEN"
+            },
+            "subtitle": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "thumbnailOverlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "background": {
+                  "verticalGradient": {
+                    "gradientLayerColors": [
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT"
+                    ]
+                  }
+                },
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "accessibilityPauseData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "accessibilityPlayData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "activeBackgroundColor": 4278190080,
+                    "activeScaleFactor": 1.2,
+                    "backgroundColor": 2566914048,
+                    "buttonSize": "REDACTED_TEXT",
+                    "iconColor": 4294967295,
+                    "iconLoadingColor": 1308622847,
+                    "loadingIndicatorColor": 14745645,
+                    "pauseIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playNavigationEndpoint": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "watchPlaylistEndpoint": {
+                        "playlistId": "REDACTED_ID"
+                      }
+                    },
+                    "playingIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "rippleTarget": "REDACTED_TEXT",
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "contentPosition": "REDACTED_TEXT",
+                "displayStyle": "REDACTED_TEXT"
+              }
+            },
+            "thumbnailRenderer": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "height": 226,
+                      "url": "https://example.invalid/redacted",
+                      "width": 226
+                    },
+                    {
+                      "height": 544,
+                      "url": "https://example.invalid/redacted",
+                      "width": 544
+                    }
+                  ]
+                },
+                "thumbnailCrop": "REDACTED_TEXT",
+                "thumbnailScale": "REDACTED_TEXT",
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "title": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        {
+          "musicTwoRowItemRenderer": {
+            "aspectRatio": "REDACTED_TEXT",
+            "menu": {
+              "menuRenderer": {
+                "accessibility": {
+                  "accessibilityData": {
+                    "label": "REDACTED_TEXT"
+                  }
+                },
+                "items": [
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "actions": [
+                            {
+                              "clickTrackingParams": "REDACTED_TOKEN",
+                              "hideEnclosingAction": {
+                                "hack": true
+                              }
+                            }
+                          ],
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "menuNavigationItemRenderer": {
+                      "icon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "shareEntityEndpoint": {
+                          "serializedShareEntity": "REDACTED_TEXT",
+                          "sharePanelType": "REDACTED_TEXT"
+                        }
+                      },
+                      "text": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "musicItemRendererDisplayPolicy": "REDACTED_TEXT",
+            "navigationEndpoint": {
+              "browseEndpoint": {
+                "browseEndpointContextSupportedConfigs": {
+                  "browseEndpointContextMusicConfig": {
+                    "pageType": "REDACTED_TEXT"
+                  }
+                },
+                "browseId": "REDACTED_ID"
+              },
+              "clickTrackingParams": "REDACTED_TOKEN"
+            },
+            "subtitle": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "thumbnailOverlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "background": {
+                  "verticalGradient": {
+                    "gradientLayerColors": [
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT"
+                    ]
+                  }
+                },
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "accessibilityPauseData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "accessibilityPlayData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "activeBackgroundColor": 4278190080,
+                    "activeScaleFactor": 1.2,
+                    "backgroundColor": 2566914048,
+                    "buttonSize": "REDACTED_TEXT",
+                    "iconColor": 4294967295,
+                    "iconLoadingColor": 1308622847,
+                    "loadingIndicatorColor": 14745645,
+                    "pauseIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playNavigationEndpoint": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "watchPlaylistEndpoint": {
+                        "playlistId": "REDACTED_ID"
+                      }
+                    },
+                    "playingIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "rippleTarget": "REDACTED_TEXT",
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "contentPosition": "REDACTED_TEXT",
+                "displayStyle": "REDACTED_TEXT"
+              }
+            },
+            "thumbnailRenderer": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "height": 226,
+                      "url": "https://example.invalid/redacted",
+                      "width": 226
+                    },
+                    {
+                      "height": 544,
+                      "url": "https://example.invalid/redacted",
+                      "width": 544
+                    }
+                  ]
+                },
+                "thumbnailCrop": "REDACTED_TEXT",
+                "thumbnailScale": "REDACTED_TEXT",
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "title": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        {
+          "musicTwoRowItemRenderer": {
+            "aspectRatio": "REDACTED_TEXT",
+            "menu": {
+              "menuRenderer": {
+                "accessibility": {
+                  "accessibilityData": {
+                    "label": "REDACTED_TEXT"
+                  }
+                },
+                "items": [
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "actions": [
+                            {
+                              "clickTrackingParams": "REDACTED_TOKEN",
+                              "hideEnclosingAction": {
+                                "hack": true
+                              }
+                            }
+                          ],
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "menuNavigationItemRenderer": {
+                      "icon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "shareEntityEndpoint": {
+                          "serializedShareEntity": "REDACTED_TEXT",
+                          "sharePanelType": "REDACTED_TEXT"
+                        }
+                      },
+                      "text": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "musicItemRendererDisplayPolicy": "REDACTED_TEXT",
+            "navigationEndpoint": {
+              "browseEndpoint": {
+                "browseEndpointContextSupportedConfigs": {
+                  "browseEndpointContextMusicConfig": {
+                    "pageType": "REDACTED_TEXT"
+                  }
+                },
+                "browseId": "REDACTED_ID"
+              },
+              "clickTrackingParams": "REDACTED_TOKEN"
+            },
+            "subtitle": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "thumbnailOverlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "background": {
+                  "verticalGradient": {
+                    "gradientLayerColors": [
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT"
+                    ]
+                  }
+                },
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "accessibilityPauseData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "accessibilityPlayData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "activeBackgroundColor": 4278190080,
+                    "activeScaleFactor": 1.2,
+                    "backgroundColor": 2566914048,
+                    "buttonSize": "REDACTED_TEXT",
+                    "iconColor": 4294967295,
+                    "iconLoadingColor": 1308622847,
+                    "loadingIndicatorColor": 14745645,
+                    "pauseIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playNavigationEndpoint": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "watchPlaylistEndpoint": {
+                        "playlistId": "REDACTED_ID"
+                      }
+                    },
+                    "playingIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "rippleTarget": "REDACTED_TEXT",
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "contentPosition": "REDACTED_TEXT",
+                "displayStyle": "REDACTED_TEXT"
+              }
+            },
+            "thumbnailRenderer": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "height": 226,
+                      "url": "https://example.invalid/redacted",
+                      "width": 226
+                    },
+                    {
+                      "height": 544,
+                      "url": "https://example.invalid/redacted",
+                      "width": 544
+                    }
+                  ]
+                },
+                "thumbnailCrop": "REDACTED_TEXT",
+                "thumbnailScale": "REDACTED_TEXT",
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "title": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        {
+          "musicTwoRowItemRenderer": {
+            "aspectRatio": "REDACTED_TEXT",
+            "menu": {
+              "menuRenderer": {
+                "accessibility": {
+                  "accessibilityData": {
+                    "label": "REDACTED_TEXT"
+                  }
+                },
+                "items": [
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "actions": [
+                            {
+                              "clickTrackingParams": "REDACTED_TOKEN",
+                              "hideEnclosingAction": {
+                                "hack": true
+                              }
+                            }
+                          ],
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "menuNavigationItemRenderer": {
+                      "icon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "shareEntityEndpoint": {
+                          "serializedShareEntity": "REDACTED_TEXT",
+                          "sharePanelType": "REDACTED_TEXT"
+                        }
+                      },
+                      "text": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "musicItemRendererDisplayPolicy": "REDACTED_TEXT",
+            "navigationEndpoint": {
+              "browseEndpoint": {
+                "browseEndpointContextSupportedConfigs": {
+                  "browseEndpointContextMusicConfig": {
+                    "pageType": "REDACTED_TEXT"
+                  }
+                },
+                "browseId": "REDACTED_ID"
+              },
+              "clickTrackingParams": "REDACTED_TOKEN"
+            },
+            "subtitle": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "thumbnailOverlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "background": {
+                  "verticalGradient": {
+                    "gradientLayerColors": [
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT"
+                    ]
+                  }
+                },
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "accessibilityPauseData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "accessibilityPlayData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "activeBackgroundColor": 4278190080,
+                    "activeScaleFactor": 1.2,
+                    "backgroundColor": 2566914048,
+                    "buttonSize": "REDACTED_TEXT",
+                    "iconColor": 4294967295,
+                    "iconLoadingColor": 1308622847,
+                    "loadingIndicatorColor": 14745645,
+                    "pauseIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playNavigationEndpoint": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "watchPlaylistEndpoint": {
+                        "playlistId": "REDACTED_ID"
+                      }
+                    },
+                    "playingIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "rippleTarget": "REDACTED_TEXT",
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "contentPosition": "REDACTED_TEXT",
+                "displayStyle": "REDACTED_TEXT"
+              }
+            },
+            "thumbnailRenderer": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "height": 226,
+                      "url": "https://example.invalid/redacted",
+                      "width": 226
+                    },
+                    {
+                      "height": 544,
+                      "url": "https://example.invalid/redacted",
+                      "width": 544
+                    }
+                  ]
+                },
+                "thumbnailCrop": "REDACTED_TEXT",
+                "thumbnailScale": "REDACTED_TEXT",
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "title": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        {
+          "musicTwoRowItemRenderer": {
+            "aspectRatio": "REDACTED_TEXT",
+            "menu": {
+              "menuRenderer": {
+                "accessibility": {
+                  "accessibilityData": {
+                    "label": "REDACTED_TEXT"
+                  }
+                },
+                "items": [
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "actions": [
+                            {
+                              "clickTrackingParams": "REDACTED_TOKEN",
+                              "hideEnclosingAction": {
+                                "hack": true
+                              }
+                            }
+                          ],
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "menuNavigationItemRenderer": {
+                      "icon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "shareEntityEndpoint": {
+                          "serializedShareEntity": "REDACTED_TEXT",
+                          "sharePanelType": "REDACTED_TEXT"
+                        }
+                      },
+                      "text": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "musicItemRendererDisplayPolicy": "REDACTED_TEXT",
+            "navigationEndpoint": {
+              "browseEndpoint": {
+                "browseEndpointContextSupportedConfigs": {
+                  "browseEndpointContextMusicConfig": {
+                    "pageType": "REDACTED_TEXT"
+                  }
+                },
+                "browseId": "REDACTED_ID"
+              },
+              "clickTrackingParams": "REDACTED_TOKEN"
+            },
+            "subtitle": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "thumbnailOverlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "background": {
+                  "verticalGradient": {
+                    "gradientLayerColors": [
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT"
+                    ]
+                  }
+                },
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "accessibilityPauseData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "accessibilityPlayData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "activeBackgroundColor": 4278190080,
+                    "activeScaleFactor": 1.2,
+                    "backgroundColor": 2566914048,
+                    "buttonSize": "REDACTED_TEXT",
+                    "iconColor": 4294967295,
+                    "iconLoadingColor": 1308622847,
+                    "loadingIndicatorColor": 14745645,
+                    "pauseIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playNavigationEndpoint": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "watchPlaylistEndpoint": {
+                        "playlistId": "REDACTED_ID"
+                      }
+                    },
+                    "playingIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "rippleTarget": "REDACTED_TEXT",
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "contentPosition": "REDACTED_TEXT",
+                "displayStyle": "REDACTED_TEXT"
+              }
+            },
+            "thumbnailRenderer": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "height": 226,
+                      "url": "https://example.invalid/redacted",
+                      "width": 226
+                    },
+                    {
+                      "height": 544,
+                      "url": "https://example.invalid/redacted",
+                      "width": 544
+                    }
+                  ]
+                },
+                "thumbnailCrop": "REDACTED_TEXT",
+                "thumbnailScale": "REDACTED_TEXT",
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "title": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        {
+          "musicTwoRowItemRenderer": {
+            "aspectRatio": "REDACTED_TEXT",
+            "menu": {
+              "menuRenderer": {
+                "accessibility": {
+                  "accessibilityData": {
+                    "label": "REDACTED_TEXT"
+                  }
+                },
+                "items": [
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "actions": [
+                            {
+                              "clickTrackingParams": "REDACTED_TOKEN",
+                              "hideEnclosingAction": {
+                                "hack": true
+                              }
+                            }
+                          ],
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "menuNavigationItemRenderer": {
+                      "icon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "shareEntityEndpoint": {
+                          "serializedShareEntity": "REDACTED_TEXT",
+                          "sharePanelType": "REDACTED_TEXT"
+                        }
+                      },
+                      "text": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "musicItemRendererDisplayPolicy": "REDACTED_TEXT",
+            "navigationEndpoint": {
+              "browseEndpoint": {
+                "browseEndpointContextSupportedConfigs": {
+                  "browseEndpointContextMusicConfig": {
+                    "pageType": "REDACTED_TEXT"
+                  }
+                },
+                "browseId": "REDACTED_ID"
+              },
+              "clickTrackingParams": "REDACTED_TOKEN"
+            },
+            "subtitle": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "thumbnailOverlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "background": {
+                  "verticalGradient": {
+                    "gradientLayerColors": [
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT"
+                    ]
+                  }
+                },
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "accessibilityPauseData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "accessibilityPlayData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "activeBackgroundColor": 4278190080,
+                    "activeScaleFactor": 1.2,
+                    "backgroundColor": 2566914048,
+                    "buttonSize": "REDACTED_TEXT",
+                    "iconColor": 4294967295,
+                    "iconLoadingColor": 1308622847,
+                    "loadingIndicatorColor": 14745645,
+                    "pauseIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playNavigationEndpoint": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "watchPlaylistEndpoint": {
+                        "playlistId": "REDACTED_ID"
+                      }
+                    },
+                    "playingIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "rippleTarget": "REDACTED_TEXT",
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "contentPosition": "REDACTED_TEXT",
+                "displayStyle": "REDACTED_TEXT"
+              }
+            },
+            "thumbnailRenderer": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "height": 226,
+                      "url": "https://example.invalid/redacted",
+                      "width": 226
+                    },
+                    {
+                      "height": 544,
+                      "url": "https://example.invalid/redacted",
+                      "width": 544
+                    }
+                  ]
+                },
+                "thumbnailCrop": "REDACTED_TEXT",
+                "thumbnailScale": "REDACTED_TEXT",
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "title": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        {
+          "musicTwoRowItemRenderer": {
+            "aspectRatio": "REDACTED_TEXT",
+            "menu": {
+              "menuRenderer": {
+                "accessibility": {
+                  "accessibilityData": {
+                    "label": "REDACTED_TEXT"
+                  }
+                },
+                "items": [
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "actions": [
+                            {
+                              "clickTrackingParams": "REDACTED_TOKEN",
+                              "hideEnclosingAction": {
+                                "hack": true
+                              }
+                            }
+                          ],
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "likeEndpoint": {
+                          "status": "REDACTED_TEXT",
+                          "target": {
+                            "playlistId": "REDACTED_ID"
+                          }
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "menuNavigationItemRenderer": {
+                      "icon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "shareEntityEndpoint": {
+                          "serializedShareEntity": "REDACTED_TEXT",
+                          "sharePanelType": "REDACTED_TEXT"
+                        }
+                      },
+                      "text": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  },
+                  {
+                    "toggleMenuServiceItemRenderer": {
+                      "defaultIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "defaultServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "defaultText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "toggledIcon": {
+                        "iconType": "REDACTED_TEXT"
+                      },
+                      "toggledServiceEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "feedbackEndpoint": {
+                          "feedbackToken": "REDACTED_TOKEN"
+                        }
+                      },
+                      "toggledText": {
+                        "runs": [
+                          {
+                            "text": "REDACTED_TEXT"
+                          }
+                        ]
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "musicItemRendererDisplayPolicy": "REDACTED_TEXT",
+            "navigationEndpoint": {
+              "browseEndpoint": {
+                "browseEndpointContextSupportedConfigs": {
+                  "browseEndpointContextMusicConfig": {
+                    "pageType": "REDACTED_TEXT"
+                  }
+                },
+                "browseId": "REDACTED_ID"
+              },
+              "clickTrackingParams": "REDACTED_TOKEN"
+            },
+            "subtitle": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "thumbnailOverlay": {
+              "musicItemThumbnailOverlayRenderer": {
+                "background": {
+                  "verticalGradient": {
+                    "gradientLayerColors": [
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT",
+                      "REDACTED_TEXT"
+                    ]
+                  }
+                },
+                "content": {
+                  "musicPlayButtonRenderer": {
+                    "accessibilityPauseData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "accessibilityPlayData": {
+                      "accessibilityData": {
+                        "label": "REDACTED_TEXT"
+                      }
+                    },
+                    "activeBackgroundColor": 4278190080,
+                    "activeScaleFactor": 1.2,
+                    "backgroundColor": 2566914048,
+                    "buttonSize": "REDACTED_TEXT",
+                    "iconColor": 4294967295,
+                    "iconLoadingColor": 1308622847,
+                    "loadingIndicatorColor": 14745645,
+                    "pauseIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "playNavigationEndpoint": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "watchPlaylistEndpoint": {
+                        "playlistId": "REDACTED_ID"
+                      }
+                    },
+                    "playingIcon": {
+                      "iconType": "REDACTED_TEXT"
+                    },
+                    "rippleTarget": "REDACTED_TEXT",
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "contentPosition": "REDACTED_TEXT",
+                "displayStyle": "REDACTED_TEXT"
+              }
+            },
+            "thumbnailRenderer": {
+              "musicThumbnailRenderer": {
+                "thumbnail": {
+                  "thumbnails": [
+                    {
+                      "height": 226,
+                      "url": "https://example.invalid/redacted",
+                      "width": 226
+                    },
+                    {
+                      "height": 544,
+                      "url": "https://example.invalid/redacted",
+                      "width": 544
+                    }
+                  ]
+                },
+                "thumbnailCrop": "REDACTED_TEXT",
+                "thumbnailScale": "REDACTED_TEXT",
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "title": {
+              "runs": [
+                {
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  },
+                  "text": "REDACTED_TEXT"
+                }
+              ]
+            },
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        }
+      ],
+      "trackingParams": "REDACTED_TOKEN"
+    }
+  },
+  "responseContext": {
+    "responseId": "REDACTED_ID",
+    "serviceTrackingParams": [
+      {
+        "params": [
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          }
+        ],
+        "service": "REDACTED_TEXT"
+      },
+      {
+        "params": [
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          }
+        ],
+        "service": "REDACTED_TEXT"
+      },
+      {
+        "params": [
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          }
+        ],
+        "service": "REDACTED_TEXT"
+      }
+    ]
+  },
+  "trackingParams": "REDACTED_TOKEN"
+}

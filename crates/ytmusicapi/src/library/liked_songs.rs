@@ -14,27 +14,35 @@ const LIKED_SONGS_PLAYLIST_ID: &str = "LM";
 const LIKED_SONGS_TITLE: &str = "Liked Songs";
 
 pub(crate) fn parse_liked_songs_response(response: &Value) -> Result<LikedSongsPage, Error> {
-    let sections = required_array_at(
+    let header_sections = required_array_at(
         response,
         "/contents/twoColumnBrowseResultsRenderer/tabs/0/tabRenderer/content/sectionListRenderer/contents",
         "library response missing liked songs sections",
     )?;
-    let header = sections
+    let item_sections = response
+        .pointer("/contents/twoColumnBrowseResultsRenderer/secondaryContents/sectionListRenderer/contents")
+        .and_then(Value::as_array)
+        .map(Vec::as_slice)
+        .unwrap_or(header_sections);
+    let header = header_sections
         .iter()
+        .chain(item_sections.iter())
         .find_map(|section| section.get("musicResponsiveHeaderRenderer"))
         .ok_or_else(|| Error::Parse("library response missing liked songs header".to_owned()))?;
-    let items = shelf_contents_or_empty(sections, "library response missing liked songs items")?;
+    let items =
+        shelf_contents_or_empty(item_sections, "library response missing liked songs items")?;
 
     Ok(LikedSongsPage {
         playlist_id: LIKED_SONGS_PLAYLIST_ID.to_owned(),
         title: required_runs_text(header, "/title/runs")?,
         items: items
             .iter()
+            .filter(|item| item.get("continuationItemRenderer").is_none())
             .map(parse_liked_song_item)
             .collect::<Result<Vec<_>, _>>()?,
         thumbnails: parse_thumbnails(header)?,
         continuation: shelf_continuation_or_empty(
-            sections,
+            item_sections,
             "library response missing liked songs items",
         )?,
     })
@@ -97,7 +105,8 @@ fn shelf_continuation_or_empty(
         if let Some(renderer) = section.get("musicPlaylistShelfRenderer") {
             return Ok(extract_continuation_token(renderer, |token| {
                 crate::LikedSongsContinuationToken::new(token)
-            }));
+            })
+            .or_else(|| continuation_item_token(renderer)));
         }
 
         let is_header_section = section.get("musicResponsiveHeaderRenderer").is_some();
@@ -110,6 +119,18 @@ fn shelf_continuation_or_empty(
     }
 
     Err(Error::Parse(missing_message.to_owned()))
+}
+
+fn continuation_item_token(renderer: &Value) -> Option<crate::LikedSongsContinuationToken> {
+    renderer
+        .pointer("/contents")
+        .and_then(Value::as_array)?
+        .iter()
+        .find_map(|item| {
+            item.pointer("/continuationItemRenderer/continuationEndpoint/continuationCommand/token")
+                .and_then(Value::as_str)
+        })
+        .map(crate::LikedSongsContinuationToken::new)
 }
 
 fn parse_liked_song_item(item: &Value) -> Result<LikedSongItem, Error> {

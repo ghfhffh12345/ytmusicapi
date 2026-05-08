@@ -171,6 +171,39 @@ fn empty_library_songs_response() -> serde_json::Value {
     })
 }
 
+async fn audit_client_with_browse_response(
+    body: &'static str,
+) -> (MockServer, tempfile::TempDir, YtMusic) {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(body))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    (server, dir, client)
+}
+
 fn library_songs_continuation_response() -> serde_json::Value {
     json!({
         "continuationContents": {
@@ -233,6 +266,41 @@ fn library_songs_continuation_response() -> serde_json::Value {
             }
         }
     })
+}
+
+#[tokio::test]
+async fn get_library_songs_parses_audit_first_page() {
+    let (_server, _dir, client) = audit_client_with_browse_response(include_str!(
+        "fixtures/audit/raw/library/songs/first_page.json"
+    ))
+    .await;
+
+    let songs = client.get_library_songs().await.unwrap();
+
+    assert_eq!(songs.items.len(), 25);
+    assert_eq!(
+        songs.continuation,
+        Some(LibrarySongsContinuationToken::new("REDACTED_TOKEN"))
+    );
+}
+
+#[tokio::test]
+async fn get_library_songs_parses_audit_continuation() {
+    let (_server, _dir, client) = audit_client_with_browse_response(include_str!(
+        "fixtures/audit/raw/library/songs/continuation.json"
+    ))
+    .await;
+
+    let songs = client
+        .get_library_songs_continuation(LibrarySongsContinuationToken::new("song-token-1"))
+        .await
+        .unwrap();
+
+    assert_eq!(songs.items.len(), 50);
+    assert_eq!(
+        songs.continuation,
+        Some(LibrarySongsContinuationToken::new("REDACTED_TOKEN"))
+    );
 }
 
 #[tokio::test]

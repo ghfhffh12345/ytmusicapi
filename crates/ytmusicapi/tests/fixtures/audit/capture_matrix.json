@@ -1,0 +1,348 @@
+{
+  "schemaVersion": 1,
+  "fixtureRoot": "crates/ytmusicapi/tests/fixtures",
+  "auditRawRoot": "crates/ytmusicapi/tests/fixtures/audit/raw",
+  "notes": [
+    "Historical live capture matrix retained as durable response-shape audit metadata.",
+    "Authenticated captures use repo-root browser.json when present.",
+    "Continuation fixtures are captured only after a public first-page method returns its matching typed continuation token.",
+    "get_song captures use signatureTimestamp 20577."
+  ],
+  "methods": [
+    {
+      "method": "search",
+      "auth": "anonymous",
+      "variants": [
+        {
+          "name": "default_mixed_first_page",
+          "required": true,
+          "query": "abba",
+          "fixture": "audit/raw/search/default_mixed.json",
+          "captured": true
+        },
+        {
+          "name": "default_mixed_continuation",
+          "required": false,
+          "query": "abba",
+          "fixture": null,
+          "captured": false,
+          "notes": "The current live first page returned no continuation token, so no audit continuation fixture was written."
+        },
+        {
+          "name": "albums_first_page",
+          "required": true,
+          "query": "abba",
+          "filter": "Albums",
+          "fixture": "audit/raw/search/albums.json",
+          "captured": true,
+          "parseStatus": "captured_then_parse_error",
+          "notes": "Current parser rejected at least one live album item shape before a typed continuation token could be used."
+        },
+        {
+          "name": "albums_continuation",
+          "required": false,
+          "query": "abba",
+          "filter": "Albums",
+          "fixture": null,
+          "captured": false,
+          "notes": "No continuation call was made because the first-page parse did not return a typed continuation token."
+        },
+        {
+          "name": "artists_first_page",
+          "required": true,
+          "query": "abba",
+          "filter": "Artists",
+          "fixture": "audit/raw/search/artists.json",
+          "captured": true
+        },
+        {
+          "name": "artists_continuation",
+          "required": false,
+          "query": "abba",
+          "filter": "Artists",
+          "fixture": "audit/raw/search/artists_continuation.json",
+          "captured": true
+        },
+        {
+          "name": "playlists_first_page",
+          "required": true,
+          "query": "abba",
+          "filter": "Playlists",
+          "fixture": "audit/raw/search/playlists.json",
+          "captured": true
+        },
+        {
+          "name": "playlists_continuation",
+          "required": false,
+          "query": "abba",
+          "filter": "Playlists",
+          "fixture": "audit/raw/search/playlists_continuation.json",
+          "captured": true
+        },
+        {
+          "name": "songs_first_page",
+          "required": true,
+          "query": "abba",
+          "filter": "Songs",
+          "fixture": "audit/raw/search/songs.json",
+          "captured": true
+        },
+        {
+          "name": "songs_continuation",
+          "required": false,
+          "query": "abba",
+          "filter": "Songs",
+          "fixture": null,
+          "captured": false,
+          "notes": "The current live first page returned no continuation token."
+        },
+        {
+          "name": "videos_first_page",
+          "required": true,
+          "query": "abba",
+          "filter": "Videos",
+          "fixture": "audit/raw/search/videos.json",
+          "captured": true
+        },
+        {
+          "name": "videos_continuation",
+          "required": false,
+          "query": "abba",
+          "filter": "Videos",
+          "fixture": null,
+          "captured": false,
+          "notes": "The current live first page returned no continuation token."
+        }
+      ]
+    },
+    {
+      "method": "search",
+      "auth": "browser",
+      "variants": [
+        {
+          "name": "songs_authenticated_first_page",
+          "required": true,
+          "query": "abba",
+          "filter": "Songs",
+          "fixture": "audit/raw/search/songs_authenticated.json",
+          "captured": true
+        },
+        {
+          "name": "songs_authenticated_continuation",
+          "required": false,
+          "query": "abba",
+          "filter": "Songs",
+          "fixture": "audit/raw/search/songs_authenticated_continuation.json",
+          "captured": true
+        },
+        {
+          "name": "videos_authenticated_first_page",
+          "required": true,
+          "query": "abba",
+          "filter": "Videos",
+          "fixture": "audit/raw/search/videos_authenticated.json",
+          "captured": true
+        },
+        {
+          "name": "videos_authenticated_continuation",
+          "required": false,
+          "query": "abba",
+          "filter": "Videos",
+          "fixture": "audit/raw/search/videos_authenticated_continuation.json",
+          "captured": true
+        }
+      ]
+    },
+    {
+      "method": "get_watch_playlist",
+      "auth": "anonymous",
+      "variants": [
+        {
+          "name": "watch_first_page",
+          "required": true,
+          "fixture": "audit/raw/watch/first_page.json",
+          "captured": true
+        },
+        {
+          "name": "watch_continuation",
+          "required": false,
+          "fixture": "audit/raw/watch/continuation.json",
+          "captured": true,
+          "parseStatus": "captured_then_parse_error",
+          "notes": "The first page returned a typed token; the continuation raw response was saved, then the current parser rejected its live shape."
+        },
+        {
+          "name": "watch_radio_first_page",
+          "required": true,
+          "fixture": "audit/raw/watch/radio_first_page.json",
+          "captured": true
+        },
+        {
+          "name": "watch_shuffle_first_page",
+          "required": true,
+          "fixture": "audit/raw/watch/shuffle_first_page.json",
+          "captured": true
+        }
+      ]
+    },
+    {
+      "method": "get_song",
+      "auth": "anonymous",
+      "signatureTimestamp": 20577,
+      "variants": [
+        {
+          "name": "song_response1",
+          "required": true,
+          "fixture": "audit/raw/song/response1.json",
+          "captured": true,
+          "parseStatus": "captured_then_parse_error",
+          "notes": "Live player response did not include the streamingData shape currently required by the parser."
+        },
+        {
+          "name": "song_response2",
+          "required": true,
+          "fixture": "audit/raw/song/response2.json",
+          "captured": true,
+          "parseStatus": "captured_then_parse_error",
+          "notes": "Live player response did not include the streamingData shape currently required by the parser."
+        },
+        {
+          "name": "song_response3",
+          "required": true,
+          "fixture": "audit/raw/song/response3.json",
+          "captured": true,
+          "parseStatus": "captured_then_parse_error",
+          "notes": "Live player response did not include the streamingData shape currently required by the parser."
+        }
+      ]
+    },
+    {
+      "method": "get_account_info",
+      "auth": "browser",
+      "variants": [
+        {
+          "name": "account_info",
+          "required": true,
+          "fixture": "audit/raw/account/account_info.json",
+          "captured": true
+        }
+      ]
+    },
+    {
+      "method": "library",
+      "auth": "browser",
+      "variants": [
+        {
+          "name": "playlists_first_page",
+          "required": true,
+          "fixture": "audit/raw/library/playlists/first_page.json",
+          "captured": true
+        },
+        {
+          "name": "playlists_continuation",
+          "required": false,
+          "fixture": "audit/raw/library/playlists/continuation.json",
+          "captured": true
+        },
+        {
+          "name": "artists_first_page",
+          "required": true,
+          "fixture": "audit/raw/library/artists/first_page.json",
+          "captured": true
+        },
+        {
+          "name": "artists_continuation",
+          "required": false,
+          "fixture": "audit/raw/library/artists/continuation.json",
+          "captured": true
+        },
+        {
+          "name": "albums_first_page",
+          "required": true,
+          "fixture": "audit/raw/library/albums/first_page.json",
+          "captured": true
+        },
+        {
+          "name": "albums_continuation",
+          "required": false,
+          "fixture": "audit/raw/library/albums/continuation.json",
+          "captured": true
+        },
+        {
+          "name": "subscriptions_first_page",
+          "required": true,
+          "fixture": "audit/raw/library/subscriptions/first_page.json",
+          "captured": true
+        },
+        {
+          "name": "subscriptions_continuation",
+          "required": false,
+          "fixture": "audit/raw/library/subscriptions/continuation.json",
+          "captured": true
+        },
+        {
+          "name": "channels_first_page",
+          "required": true,
+          "fixture": "audit/raw/library/channels/first_page.json",
+          "captured": true
+        },
+        {
+          "name": "channels_continuation",
+          "required": false,
+          "fixture": "audit/raw/library/channels/continuation.json",
+          "captured": true
+        },
+        {
+          "name": "podcasts_first_page",
+          "required": true,
+          "fixture": "audit/raw/library/podcasts/first_page.json",
+          "captured": true
+        },
+        {
+          "name": "podcasts_continuation",
+          "required": false,
+          "fixture": "audit/raw/library/podcasts/continuation.json",
+          "captured": true
+        },
+        {
+          "name": "songs_first_page",
+          "required": true,
+          "fixture": "audit/raw/library/songs/first_page.json",
+          "captured": true
+        },
+        {
+          "name": "songs_continuation",
+          "required": false,
+          "fixture": "audit/raw/library/songs/continuation.json",
+          "captured": true
+        },
+        {
+          "name": "liked_songs_first_page",
+          "required": true,
+          "fixture": "audit/raw/library/liked_songs/first_page.json",
+          "captured": true
+        },
+        {
+          "name": "liked_songs_continuation",
+          "required": false,
+          "fixture": null,
+          "captured": false,
+          "notes": "The current live first page returned no continuation token for this account."
+        },
+        {
+          "name": "saved_episodes_first_page",
+          "required": true,
+          "fixture": "audit/raw/library/saved_episodes/first_page.json",
+          "captured": true
+        },
+        {
+          "name": "saved_episodes_continuation",
+          "required": false,
+          "fixture": null,
+          "captured": false,
+          "notes": "The current live first page returned no continuation token for this account."
+        }
+      ]
+    }
+  ]
+}

@@ -80,6 +80,39 @@ fn empty_library_playlists_response() -> serde_json::Value {
     })
 }
 
+async fn audit_client_with_browse_response(
+    body: &'static str,
+) -> (MockServer, tempfile::TempDir, YtMusic) {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/browse"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(body))
+        .mount(&server)
+        .await;
+
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("browser.json");
+    fs::write(&path, browser_auth_json()).unwrap();
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .browser_auth_path(&path)
+        .build()
+        .unwrap();
+
+    (server, dir, client)
+}
+
 #[tokio::test]
 async fn get_library_playlists_returns_page_and_continuation() {
     let server = MockServer::start().await;
@@ -180,6 +213,40 @@ async fn get_library_playlists_returns_page_and_continuation() {
             continuation: Some(LibraryPlaylistsContinuationToken::new("playlist-token-1")),
         }
     );
+}
+
+#[tokio::test]
+async fn get_library_playlists_parses_audit_first_page_with_create_control_tile() {
+    let (_server, _dir, client) = audit_client_with_browse_response(include_str!(
+        "fixtures/audit/raw/library/playlists/first_page.json"
+    ))
+    .await;
+
+    let playlists = client.get_library_playlists().await.unwrap();
+
+    assert_eq!(playlists.items.len(), 25);
+    assert_eq!(
+        playlists.continuation,
+        Some(LibraryPlaylistsContinuationToken::new("REDACTED_TOKEN"))
+    );
+}
+
+#[tokio::test]
+async fn get_library_playlists_audit_continuation_is_terminal() {
+    let (_server, _dir, client) = audit_client_with_browse_response(include_str!(
+        "fixtures/audit/raw/library/playlists/continuation.json"
+    ))
+    .await;
+
+    let playlists = client
+        .get_library_playlists_continuation(LibraryPlaylistsContinuationToken::new(
+            "playlist-token-1",
+        ))
+        .await
+        .unwrap();
+
+    assert_eq!(playlists.items.len(), 12);
+    assert_eq!(playlists.continuation, None);
 }
 
 #[tokio::test]

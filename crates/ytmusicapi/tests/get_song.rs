@@ -34,11 +34,12 @@ fn get_song_response_serializes_camel_case_and_omits_optional_fields() {
         playability_status: SongPlayabilityStatus {
             status: "OK".to_owned(),
             playable_in_embed: true,
+            reason: None,
             context_params: Some("Q0FFU0FnZ0I=".to_owned()),
             audio_only_availability: Some("FEATURE_AVAILABILITY_ALLOWED".to_owned()),
             playback_mode: Some("PLAYBACK_MODE_ALLOW".to_owned()),
         },
-        streaming_data: SongStreamingData {
+        streaming_data: Some(SongStreamingData {
             expires_in_seconds: 21_540,
             server_abr_streaming_url: None,
             formats: vec![SongStreamFormat {
@@ -107,7 +108,7 @@ fn get_song_response_serializes_camel_case_and_omits_optional_fields() {
                 }),
                 signature_cipher: "s=def&sp=sig&url=https%3A%2F%2Fexample.com".to_owned(),
             }],
-        },
+        }),
         microformat: Some(SongMicroformat {
             url_canonical: Some("https://music.youtube.com/watch?v=video-1".to_owned()),
             description: Some("Artist".to_owned()),
@@ -195,7 +196,7 @@ async fn get_song_posts_player_body_and_returns_typed_response() {
     let response = client.get_song("0rilIYWiJ7M", 20_000).await.unwrap();
 
     assert_eq!(response.video_details.video_id, "0rilIYWiJ7M");
-    assert_eq!(response.streaming_data.formats.len(), 1);
+    assert_eq!(response.streaming_data.as_ref().unwrap().formats.len(), 1);
 
     let requests = server.received_requests().await.unwrap();
     let request = requests
@@ -216,4 +217,42 @@ async fn get_song_posts_player_body_and_returns_typed_response() {
         body["context"]["client"]["clientVersion"],
         "1.20250501.01.00"
     );
+}
+
+#[tokio::test]
+async fn get_song_accepts_audit_unplayable_metadata_without_streaming_data() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.01.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/player"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/audit/raw/song/response1.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let response = client.get_song("4y33h81phKU", 20_000).await.unwrap();
+
+    assert_eq!(response.video_details.video_id, "4y33h81phKU");
+    assert_eq!(response.playability_status.status, "UNPLAYABLE");
+    assert_eq!(
+        response.playability_status.reason.as_deref(),
+        Some("This video is only available to Music Premium members")
+    );
+    assert!(response.streaming_data.is_none());
 }

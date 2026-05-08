@@ -1,0 +1,345 @@
+{
+  "actions": [
+    {
+      "clickTrackingParams": "REDACTED_TOKEN",
+      "openPopupAction": {
+        "popup": {
+          "multiPageMenuRenderer": {
+            "header": {
+              "activeAccountHeaderRenderer": {
+                "accountName": {
+                  "runs": [
+                    {
+                      "text": "REDACTED_TEXT"
+                    }
+                  ]
+                },
+                "accountPhoto": {
+                  "thumbnails": [
+                    {
+                      "height": 108,
+                      "url": "https://example.invalid/redacted",
+                      "width": 108
+                    }
+                  ]
+                },
+                "channelHandle": {
+                  "runs": [
+                    {
+                      "text": "REDACTED_TEXT"
+                    }
+                  ]
+                },
+                "manageAccountTitle": {
+                  "runs": [
+                    {
+                      "navigationEndpoint": {
+                        "clickTrackingParams": "REDACTED_TOKEN",
+                        "urlEndpoint": {
+                          "target": "REDACTED_TEXT",
+                          "url": "https://example.invalid/redacted"
+                        }
+                      },
+                      "text": "REDACTED_TEXT"
+                    }
+                  ]
+                },
+                "settingsEndpoint": {
+                  "applicationSettingsEndpoint": {
+                    "hack": true
+                  },
+                  "clickTrackingParams": "REDACTED_TOKEN"
+                },
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "sections": [
+              {
+                "multiPageMenuSectionRenderer": {
+                  "items": [
+                    {
+                      "compactLinkRenderer": {
+                        "icon": {
+                          "iconType": "REDACTED_TEXT"
+                        },
+                        "navigationEndpoint": {
+                          "browseEndpoint": {
+                            "browseEndpointContextSupportedConfigs": {
+                              "browseEndpointContextMusicConfig": {
+                                "pageType": "REDACTED_TEXT"
+                              }
+                            },
+                            "browseId": "REDACTED_ID",
+                            "canonicalBaseUrl": "https://example.invalid/redacted"
+                          },
+                          "clickTrackingParams": "REDACTED_TOKEN"
+                        },
+                        "title": {
+                          "runs": [
+                            {
+                              "text": "REDACTED_TEXT"
+                            }
+                          ]
+                        },
+                        "trackingParams": "REDACTED_TOKEN"
+                      }
+                    },
+                    {
+                      "compactLinkRenderer": {
+                        "icon": {
+                          "iconType": "REDACTED_TEXT"
+                        },
+                        "navigationEndpoint": {
+                          "browseEndpoint": {
+                            "browseId": "REDACTED_ID",
+                            "params": "REDACTED_TOKEN"
+                          },
+                          "clickTrackingParams": "REDACTED_TOKEN"
+                        },
+                        "title": {
+                          "runs": [
+                            {
+                              "text": "REDACTED_TEXT"
+                            }
+                          ]
+                        },
+                        "trackingParams": "REDACTED_TOKEN"
+                      }
+                    },
+                    {
+                      "compactLinkRenderer": {
+                        "icon": {
+                          "iconType": "REDACTED_TEXT"
+                        },
+                        "secondaryIcon": {
+                          "iconType": "REDACTED_TEXT"
+                        },
+                        "serviceEndpoint": {
+                          "clickTrackingParams": "REDACTED_TOKEN",
+                          "getAccountSwitcherEndpoint": {
+                            "hack": true
+                          }
+                        },
+                        "title": {
+                          "runs": [
+                            {
+                              "text": "REDACTED_TEXT"
+                            }
+                          ]
+                        },
+                        "trackingParams": "REDACTED_TOKEN"
+                      }
+                    },
+                    {
+                      "compactLinkRenderer": {
+                        "icon": {
+                          "iconType": "REDACTED_TEXT"
+                        },
+                        "navigationEndpoint": {
+                          "clickTrackingParams": "REDACTED_TOKEN",
+                          "signOutEndpoint": {
+                            "hack": true
+                          }
+                        },
+                        "title": {
+                          "runs": [
+                            {
+                              "text": "REDACTED_TEXT"
+                            }
+                          ]
+                        },
+                        "trackingParams": "REDACTED_TOKEN"
+                      }
+                    }
+                  ],
+                  "trackingParams": "REDACTED_TOKEN"
+                }
+              },
+              {
+                "multiPageMenuSectionRenderer": {
+                  "items": [
+                    {
+                      "compactLinkRenderer": {
+                        "icon": {
+                          "iconType": "REDACTED_TEXT"
+                        },
+                        "navigationEndpoint": {
+                          "browseEndpoint": {
+                            "browseId": "REDACTED_ID"
+                          },
+                          "clickTrackingParams": "REDACTED_TOKEN"
+                        },
+                        "title": {
+                          "runs": [
+                            {
+                              "text": "REDACTED_TEXT"
+                            }
+                          ]
+                        },
+                        "trackingParams": "REDACTED_TOKEN"
+                      }
+                    },
+                    {
+                      "compactLinkRenderer": {
+                        "icon": {
+                          "iconType": "REDACTED_TEXT"
+                        },
+                        "navigationEndpoint": {
+                          "applicationSettingsEndpoint": {
+                            "hack": true
+                          },
+                          "clickTrackingParams": "REDACTED_TOKEN"
+                        },
+                        "title": {
+                          "runs": [
+                            {
+                              "text": "REDACTED_TEXT"
+                            }
+                          ]
+                        },
+                        "trackingParams": "REDACTED_TOKEN"
+                      }
+                    },
+                    {
+                      "compactLinkRenderer": {
+                        "icon": {
+                          "iconType": "REDACTED_TEXT"
+                        },
+                        "navigationEndpoint": {
+                          "clickTrackingParams": "REDACTED_TOKEN",
+                          "urlEndpoint": {
+                            "url": "https://example.invalid/redacted"
+                          }
+                        },
+                        "title": {
+                          "runs": [
+                            {
+                              "text": "REDACTED_TEXT"
+                            }
+                          ]
+                        },
+                        "trackingParams": "REDACTED_TOKEN"
+                      }
+                    },
+                    {
+                      "compactLinkRenderer": {
+                        "icon": {
+                          "iconType": "REDACTED_TEXT"
+                        },
+                        "serviceEndpoint": {
+                          "clickTrackingParams": "REDACTED_TOKEN",
+                          "signalServiceEndpoint": {
+                            "actions": [
+                              {
+                                "clickTrackingParams": "REDACTED_TOKEN",
+                                "signalAction": {
+                                  "signal": "REDACTED_TEXT"
+                                }
+                              }
+                            ],
+                            "signal": "REDACTED_TEXT"
+                          }
+                        },
+                        "title": {
+                          "runs": [
+                            {
+                              "text": "REDACTED_TEXT"
+                            }
+                          ]
+                        },
+                        "trackingParams": "REDACTED_TOKEN"
+                      }
+                    },
+                    {
+                      "compactLinkRenderer": {
+                        "icon": {
+                          "iconType": "REDACTED_TEXT"
+                        },
+                        "serviceEndpoint": {
+                          "clickTrackingParams": "REDACTED_TOKEN",
+                          "signalServiceEndpoint": {
+                            "actions": [
+                              {
+                                "clickTrackingParams": "REDACTED_TOKEN",
+                                "sendFeedbackAction": {
+                                  "bucket": "REDACTED_TEXT"
+                                }
+                              }
+                            ],
+                            "signal": "REDACTED_TEXT"
+                          }
+                        },
+                        "title": {
+                          "runs": [
+                            {
+                              "text": "REDACTED_TEXT"
+                            }
+                          ]
+                        },
+                        "trackingParams": "REDACTED_TOKEN"
+                      }
+                    }
+                  ],
+                  "trackingParams": "REDACTED_TOKEN"
+                }
+              }
+            ],
+            "style": "REDACTED_TEXT",
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        "popupType": "REDACTED_TEXT",
+        "reusePopup": true
+      }
+    }
+  ],
+  "responseContext": {
+    "responseId": "REDACTED_ID",
+    "serviceTrackingParams": [
+      {
+        "params": [
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          }
+        ],
+        "service": "REDACTED_TEXT"
+      },
+      {
+        "params": [
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          }
+        ],
+        "service": "REDACTED_TEXT"
+      },
+      {
+        "params": [
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          }
+        ],
+        "service": "REDACTED_TEXT"
+      }
+    ]
+  },
+  "trackingParams": "REDACTED_TOKEN"
+}

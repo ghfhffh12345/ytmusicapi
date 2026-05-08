@@ -121,7 +121,7 @@ fn parse_filtered_search_continuation_item(
     let has_artist_browse_id = browse_id.is_some_and(|browse_id| browse_id.starts_with("UC"));
     let has_views = metadata_parts.iter().any(|part| {
         required_text(part, "/text")
-            .map(|text| text.to_ascii_lowercase().contains("views"))
+            .map(|text| looks_like_views(&text))
             .unwrap_or(false)
     });
     let has_subscribers_or_audience = metadata_parts.iter().any(|part| {
@@ -132,6 +132,14 @@ fn parse_filtered_search_continuation_item(
             })
             .unwrap_or(false)
     });
+    let browse_link_count = metadata_parts
+        .iter()
+        .filter(|part| {
+            part.pointer("/navigationEndpoint/browseEndpoint/browseId")
+                .and_then(Value::as_str)
+                .is_some()
+        })
+        .count();
     let has_album_link = metadata_parts.iter().skip(1).any(|part| {
         part.pointer("/navigationEndpoint/browseEndpoint/browseId")
             .and_then(Value::as_str)
@@ -144,6 +152,12 @@ fn parse_filtered_search_continuation_item(
     let inferred_filter = match leading_text.as_deref() {
         Some("Album" | "Single" | "EP") => SearchFilter::Albums,
         _ if has_video_id && has_views => SearchFilter::Videos,
+        _ if has_video_id
+            && browse_link_count == 1
+            && !trailing_text.as_deref().is_some_and(looks_like_duration) =>
+        {
+            SearchFilter::Videos
+        }
         _ if has_video_id
             && (has_album_link || trailing_text.as_deref().is_some_and(looks_like_duration)) =>
         {
@@ -300,7 +314,7 @@ fn parse_shelf_item(item: &Value, category: Option<String>) -> Result<SearchResu
         "Album" | "Single" | "EP" => parse_album_result(renderer, category, title, &metadata_parts),
         "Song" => parse_song_result(renderer, category, title, &metadata_parts),
         "Video" => parse_video_result(renderer, category, title, &metadata_parts),
-        "Artist" => parse_artist_result(renderer, category, title, &metadata_parts, false),
+        "Artist" => parse_artist_result(renderer, category, title, &metadata_parts, true, false),
         "Profile" => parse_profile_result(renderer, category, title, &metadata_parts),
         "Playlist" => parse_playlist_result(renderer, category, title, &metadata_parts, true),
         "Episode" => parse_episode_result(renderer, category, title, &metadata_parts),
@@ -332,7 +346,7 @@ fn parse_filtered_shelf_item(
         SearchFilter::Videos => parse_video_result(renderer, category, title, &metadata_parts),
         SearchFilter::Albums => parse_album_result(renderer, category, title, &metadata_parts),
         SearchFilter::Artists => {
-            parse_artist_result(renderer, category, title, &metadata_parts, true)
+            parse_artist_result(renderer, category, title, &metadata_parts, true, true)
         }
         SearchFilter::Playlists => {
             parse_playlist_result(renderer, category, title, &metadata_parts, false)
@@ -346,13 +360,32 @@ fn parse_album_result(
     title: String,
     metadata_parts: &[&Value],
 ) -> Result<SearchResult, Error> {
-    let artist_run = metadata_parts
-        .get(1)
-        .ok_or_else(|| Error::Parse("search response missing album artist".to_owned()))?;
-    let year = metadata_parts
-        .get(2)
+    let type_label = metadata_parts
+        .first()
         .map(|run| required_text(run, "/text"))
-        .transpose()?;
+        .transpose()?
+        .ok_or_else(|| Error::Parse("search response missing album type label".to_owned()))?;
+    let year = metadata_parts
+        .iter()
+        .filter_map(|run| required_text(run, "/text").ok())
+        .find(|text| looks_like_year(text));
+    let artists = metadata_parts
+        .iter()
+        .skip(1)
+        .filter_map(|run| {
+            let text = required_text(run, "/text").ok()?;
+            let trimmed = text.trim();
+            if trimmed == "&" || looks_like_year(trimmed) {
+                return None;
+            }
+
+            Some(ArtistRef {
+                id: optional_text_at(run, "/navigationEndpoint/browseEndpoint/browseId")
+                    .unwrap_or_default(),
+                name: text,
+            })
+        })
+        .collect();
 
     Ok(SearchResult::Album(AlbumResult {
         category,
@@ -363,11 +396,11 @@ fn parse_album_result(
             "/overlay/musicItemThumbnailOverlayRenderer/content/musicPlayButtonRenderer/playNavigationEndpoint/watchPlaylistEndpoint/playlistId",
         ),
         title,
-        type_label: required_text(metadata_parts[0], "/text")?,
+        type_label,
         year,
         duration: None,
         is_explicit: has_explicit_badge(renderer),
-        artists: vec![parse_artist_ref(artist_run)?],
+        artists,
         thumbnails: parse_thumbnails(renderer)?,
     }))
 }
@@ -411,7 +444,7 @@ fn parse_video_result(
         thumbnails: parse_thumbnails(renderer)?,
         duration: metadata.duration,
         views: metadata.views,
-        date: None,
+        date: metadata.date,
         podcast: None,
         live: None,
     }))
@@ -423,6 +456,7 @@ fn parse_artist_result(
     title: String,
     metadata_parts: &[&Value],
     preserve_subscribers: bool,
+    preserve_monthly_audience: bool,
 ) -> Result<SearchResult, Error> {
     let browse_id = required_text(renderer, "/navigationEndpoint/browseEndpoint/browseId")?;
     let subscribers = preserve_subscribers
@@ -431,6 +465,13 @@ fn parse_artist_result(
                 .get(1)
                 .map(|run| required_text(run, "/text"))
                 .transpose()
+                .map(|text| {
+                    text.filter(|value| {
+                        let value = value.to_ascii_lowercase();
+                        value.contains("subscriber")
+                            || (preserve_monthly_audience && value.contains("monthly audience"))
+                    })
+                })
         })
         .transpose()?
         .flatten();
@@ -585,6 +626,7 @@ struct ParsedMediaMetadata {
     album: Option<AlbumRef>,
     duration: Option<String>,
     views: Option<String>,
+    date: Option<String>,
 }
 
 fn parse_media_metadata(metadata_parts: &[&Value]) -> ParsedMediaMetadata {
@@ -593,6 +635,7 @@ fn parse_media_metadata(metadata_parts: &[&Value]) -> ParsedMediaMetadata {
         album: None,
         duration: None,
         views: None,
+        date: None,
     };
 
     for part in metadata_parts {
@@ -627,8 +670,10 @@ fn parse_media_metadata(metadata_parts: &[&Value]) -> ParsedMediaMetadata {
 
         if parsed.duration.is_none() && looks_like_duration(text) {
             parsed.duration = Some(text.to_owned());
-        } else if parsed.views.is_none() && text.to_ascii_lowercase().contains("view") {
+        } else if parsed.views.is_none() && looks_like_views(text) {
             parsed.views = Some(text.to_owned());
+        } else if parsed.date.is_none() && looks_like_publish_date(text) {
+            parsed.date = Some(text.to_owned());
         }
     }
 
@@ -741,6 +786,38 @@ fn looks_like_duration(value: &str) -> bool {
     }
 
     count >= 2
+}
+
+fn looks_like_views(value: &str) -> bool {
+    let value = value.trim().to_ascii_lowercase();
+    let Some(count) = value
+        .strip_suffix(" views")
+        .or_else(|| value.strip_suffix(" view"))
+    else {
+        return false;
+    };
+
+    let count = count.trim();
+    !count.is_empty() && (count == "no" || count.chars().any(|ch| ch.is_ascii_digit()))
+}
+
+fn looks_like_year(value: &str) -> bool {
+    value.len() == 4 && value.bytes().all(|byte| byte.is_ascii_digit())
+}
+
+fn looks_like_publish_date(value: &str) -> bool {
+    let mut parts = value.rsplitn(2, ' ');
+    let Some(year) = parts.next() else {
+        return false;
+    };
+
+    value.contains(',')
+        && year.len() == 4
+        && year.bytes().all(|byte| byte.is_ascii_digit())
+        && value
+            .chars()
+            .next()
+            .is_some_and(|ch| ch.is_ascii_alphabetic())
 }
 
 fn optional_runs_text_at(value: &Value, pointer: &str) -> Option<String> {
@@ -966,9 +1043,17 @@ mod tests {
     }
 
     fn expected_default_mixed() -> Value {
-        expected_fixture(include_str!(
+        let mut expected = expected_fixture(include_str!(
             "../../tests/fixtures/search/expected/default_mixed.json"
-        ))
+        ));
+        if let Some(items) = expected.as_array_mut() {
+            if let Some(artist) = items.iter_mut().find(|item| {
+                item.get("artist").and_then(Value::as_str) == Some("Daft Punk's Karaoke Band")
+            }) {
+                artist["subscribers"] = json!("2 subscribers");
+            }
+        }
+        expected
     }
 
     fn expected_albums() -> Value {
@@ -1160,6 +1245,137 @@ mod tests {
             parsed.continuation,
             Some(SearchContinuationToken::new("songs-token-2"))
         );
+    }
+
+    #[test]
+    fn filtered_song_continuation_keeps_unknown_browse_links_as_artists() {
+        let response = json!({
+            "continuationContents": {
+                "musicShelfContinuation": {
+                    "contents": [{
+                        "musicResponsiveListItemRenderer": {
+                            "flexColumns": [
+                                {
+                                    "musicResponsiveListItemFlexColumnRenderer": {
+                                        "text": { "runs": [{ "text": "Structural Song" }] }
+                                    }
+                                },
+                                {
+                                    "musicResponsiveListItemFlexColumnRenderer": {
+                                        "text": {
+                                            "runs": [
+                                                {
+                                                    "text": "Structural Artist",
+                                                    "navigationEndpoint": { "browseEndpoint": { "browseId": "UCstructuralartist" } }
+                                                },
+                                                { "text": " • " },
+                                                {
+                                                    "text": "Structural Collaborator",
+                                                    "navigationEndpoint": { "browseEndpoint": { "browseId": "BROWSEstructuralcollaborator" } }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            "overlay": {
+                                "musicItemThumbnailOverlayRenderer": {
+                                    "content": {
+                                        "musicPlayButtonRenderer": {
+                                            "playNavigationEndpoint": {
+                                                "watchEndpoint": { "videoId": "structural-song-video" }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "thumbnail": {
+                                "musicThumbnailRenderer": {
+                                    "thumbnail": {
+                                        "thumbnails": [{ "url": "https://example.com/structural-song.jpg", "width": 60, "height": 60 }]
+                                    }
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let parsed = parse_search_continuation_response(&response).unwrap();
+
+        assert!(matches!(
+            &parsed.items[0],
+            SearchResult::Song(result)
+                if result.artists.iter().map(|artist| artist.name.as_str()).collect::<Vec<_>>()
+                    == vec!["Structural Artist", "Structural Collaborator"]
+                    && result.album.is_none()
+        ));
+    }
+
+    #[test]
+    fn filtered_video_continuation_infers_singular_view_count_as_video() {
+        let response = json!({
+            "continuationContents": {
+                "musicShelfContinuation": {
+                    "contents": [{
+                        "musicResponsiveListItemRenderer": {
+                            "flexColumns": [
+                                {
+                                    "musicResponsiveListItemFlexColumnRenderer": {
+                                        "text": { "runs": [{ "text": "Structural Video" }] }
+                                    }
+                                },
+                                {
+                                    "musicResponsiveListItemFlexColumnRenderer": {
+                                        "text": {
+                                            "runs": [
+                                                {
+                                                    "text": "Structural Artist",
+                                                    "navigationEndpoint": { "browseEndpoint": { "browseId": "UCstructuralartist" } }
+                                                },
+                                                { "text": " • " },
+                                                { "text": "1 view" },
+                                                { "text": " • " },
+                                                { "text": "1:23" }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            "overlay": {
+                                "musicItemThumbnailOverlayRenderer": {
+                                    "content": {
+                                        "musicPlayButtonRenderer": {
+                                            "playNavigationEndpoint": {
+                                                "watchEndpoint": { "videoId": "structural-video" }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "thumbnail": {
+                                "musicThumbnailRenderer": {
+                                    "thumbnail": {
+                                        "thumbnails": [{ "url": "https://example.com/structural-video.jpg", "width": 60, "height": 60 }]
+                                    }
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let parsed = parse_search_continuation_response(&response).unwrap();
+
+        assert!(matches!(
+            &parsed.items[0],
+            SearchResult::Video(result)
+                if result.video_id == "structural-video"
+                    && result.views.as_deref() == Some("1 view")
+                    && result.duration.as_deref() == Some("1:23")
+        ));
     }
 
     #[test]

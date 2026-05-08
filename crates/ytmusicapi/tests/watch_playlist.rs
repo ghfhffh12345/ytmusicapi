@@ -342,6 +342,57 @@ async fn get_watch_playlist_continuation_posts_continuation_body_and_returns_pag
 }
 
 #[tokio::test]
+async fn audit_watch_playlist_continuation_allows_missing_contents_and_preserves_token() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/next"))
+        .and(|request: &Request| {
+            serde_json::from_slice::<Value>(&request.body)
+                .ok()
+                .and_then(|body| {
+                    body.get("continuation")
+                        .and_then(Value::as_str)
+                        .map(str::to_owned)
+                })
+                == Some("watch-token-1".to_owned())
+        })
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/audit/raw/watch/continuation.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .get_watch_playlist_continuation(WatchPlaylistContinuationToken::new("watch-token-1"))
+        .await
+        .unwrap();
+
+    assert!(page.items.is_empty());
+    assert_eq!(
+        page.continuation,
+        Some(WatchPlaylistContinuationToken::new(
+            "CAESIxILNHkzM2g4MXBoS1UiEVJEQU1WTTR5MzNoODFwaEtV0AEBGAo%3D"
+        ))
+    );
+}
+
+#[tokio::test]
 async fn get_watch_playlist_uses_shuffle_and_radio_params() {
     let server = MockServer::start().await;
 
@@ -415,4 +466,148 @@ async fn get_watch_playlist_uses_shuffle_and_radio_params() {
             .iter()
             .any(|body| body["videoId"] == "video-1" && body["params"] == "wAEB")
     );
+}
+
+#[tokio::test]
+async fn audit_watch_first_page_filters_like_counts_from_artists() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/next"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(include_str!("fixtures/audit/raw/watch/first_page.json")),
+        )
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .get_watch_playlist(WatchPlaylistQuery::new().with_video_id("4y33h81phKU"))
+        .await
+        .unwrap();
+
+    assert_eq!(page.items.len(), 1);
+    assert_eq!(page.items[0].video_id, "4y33h81phKU");
+    assert_eq!(page.items[0].views.as_deref(), Some("108M views"));
+    assert_eq!(
+        page.items[0]
+            .artists
+            .iter()
+            .map(|artist| artist.name.as_str())
+            .collect::<Vec<_>>(),
+        vec!["Patrik Pietschmann"]
+    );
+    assert_eq!(
+        page.continuation,
+        Some(WatchPlaylistContinuationToken::new(
+            "CAESIxILNHkzM2g4MXBoS1UiEVJEQU1WTTR5MzNoODFwaEtV0AEBGAo%3D"
+        ))
+    );
+}
+
+#[tokio::test]
+async fn audit_watch_radio_first_page_filters_like_counts_from_artists() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/next"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(include_str!(
+            "fixtures/audit/raw/watch/radio_first_page.json"
+        )))
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .get_watch_playlist(
+            WatchPlaylistQuery::new()
+                .with_video_id("4y33h81phKU")
+                .radio(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(page.items.len(), 1);
+    assert_eq!(
+        page.items[0]
+            .artists
+            .iter()
+            .map(|artist| artist.name.as_str())
+            .collect::<Vec<_>>(),
+        vec!["Patrik Pietschmann"]
+    );
+    assert_eq!(
+        page.continuation,
+        Some(WatchPlaylistContinuationToken::new(
+            "CAESKRILNHkzM2g4MXBoS1UiEVJEQU1WTTR5MzNoODFwaEtVMgR3QUVC0AEBGAo%3D"
+        ))
+    );
+}
+
+#[tokio::test]
+async fn audit_watch_shuffle_first_page_skips_non_track_rows_without_continuation() {
+    let server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(
+            r#"ytcfg.set({ "VISITOR_DATA": "visitor-id-123", "INNERTUBE_API_KEY": "test-api-key", "INNERTUBE_CONTEXT_CLIENT_VERSION": "1.20250501.03.00" });"#,
+        ))
+        .mount(&server)
+        .await;
+
+    Mock::given(method("POST"))
+        .and(path("/youtubei/v1/next"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(include_str!(
+            "fixtures/audit/raw/watch/shuffle_first_page.json"
+        )))
+        .mount(&server)
+        .await;
+
+    let client = YtMusic::builder()
+        .homepage_url(server.uri())
+        .base_url(format!("{}/youtubei/v1/", server.uri()))
+        .build()
+        .unwrap();
+
+    let page = client
+        .get_watch_playlist(
+            WatchPlaylistQuery::new()
+                .with_playlist_id("RDAMVMTh2Op6uvNXw")
+                .shuffle(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(page.items.len(), 6);
+    assert_eq!(page.items[0].video_id, "Th2Op6uvNXw");
+    assert_eq!(page.items[5].video_id, "Qhwafoo7Pnc");
+    assert_eq!(page.continuation, None);
 }

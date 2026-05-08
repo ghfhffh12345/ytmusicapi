@@ -14,16 +14,25 @@ const SAVED_EPISODES_PLAYLIST_ID: &str = "SE";
 const SAVED_EPISODES_TITLE: &str = "Saved Episodes";
 
 pub(crate) fn parse_saved_episodes_response(response: &Value) -> Result<SavedEpisodesPage, Error> {
-    let sections = required_array_at(
+    let header_sections = required_array_at(
         response,
         "/contents/twoColumnBrowseResultsRenderer/tabs/0/tabRenderer/content/sectionListRenderer/contents",
         "library response missing saved episodes sections",
     )?;
-    let header = sections
+    let item_sections = response
+        .pointer("/contents/twoColumnBrowseResultsRenderer/secondaryContents/sectionListRenderer/contents")
+        .and_then(Value::as_array)
+        .map(Vec::as_slice)
+        .unwrap_or(header_sections);
+    let header = header_sections
         .iter()
+        .chain(item_sections.iter())
         .find_map(|section| section.get("musicResponsiveHeaderRenderer"))
         .ok_or_else(|| Error::Parse("library response missing saved episodes header".to_owned()))?;
-    let items = shelf_contents_or_empty(sections, "library response missing saved episodes items")?;
+    let items = shelf_contents_or_empty(
+        item_sections,
+        "library response missing saved episodes items",
+    )?;
 
     Ok(SavedEpisodesPage {
         playlist_id: SAVED_EPISODES_PLAYLIST_ID.to_owned(),
@@ -34,7 +43,7 @@ pub(crate) fn parse_saved_episodes_response(response: &Value) -> Result<SavedEpi
             .collect::<Result<Vec<_>, _>>()?,
         thumbnails: parse_thumbnails(header)?,
         continuation: shelf_continuation_or_empty(
-            sections,
+            item_sections,
             "library response missing saved episodes items",
         )?,
     })
@@ -168,7 +177,15 @@ fn parse_episode_metadata(runs: &[Value]) -> Result<ParsedEpisodeMetadata, Error
         }
     }
 
-    let [channel, podcast] = metadata_values.as_slice() else {
+    let Some(channel) = metadata_values.first() else {
+        return Err(Error::Parse(
+            "library response missing saved episode channel or podcast metadata".to_owned(),
+        ));
+    };
+    let Some(podcast) = metadata_values
+        .last()
+        .filter(|_| metadata_values.len() >= 2)
+    else {
         return Err(Error::Parse(
             "library response missing saved episode channel or podcast metadata".to_owned(),
         ));

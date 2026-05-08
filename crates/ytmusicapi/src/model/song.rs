@@ -7,7 +7,8 @@ use crate::Thumbnail;
 pub struct GetSongResponse {
     pub video_details: SongVideoDetails,
     pub playability_status: SongPlayabilityStatus,
-    pub streaming_data: SongStreamingData,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub streaming_data: Option<SongStreamingData>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub microformat: Option<SongMicroformat>,
 }
@@ -39,6 +40,8 @@ pub struct SongVideoDetails {
 pub struct SongPlayabilityStatus {
     pub status: String,
     pub playable_in_embed: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reason: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub context_params: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
