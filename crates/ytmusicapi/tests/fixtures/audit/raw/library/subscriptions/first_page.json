@@ -3758,72 +3758,6 @@
                                             "clickTrackingParams": "REDACTED_TOKEN",
                                             "musicCheckboxFormItemMutatedCommand": {
                                               "formItemEntityKey": "REDACTED_TEXT",
-                                              "newCheckedState": true
-                                            }
-                                          },
-                                          {
-                                            "clickTrackingParams": "REDACTED_TOKEN",
-                                            "musicCheckboxFormItemMutatedCommand": {
-                                              "formItemEntityKey": "REDACTED_TEXT",
-                                              "newCheckedState": false
-                                            }
-                                          },
-                                          {
-                                            "clickTrackingParams": "REDACTED_TOKEN",
-                                            "musicCheckboxFormItemMutatedCommand": {
-                                              "formItemEntityKey": "REDACTED_TEXT",
-                                              "newCheckedState": false
-                                            }
-                                          },
-                                          {
-                                            "browseSectionListReloadEndpoint": {
-                                              "continuation": {
-                                                "reloadContinuationData": {
-                                                  "clickTrackingParams": "REDACTED_TOKEN",
-                                                  "continuation": "REDACTED_TOKEN",
-                                                  "showSpinnerOverlay": true
-                                                }
-                                              }
-                                            },
-                                            "clickTrackingParams": "REDACTED_TOKEN"
-                                          }
-                                        ]
-                                      }
-                                    },
-                                    "selectedIcon": {
-                                      "iconType": "REDACTED_TEXT"
-                                    },
-                                    "title": {
-                                      "runs": [
-                                        {
-                                          "text": "REDACTED_TEXT"
-                                        }
-                                      ]
-                                    },
-                                    "trackingParams": "REDACTED_TOKEN"
-                                  }
-                                },
-                                {
-                                  "musicMultiSelectMenuItemRenderer": {
-                                    "deselectedAccessibility": {
-                                      "accessibilityData": {
-                                        "label": "REDACTED_TEXT"
-                                      }
-                                    },
-                                    "formItemEntityKey": "REDACTED_TEXT",
-                                    "selectedAccessibility": {
-                                      "accessibilityData": {
-                                        "label": "REDACTED_TEXT"
-                                      }
-                                    },
-                                    "selectedCommand": {
-                                      "clickTrackingParams": "REDACTED_TOKEN",
-                                      "commandExecutorCommand": {
-                                        "commands": [
-                                          {
-                                            "clickTrackingParams": "REDACTED_TOKEN",
-                                            "musicCheckboxFormItemMutatedCommand": {
-                                              "formItemEntityKey": "REDACTED_TEXT",
                                               "newCheckedState": false
                                             }
                                           },
@@ -3898,6 +3832,72 @@
                                             "musicCheckboxFormItemMutatedCommand": {
                                               "formItemEntityKey": "REDACTED_TEXT",
                                               "newCheckedState": true
+                                            }
+                                          },
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": false
+                                            }
+                                          },
+                                          {
+                                            "browseSectionListReloadEndpoint": {
+                                              "continuation": {
+                                                "reloadContinuationData": {
+                                                  "clickTrackingParams": "REDACTED_TOKEN",
+                                                  "continuation": "REDACTED_TOKEN",
+                                                  "showSpinnerOverlay": true
+                                                }
+                                              }
+                                            },
+                                            "clickTrackingParams": "REDACTED_TOKEN"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "selectedIcon": {
+                                      "iconType": "REDACTED_TEXT"
+                                    },
+                                    "title": {
+                                      "runs": [
+                                        {
+                                          "text": "REDACTED_TEXT"
+                                        }
+                                      ]
+                                    },
+                                    "trackingParams": "REDACTED_TOKEN"
+                                  }
+                                },
+                                {
+                                  "musicMultiSelectMenuItemRenderer": {
+                                    "deselectedAccessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "formItemEntityKey": "REDACTED_TEXT",
+                                    "selectedAccessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "selectedCommand": {
+                                      "clickTrackingParams": "REDACTED_TOKEN",
+                                      "commandExecutorCommand": {
+                                        "commands": [
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": true
+                                            }
+                                          },
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": false
                                             }
                                           },
                                           {
@@ -4317,7 +4317,7 @@
         }
       ],
       "timestamp": {
-        "nanos": 573833740,
+        "nanos": 713735426,
         "seconds": "REDACTED_TEXT"
       }
     }

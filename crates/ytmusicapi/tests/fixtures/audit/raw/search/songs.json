@@ -40,21 +40,21 @@
                                 }
                               ]
                             },
-                            "trackingParams": "CAQQ-pUBGAAiEwj_neG64KmUAxWAmVYBHWCvKLk="
+                            "trackingParams": "CAQQ-pUBGAAiEwie4aOj4qmUAxXDRCwFHYjtN2o="
                           }
                         }
                       ],
-                      "trackingParams": "CAMQuy8YACITCP-d4brgqZQDFYCZVgEdYK8ouQ=="
+                      "trackingParams": "CAMQuy8YACITCJ7ho6PiqZQDFcNELAUdiO03ag=="
                     }
                   }
                 ],
-                "trackingParams": "CAIQui8iEwj_neG64KmUAxWAmVYBHWCvKLk="
+                "trackingParams": "CAIQui8iEwie4aOj4qmUAxXDRCwFHYjtN2o="
               }
             },
             "selected": true,
             "tabIdentifier": "music_search_catalog",
             "title": "YT Music",
-            "trackingParams": "CAEQ8JMBGAAiEwj_neG64KmUAxWAmVYBHWCvKLk="
+            "trackingParams": "CAEQ8JMBGAAiEwie4aOj4qmUAxXDRCwFHYjtN2o="
           }
         }
       ]
@@ -62,7 +62,7 @@
   },
   "responseContext": {
     "maxAgeSeconds": 120,
-    "responseId": "IhMI_53huuCplAMVgJlWAR1gryi5",
+    "responseId": "IhMInuGjo-KplAMVw0QsBR2I7Tdq",
     "serviceTrackingParams": [
       {
         "params": [
@@ -80,7 +80,7 @@
           },
           {
             "key": "GetSearch_rid",
-            "value": "0xce18a672e3907281"
+            "value": "0x1965572e9d64c81c"
           }
         ],
         "service": "CSI"
@@ -109,5 +109,5 @@
       }
     ]
   },
-  "trackingParams": "CAAQvGkiEwj_neG64KmUAxWAmVYBHWCvKLnKAQRkDqRe"
+  "trackingParams": "CAAQvGkiEwie4aOj4qmUAxXDRCwFHYjtN2rKAQRLu8Y8"
 }

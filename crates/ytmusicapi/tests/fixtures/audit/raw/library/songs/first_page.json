@@ -819,7 +819,6 @@
                                             }
                                           },
                                           "params": "REDACTED_TOKEN",
-                                          "playerParams": "REDACTED_TOKEN",
                                           "playlistId": "REDACTED_ID",
                                           "videoId": "REDACTED_ID",
                                           "watchEndpointMusicSupportedConfigs": {
@@ -1438,7 +1437,6 @@
                                             }
                                           },
                                           "params": "REDACTED_TOKEN",
-                                          "playerParams": "REDACTED_TOKEN",
                                           "playlistId": "REDACTED_ID",
                                           "videoId": "REDACTED_ID",
                                           "watchEndpointMusicSupportedConfigs": {
@@ -3759,6 +3757,7 @@
                                           }
                                         },
                                         "params": "REDACTED_TOKEN",
+                                        "playerParams": "REDACTED_TOKEN",
                                         "playlistId": "REDACTED_ID",
                                         "videoId": "REDACTED_ID",
                                         "watchEndpointMusicSupportedConfigs": {
@@ -4519,6 +4518,7 @@
                                             }
                                           },
                                           "params": "REDACTED_TOKEN",
+                                          "playerParams": "REDACTED_TOKEN",
                                           "playlistId": "REDACTED_ID",
                                           "videoId": "REDACTED_ID",
                                           "watchEndpointMusicSupportedConfigs": {
@@ -10519,6 +10519,7 @@
                                                 "serializedContextData": "REDACTED_TEXT"
                                               }
                                             },
+                                            "playerParams": "REDACTED_TOKEN",
                                             "playlistId": "REDACTED_ID",
                                             "videoId": "REDACTED_ID",
                                             "watchEndpointMusicSupportedConfigs": {
@@ -11195,6 +11196,7 @@
                                             }
                                           },
                                           "params": "REDACTED_TOKEN",
+                                          "playerParams": "REDACTED_TOKEN",
                                           "playlistId": "REDACTED_ID",
                                           "videoId": "REDACTED_ID",
                                           "watchEndpointMusicSupportedConfigs": {
@@ -11814,7 +11816,6 @@
                                             }
                                           },
                                           "params": "REDACTED_TOKEN",
-                                          "playerParams": "REDACTED_TOKEN",
                                           "playlistId": "REDACTED_ID",
                                           "videoId": "REDACTED_ID",
                                           "watchEndpointMusicSupportedConfigs": {
@@ -13524,7 +13525,6 @@
                                           }
                                         },
                                         "params": "REDACTED_TOKEN",
-                                        "playerParams": "REDACTED_TOKEN",
                                         "playlistId": "REDACTED_ID",
                                         "videoId": "REDACTED_ID",
                                         "watchEndpointMusicSupportedConfigs": {
@@ -13693,6 +13693,7 @@
                                             }
                                           },
                                           "params": "REDACTED_TOKEN",
+                                          "playerParams": "REDACTED_TOKEN",
                                           "playlistId": "REDACTED_ID",
                                           "videoId": "REDACTED_ID",
                                           "watchEndpointMusicSupportedConfigs": {
@@ -14201,7 +14202,6 @@
                                                 "serializedContextData": "REDACTED_TEXT"
                                               }
                                             },
-                                            "playerParams": "REDACTED_TOKEN",
                                             "playlistId": "REDACTED_ID",
                                             "videoId": "REDACTED_ID",
                                             "watchEndpointMusicSupportedConfigs": {
@@ -15369,7 +15369,6 @@
                                           }
                                         },
                                         "params": "REDACTED_TOKEN",
-                                        "playerParams": "REDACTED_TOKEN",
                                         "playlistId": "REDACTED_ID",
                                         "videoId": "REDACTED_ID",
                                         "watchEndpointMusicSupportedConfigs": {
@@ -15476,14 +15475,14 @@
                                             "clickTrackingParams": "REDACTED_TOKEN",
                                             "musicCheckboxFormItemMutatedCommand": {
                                               "formItemEntityKey": "REDACTED_TEXT",
-                                              "newCheckedState": true
+                                              "newCheckedState": false
                                             }
                                           },
                                           {
                                             "clickTrackingParams": "REDACTED_TOKEN",
                                             "musicCheckboxFormItemMutatedCommand": {
                                               "formItemEntityKey": "REDACTED_TEXT",
-                                              "newCheckedState": false
+                                              "newCheckedState": true
                                             }
                                           },
                                           {
@@ -15608,21 +15607,21 @@
                                             "clickTrackingParams": "REDACTED_TOKEN",
                                             "musicCheckboxFormItemMutatedCommand": {
                                               "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": false
+                                            }
+                                          },
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": false
+                                            }
+                                          },
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
                                               "newCheckedState": true
-                                            }
-                                          },
-                                          {
-                                            "clickTrackingParams": "REDACTED_TOKEN",
-                                            "musicCheckboxFormItemMutatedCommand": {
-                                              "formItemEntityKey": "REDACTED_TEXT",
-                                              "newCheckedState": false
-                                            }
-                                          },
-                                          {
-                                            "clickTrackingParams": "REDACTED_TOKEN",
-                                            "musicCheckboxFormItemMutatedCommand": {
-                                              "formItemEntityKey": "REDACTED_TEXT",
-                                              "newCheckedState": false
                                             }
                                           },
                                           {
@@ -15966,7 +15965,7 @@
         }
       ],
       "timestamp": {
-        "nanos": 239394009,
+        "nanos": 673303060,
         "seconds": "REDACTED_TEXT"
       }
     }

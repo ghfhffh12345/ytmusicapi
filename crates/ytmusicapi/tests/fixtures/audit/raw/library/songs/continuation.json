@@ -40,6 +40,7 @@
                                 "serializedContextData": "REDACTED_TEXT"
                               }
                             },
+                            "playerParams": "REDACTED_TOKEN",
                             "playlistId": "REDACTED_ID",
                             "videoId": "REDACTED_ID",
                             "watchEndpointMusicSupportedConfigs": {
@@ -1190,6 +1191,7 @@
                             "serializedContextData": "REDACTED_TEXT"
                           }
                         },
+                        "playerParams": "REDACTED_TOKEN",
                         "playlistId": "REDACTED_ID",
                         "videoId": "REDACTED_ID",
                         "watchEndpointMusicSupportedConfigs": {
@@ -2555,7 +2557,6 @@
                             }
                           },
                           "params": "REDACTED_TOKEN",
-                          "playerParams": "REDACTED_TOKEN",
                           "playlistId": "REDACTED_ID",
                           "videoId": "REDACTED_ID",
                           "watchEndpointMusicSupportedConfigs": {
@@ -4256,6 +4257,7 @@
                             "serializedContextData": "REDACTED_TEXT"
                           }
                         },
+                        "playerParams": "REDACTED_TOKEN",
                         "playlistId": "REDACTED_ID",
                         "videoId": "REDACTED_ID",
                         "watchEndpointMusicSupportedConfigs": {
@@ -6801,7 +6803,6 @@
                                 "serializedContextData": "REDACTED_TEXT"
                               }
                             },
-                            "playerParams": "REDACTED_TOKEN",
                             "playlistId": "REDACTED_ID",
                             "videoId": "REDACTED_ID",
                             "watchEndpointMusicSupportedConfigs": {
@@ -8560,6 +8561,7 @@
                             "serializedContextData": "REDACTED_TEXT"
                           }
                         },
+                        "playerParams": "REDACTED_TOKEN",
                         "playlistId": "REDACTED_ID",
                         "videoId": "REDACTED_ID",
                         "watchEndpointMusicSupportedConfigs": {
@@ -9235,6 +9237,7 @@
                                 "serializedContextData": "REDACTED_TEXT"
                               }
                             },
+                            "playerParams": "REDACTED_TOKEN",
                             "playlistId": "REDACTED_ID",
                             "videoId": "REDACTED_ID",
                             "watchEndpointMusicSupportedConfigs": {
@@ -9319,6 +9322,7 @@
                             }
                           },
                           "params": "REDACTED_TOKEN",
+                          "playerParams": "REDACTED_TOKEN",
                           "playlistId": "REDACTED_ID",
                           "videoId": "REDACTED_ID",
                           "watchEndpointMusicSupportedConfigs": {
@@ -9768,6 +9772,7 @@
                             "serializedContextData": "REDACTED_TEXT"
                           }
                         },
+                        "playerParams": "REDACTED_TOKEN",
                         "playlistId": "REDACTED_ID",
                         "videoId": "REDACTED_ID",
                         "watchEndpointMusicSupportedConfigs": {
@@ -9852,7 +9857,6 @@
                                 "serializedContextData": "REDACTED_TEXT"
                               }
                             },
-                            "playerParams": "REDACTED_TOKEN",
                             "playlistId": "REDACTED_ID",
                             "videoId": "REDACTED_ID",
                             "watchEndpointMusicSupportedConfigs": {
@@ -10470,6 +10474,7 @@
                                 "serializedContextData": "REDACTED_TEXT"
                               }
                             },
+                            "playerParams": "REDACTED_TOKEN",
                             "playlistId": "REDACTED_ID",
                             "videoId": "REDACTED_ID",
                             "watchEndpointMusicSupportedConfigs": {
@@ -11788,6 +11793,7 @@
                             }
                           },
                           "params": "REDACTED_TOKEN",
+                          "playerParams": "REDACTED_TOKEN",
                           "playlistId": "REDACTED_ID",
                           "videoId": "REDACTED_ID",
                           "watchEndpointMusicSupportedConfigs": {
@@ -12336,6 +12342,7 @@
                                 "serializedContextData": "REDACTED_TEXT"
                               }
                             },
+                            "playerParams": "REDACTED_TOKEN",
                             "playlistId": "REDACTED_ID",
                             "videoId": "REDACTED_ID",
                             "watchEndpointMusicSupportedConfigs": {
@@ -13052,6 +13059,7 @@
                             }
                           },
                           "params": "REDACTED_TOKEN",
+                          "playerParams": "REDACTED_TOKEN",
                           "playlistId": "REDACTED_ID",
                           "videoId": "REDACTED_ID",
                           "watchEndpointMusicSupportedConfigs": {
@@ -13475,7 +13483,6 @@
                             "serializedContextData": "REDACTED_TEXT"
                           }
                         },
-                        "playerParams": "REDACTED_TOKEN",
                         "playlistId": "REDACTED_ID",
                         "videoId": "REDACTED_ID",
                         "watchEndpointMusicSupportedConfigs": {
@@ -14067,7 +14074,6 @@
                             "serializedContextData": "REDACTED_TEXT"
                           }
                         },
-                        "playerParams": "REDACTED_TOKEN",
                         "playlistId": "REDACTED_ID",
                         "videoId": "REDACTED_ID",
                         "watchEndpointMusicSupportedConfigs": {
@@ -14152,6 +14158,7 @@
                                 "serializedContextData": "REDACTED_TEXT"
                               }
                             },
+                            "playerParams": "REDACTED_TOKEN",
                             "playlistId": "REDACTED_ID",
                             "videoId": "REDACTED_ID",
                             "watchEndpointMusicSupportedConfigs": {
@@ -14236,6 +14243,7 @@
                             }
                           },
                           "params": "REDACTED_TOKEN",
+                          "playerParams": "REDACTED_TOKEN",
                           "playlistId": "REDACTED_ID",
                           "videoId": "REDACTED_ID",
                           "watchEndpointMusicSupportedConfigs": {
@@ -15250,7 +15258,6 @@
                             "serializedContextData": "REDACTED_TEXT"
                           }
                         },
-                        "playerParams": "REDACTED_TOKEN",
                         "playlistId": "REDACTED_ID",
                         "videoId": "REDACTED_ID",
                         "watchEndpointMusicSupportedConfigs": {
@@ -15335,7 +15342,6 @@
                                 "serializedContextData": "REDACTED_TEXT"
                               }
                             },
-                            "playerParams": "REDACTED_TOKEN",
                             "playlistId": "REDACTED_ID",
                             "videoId": "REDACTED_ID",
                             "watchEndpointMusicSupportedConfigs": {
@@ -20683,6 +20689,7 @@
                             "serializedContextData": "REDACTED_TEXT"
                           }
                         },
+                        "playerParams": "REDACTED_TOKEN",
                         "playlistId": "REDACTED_ID",
                         "videoId": "REDACTED_ID",
                         "watchEndpointMusicSupportedConfigs": {
@@ -20767,7 +20774,6 @@
                                 "serializedContextData": "REDACTED_TEXT"
                               }
                             },
-                            "playerParams": "REDACTED_TOKEN",
                             "playlistId": "REDACTED_ID",
                             "videoId": "REDACTED_ID",
                             "watchEndpointMusicSupportedConfigs": {
@@ -24062,6 +24068,7 @@
                             "serializedContextData": "REDACTED_TEXT"
                           }
                         },
+                        "playerParams": "REDACTED_TOKEN",
                         "playlistId": "REDACTED_ID",
                         "videoId": "REDACTED_ID",
                         "watchEndpointMusicSupportedConfigs": {
@@ -25919,6 +25926,7 @@
                             }
                           },
                           "params": "REDACTED_TOKEN",
+                          "playerParams": "REDACTED_TOKEN",
                           "playlistId": "REDACTED_ID",
                           "videoId": "REDACTED_ID",
                           "watchEndpointMusicSupportedConfigs": {
@@ -26314,7 +26322,6 @@
                             "serializedContextData": "REDACTED_TEXT"
                           }
                         },
-                        "playerParams": "REDACTED_TOKEN",
                         "playlistId": "REDACTED_ID",
                         "videoId": "REDACTED_ID",
                         "watchEndpointMusicSupportedConfigs": {
@@ -27525,6 +27532,7 @@
                                 "serializedContextData": "REDACTED_TEXT"
                               }
                             },
+                            "playerParams": "REDACTED_TOKEN",
                             "playlistId": "REDACTED_ID",
                             "videoId": "REDACTED_ID",
                             "watchEndpointMusicSupportedConfigs": {
@@ -28567,7 +28575,6 @@
                             "serializedContextData": "REDACTED_TEXT"
                           }
                         },
-                        "playerParams": "REDACTED_TOKEN",
                         "playlistId": "REDACTED_ID",
                         "videoId": "REDACTED_ID",
                         "watchEndpointMusicSupportedConfigs": {
@@ -28736,7 +28743,6 @@
                             }
                           },
                           "params": "REDACTED_TOKEN",
-                          "playerParams": "REDACTED_TOKEN",
                           "playlistId": "REDACTED_ID",
                           "videoId": "REDACTED_ID",
                           "watchEndpointMusicSupportedConfigs": {

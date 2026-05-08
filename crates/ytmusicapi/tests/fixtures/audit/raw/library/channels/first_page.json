@@ -2713,21 +2713,21 @@
                                             "clickTrackingParams": "REDACTED_TOKEN",
                                             "musicCheckboxFormItemMutatedCommand": {
                                               "formItemEntityKey": "REDACTED_TEXT",
-                                              "newCheckedState": false
-                                            }
-                                          },
-                                          {
-                                            "clickTrackingParams": "REDACTED_TOKEN",
-                                            "musicCheckboxFormItemMutatedCommand": {
-                                              "formItemEntityKey": "REDACTED_TEXT",
-                                              "newCheckedState": false
-                                            }
-                                          },
-                                          {
-                                            "clickTrackingParams": "REDACTED_TOKEN",
-                                            "musicCheckboxFormItemMutatedCommand": {
-                                              "formItemEntityKey": "REDACTED_TEXT",
                                               "newCheckedState": true
+                                            }
+                                          },
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": false
+                                            }
+                                          },
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": false
                                             }
                                           },
                                           {
@@ -2845,14 +2845,14 @@
                                             "clickTrackingParams": "REDACTED_TOKEN",
                                             "musicCheckboxFormItemMutatedCommand": {
                                               "formItemEntityKey": "REDACTED_TEXT",
-                                              "newCheckedState": false
+                                              "newCheckedState": true
                                             }
                                           },
                                           {
                                             "clickTrackingParams": "REDACTED_TOKEN",
                                             "musicCheckboxFormItemMutatedCommand": {
                                               "formItemEntityKey": "REDACTED_TEXT",
-                                              "newCheckedState": true
+                                              "newCheckedState": false
                                             }
                                           },
                                           {
@@ -3272,7 +3272,7 @@
         }
       ],
       "timestamp": {
-        "nanos": 180722874,
+        "nanos": 395877378,
         "seconds": "REDACTED_TEXT"
       }
     }

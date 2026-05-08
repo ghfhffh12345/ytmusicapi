@@ -564,7 +564,7 @@ fn write_captured_fixture(
 fn redact_for_fixture(fixture: &str, value: &mut Value) {
     match redaction_mode(fixture) {
         RedactionMode::None => {}
-        mode => redact_value(value, mode, None),
+        mode => redact_value(value, mode, None, false),
     }
 }
 
@@ -585,30 +585,38 @@ fn redaction_mode(fixture: &str) -> RedactionMode {
     }
 }
 
-fn redact_value(value: &mut Value, mode: RedactionMode, parent_key: Option<&str>) {
+fn redact_value(
+    value: &mut Value,
+    mode: RedactionMode,
+    parent_key: Option<&str>,
+    sensitive_ancestor: bool,
+) {
     match value {
         Value::Object(map) => {
             for (key, child) in map {
-                redact_value(child, mode, Some(key));
+                let is_sensitive = sensitive_ancestor
+                    || matches!(mode, RedactionMode::AllStrings)
+                    || matches!(mode, RedactionMode::SensitiveFields) && is_sensitive_key(key);
+                redact_value(child, mode, Some(key), is_sensitive);
             }
         }
         Value::Array(items) => {
             for item in items {
-                redact_value(item, mode, parent_key);
+                redact_value(item, mode, parent_key, sensitive_ancestor);
             }
         }
-        Value::String(text) if should_redact_string(mode, parent_key) => {
+        Value::String(text) if should_redact_string(mode, parent_key, sensitive_ancestor) => {
             *text = redacted_string(parent_key.unwrap_or("value"));
         }
         _ => {}
     }
 }
 
-fn should_redact_string(mode: RedactionMode, key: Option<&str>) -> bool {
+fn should_redact_string(mode: RedactionMode, key: Option<&str>, sensitive_ancestor: bool) -> bool {
     match mode {
         RedactionMode::None => false,
         RedactionMode::AllStrings => true,
-        RedactionMode::SensitiveFields => key.is_some_and(is_sensitive_key),
+        RedactionMode::SensitiveFields => sensitive_ancestor || key.is_some_and(is_sensitive_key),
     }
 }
 
@@ -718,5 +726,43 @@ mod tests {
             value["thumbnail"]["url"],
             "https://example.invalid/redacted"
         );
+    }
+
+    #[test]
+    fn authenticated_search_redacts_values_under_sensitive_ancestors() {
+        let mut value = json!({
+            "serviceTrackingParams": [
+                {
+                    "service": "CSI",
+                    "params": [
+                        {
+                            "key": "c",
+                            "value": "WEB_REMIX"
+                        },
+                        {
+                            "key": "yt_li",
+                            "value": "1"
+                        }
+                    ]
+                }
+            ],
+            "title": "Dancing Queen"
+        });
+
+        redact_for_fixture("audit/raw/search/songs_authenticated.json", &mut value);
+
+        assert_eq!(
+            value["serviceTrackingParams"][0]["service"],
+            "REDACTED_TEXT"
+        );
+        assert_eq!(
+            value["serviceTrackingParams"][0]["params"][0]["key"],
+            "REDACTED_TEXT"
+        );
+        assert_eq!(
+            value["serviceTrackingParams"][0]["params"][0]["value"],
+            "REDACTED_TEXT"
+        );
+        assert_eq!(value["title"], "Dancing Queen");
     }
 }
