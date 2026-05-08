@@ -33,28 +33,28 @@
                                 },
                                 {
                                   "bold": true,
-                                  "text": "ABBA"
+                                  "text": "abba"
                                 },
                                 {
                                   "text": "."
                                 }
                               ]
                             },
-                            "trackingParams": "CAQQ-pUBGAAiEwjs5J-E_pWUAxXEuykDHTogL-U="
+                            "trackingParams": "CAQQ-pUBGAAiEwjm8KqZ3amUAxW6a-sIHau7MTk="
                           }
                         }
                       ],
-                      "trackingParams": "CAMQuy8YACITCOzkn4T-lZQDFcS7KQMdOiAv5Q=="
+                      "trackingParams": "CAMQuy8YACITCObwqpndqZQDFbpr6wgdq7sxOQ=="
                     }
                   }
                 ],
-                "trackingParams": "CAIQui8iEwjs5J-E_pWUAxXEuykDHTogL-U="
+                "trackingParams": "CAIQui8iEwjm8KqZ3amUAxW6a-sIHau7MTk="
               }
             },
             "selected": true,
             "tabIdentifier": "music_search_catalog",
             "title": "YT Music",
-            "trackingParams": "CAEQ8JMBGAAiEwjs5J-E_pWUAxXEuykDHTogL-U="
+            "trackingParams": "CAEQ8JMBGAAiEwjm8KqZ3amUAxW6a-sIHau7MTk="
           }
         }
       ]
@@ -62,7 +62,7 @@
   },
   "responseContext": {
     "maxAgeSeconds": 120,
-    "responseId": "IhMI7OSfhP6VlAMVxLspAx06IC_l",
+    "responseId": "IhMI5vCqmd2plAMVumvrCB2ruzE5",
     "serviceTrackingParams": [
       {
         "params": [
@@ -72,7 +72,7 @@
           },
           {
             "key": "cver",
-            "value": "1.20260430.01.00"
+            "value": "1.20260505.09.00"
           },
           {
             "key": "yt_li",
@@ -80,7 +80,7 @@
           },
           {
             "key": "GetSearch_rid",
-            "value": "0x166d250a0f5aa157"
+            "value": "0x0214a3a38103deb2"
           }
         ],
         "service": "CSI"
@@ -109,5 +109,5 @@
       }
     ]
   },
-  "trackingParams": "CAAQvGkiEwjs5J-E_pWUAxXEuykDHTogL-XKAQRT3k93"
+  "trackingParams": "CAAQvGkiEwjm8KqZ3amUAxW6a-sIHau7MTnKAQRxqzmS"
 }

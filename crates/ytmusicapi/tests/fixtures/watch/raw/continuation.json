@@ -1,52 +1,113 @@
 {
+  "contents": {
+    "singleColumnMusicWatchNextResultsRenderer": {
+      "tabbedRenderer": {
+        "watchNextTabbedResultsRenderer": {
+          "tabs": [
+            {
+              "tabRenderer": {
+                "content": {
+                  "musicQueueRenderer": {
+                    "hack": true
+                  }
+                },
+                "title": "Up next",
+                "trackingParams": "CAMQn7QFGAAiEwi9n5ma3amUAxURQjgFHUeVKls="
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
   "continuationContents": {
     "playlistPanelContinuation": {
-      "contents": [
+      "continuations": [
         {
-          "playlistPanelVideoRenderer": {
-            "videoId": "video-3",
-            "title": {
-              "runs": [
-                {
-                  "text": "Third Song"
-                }
-              ]
-            },
-            "thumbnail": {
-              "musicThumbnailRenderer": {
-                "thumbnail": {
-                  "thumbnails": [
-                    {
-                      "url": "https://example.com/3.jpg",
-                      "width": 640,
-                      "height": 640
-                    }
-                  ]
-                }
-              }
-            },
-            "longBylineText": {
-              "runs": [
-                {
-                  "text": "Artist Three",
-                  "navigationEndpoint": {
-                    "browseEndpoint": {
-                      "browseId": "UCartist3"
-                    }
-                  }
-                }
-              ]
-            }
+          "nextRadioContinuationData": {
+            "clickTrackingParams": "CAEQxyAiEwi9n5ma3amUAxURQjgFHUeVKlvKAQRxqzmS",
+            "continuation": "CAESIxILNHkzM2g4MXBoS1UiEVJEQU1WTTR5MzNoODFwaEtV0AEBGAo%3D"
           }
         }
       ],
-      "continuations": [
-        {
-          "nextContinuationData": {
-            "continuation": "watch-token-2"
-          }
+      "isInfinite": true,
+      "playlistId": "RDAMVM4y33h81phKU",
+      "shuffleToggleButton": {
+        "toggleButtonRenderer": {
+          "defaultIcon": {
+            "iconType": "MUSIC_SHUFFLE"
+          },
+          "defaultServiceEndpoint": {
+            "clickTrackingParams": "CAIQmE0iEwi9n5ma3amUAxURQjgFHUeVKlvKAQRxqzmS",
+            "watchPlaylistEndpoint": {
+              "params": "wAEB8gECGAE%3D",
+              "playlistId": "RDAMVM4y33h81phKU"
+            }
+          },
+          "toggledIcon": {
+            "iconType": "MUSIC_SHUFFLE"
+          },
+          "toggledServiceEndpoint": {
+            "clickTrackingParams": "CAIQmE0iEwi9n5ma3amUAxURQjgFHUeVKlvKAQRxqzmS",
+            "watchPlaylistEndpoint": {
+              "params": "wAEB",
+              "playlistId": "RDAMVM4y33h81phKU"
+            }
+          },
+          "trackingParams": "CAIQmE0iEwi9n5ma3amUAxURQjgFHUeVKls="
         }
-      ]
+      },
+      "trackingParams": "CAEQxyAiEwi9n5ma3amUAxURQjgFHUeVKls="
     }
-  }
+  },
+  "queueContextParams": "CAAaEVJEQU1WTTR5MzNoODFwaEtVIABQAVoECAAQAGIAcAF4AQ==",
+  "responseContext": {
+    "responseId": "IhMIvZ-Zmt2plAMVEUI4BR1HlSpb",
+    "serviceTrackingParams": [
+      {
+        "params": [
+          {
+            "key": "c",
+            "value": "WEB_REMIX"
+          },
+          {
+            "key": "cver",
+            "value": "1.20260505.09.00"
+          },
+          {
+            "key": "yt_li",
+            "value": "0"
+          },
+          {
+            "key": "GetWatchNext_rid",
+            "value": "0x93d93b8a6b3aa1c9"
+          }
+        ],
+        "service": "CSI"
+      },
+      {
+        "params": [
+          {
+            "key": "logged_in",
+            "value": "0"
+          }
+        ],
+        "service": "GFEEDBACK"
+      },
+      {
+        "params": [
+          {
+            "key": "client.version",
+            "value": "1.20000101"
+          },
+          {
+            "key": "client.name",
+            "value": "WEB_REMIX"
+          }
+        ],
+        "service": "ECATCHER"
+      }
+    ]
+  },
+  "trackingParams": "CAAQg2ciEwi9n5ma3amUAxURQjgFHUeVKlvKAQRxqzmS"
 }
