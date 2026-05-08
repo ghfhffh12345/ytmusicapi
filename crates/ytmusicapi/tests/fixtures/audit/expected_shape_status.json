@@ -1,0 +1,107 @@
+[
+  {
+    "description": "filtered search shelves expose a title run on first-page results",
+    "fixtures": [
+      "search/albums.json",
+      "search/artists.json",
+      "search/playlists.json",
+      "search/songs_authenticated.json",
+      "search/videos_authenticated.json"
+    ],
+    "path": "contents.tabbedSearchResultsRenderer.tabs[].tabRenderer.content.sectionListRenderer.contents[].musicShelfRenderer.title.runs[].text",
+    "status": "alwaysPresent"
+  },
+  {
+    "description": "mixed search top-result card appears only on the unfiltered variant",
+    "fixtures": [
+      "search/default_mixed.json",
+      "search/songs.json"
+    ],
+    "path": "contents.tabbedSearchResultsRenderer.tabs[].tabRenderer.content.sectionListRenderer.contents[].musicCardShelfRenderer.title.runs[].text",
+    "status": "variantOnly"
+  },
+  {
+    "description": "search text runs only carry navigation endpoints on link runs",
+    "fixtures": [
+      "search/default_mixed.json"
+    ],
+    "path": "contents.tabbedSearchResultsRenderer.tabs[].tabRenderer.content.sectionListRenderer.contents[].musicShelfRenderer.contents[].musicResponsiveListItemRenderer.flexColumns[].musicResponsiveListItemFlexColumnRenderer.text.runs[].navigationEndpoint",
+    "status": "itemOptional"
+  },
+  {
+    "description": "watch first-page playlist panels expose video ids across playback modes",
+    "fixtures": [
+      "watch/first_page.json",
+      "watch/radio_first_page.json",
+      "watch/shuffle_first_page.json"
+    ],
+    "path": "contents.singleColumnMusicWatchNextResultsRenderer.tabbedRenderer.watchNextTabbedResultsRenderer.tabs[].tabRenderer.content.musicQueueRenderer.content.playlistPanelRenderer.contents[].playlistPanelVideoRenderer.videoId",
+    "status": "alwaysPresent"
+  },
+  {
+    "description": "watch first-page playlist-panel shape is absent from continuation responses",
+    "fixtures": [
+      "watch/first_page.json",
+      "watch/continuation.json"
+    ],
+    "path": "contents.singleColumnMusicWatchNextResultsRenderer.tabbedRenderer.watchNextTabbedResultsRenderer.tabs[].tabRenderer.content.musicQueueRenderer.content.playlistPanelRenderer.contents[].playlistPanelVideoRenderer.videoId",
+    "status": "variantOnly"
+  },
+  {
+    "description": "song player responses expose the requested video id",
+    "fixtures": [
+      "song/response1.json",
+      "song/response2.json",
+      "song/response3.json"
+    ],
+    "path": "videoDetails.videoId",
+    "status": "alwaysPresent"
+  },
+  {
+    "description": "authenticated account-info response exposes an active account name",
+    "fixtures": [
+      "account/account_info.json"
+    ],
+    "path": "actions[].openPopupAction.popup.multiPageMenuRenderer.header.activeAccountHeaderRenderer.accountName.runs[].text",
+    "status": "alwaysPresent"
+  },
+  {
+    "description": "authenticated library grid and shelf first pages expose section tracking",
+    "fixtures": [
+      "library/albums/first_page.json",
+      "library/artists/first_page.json",
+      "library/channels/first_page.json",
+      "library/playlists/first_page.json",
+      "library/podcasts/first_page.json",
+      "library/songs/first_page.json",
+      "library/subscriptions/first_page.json"
+    ],
+    "path": "contents.singleColumnBrowseResultsRenderer.tabs[].tabRenderer.content.sectionListRenderer.trackingParams",
+    "status": "alwaysPresent"
+  },
+  {
+    "description": "authenticated liked songs and saved episodes use a different first-page library shape",
+    "fixtures": [
+      "library/albums/first_page.json",
+      "library/artists/first_page.json",
+      "library/channels/first_page.json",
+      "library/liked_songs/first_page.json",
+      "library/playlists/first_page.json",
+      "library/podcasts/first_page.json",
+      "library/saved_episodes/first_page.json",
+      "library/songs/first_page.json",
+      "library/subscriptions/first_page.json"
+    ],
+    "path": "contents.singleColumnBrowseResultsRenderer.tabs[].tabRenderer.content.sectionListRenderer.trackingParams",
+    "status": "variantOnly"
+  },
+  {
+    "description": "authenticated library song continuation responses use continuationContents instead of first-page contents",
+    "fixtures": [
+      "library/songs/first_page.json",
+      "library/songs/continuation.json"
+    ],
+    "path": "continuationContents.musicShelfContinuation.contents[].musicResponsiveListItemRenderer.trackingParams",
+    "status": "variantOnly"
+  }
+]
