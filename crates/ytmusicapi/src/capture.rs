@@ -8,13 +8,13 @@ const CAPTURE_DIR_ENV: &str = "YTMUSICAPI_CAPTURE_DIR";
 const CAPTURE_LABEL_ENV: &str = "YTMUSICAPI_CAPTURE_LABEL";
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct CaptureConfig {
+struct CaptureConfig {
     dir: PathBuf,
     label: String,
 }
 
 impl CaptureConfig {
-    pub fn from_env() -> Option<Self> {
+    fn from_env() -> Option<Self> {
         let dir = env::var_os(CAPTURE_DIR_ENV)?;
         let label = env::var_os(CAPTURE_LABEL_ENV)?;
 
@@ -24,11 +24,7 @@ impl CaptureConfig {
         })
     }
 
-    pub fn label(&self) -> &str {
-        &self.label
-    }
-
-    pub fn path_for_endpoint(&self, endpoint: &str) -> PathBuf {
+    fn path_for_endpoint(&self, endpoint: &str) -> PathBuf {
         self.dir.join(&self.label).join(format!(
             "{}.json",
             sanitize_component(endpoint.trim_matches('/'), "response")
@@ -80,4 +76,105 @@ fn sanitize_component(input: &str, fallback: &str) -> String {
 
 fn write_error(action: &str, path: &Path, error: std::io::Error) -> Error {
     Error::Parse(format!("failed to {action} at {}: {error}", path.display()))
+}
+
+#[cfg(test)]
+mod tests {
+    use std::ffi::OsString;
+    use std::path::Path;
+    use std::sync::{Mutex, MutexGuard};
+
+    use tempfile::tempdir;
+
+    use super::CaptureConfig;
+
+    static ENV_LOCK: Mutex<()> = Mutex::new(());
+
+    struct CaptureEnvGuard {
+        dir: Option<OsString>,
+        label: Option<OsString>,
+    }
+
+    impl CaptureEnvGuard {
+        fn set(dir: Option<&Path>, label: Option<&str>) -> Self {
+            let guard = Self {
+                dir: std::env::var_os(super::CAPTURE_DIR_ENV),
+                label: std::env::var_os(super::CAPTURE_LABEL_ENV),
+            };
+
+            unsafe {
+                match dir {
+                    Some(dir) => std::env::set_var(super::CAPTURE_DIR_ENV, dir),
+                    None => std::env::remove_var(super::CAPTURE_DIR_ENV),
+                }
+
+                match label {
+                    Some(label) => std::env::set_var(super::CAPTURE_LABEL_ENV, label),
+                    None => std::env::remove_var(super::CAPTURE_LABEL_ENV),
+                }
+            }
+
+            guard
+        }
+    }
+
+    impl Drop for CaptureEnvGuard {
+        fn drop(&mut self) {
+            unsafe {
+                match &self.dir {
+                    Some(dir) => std::env::set_var(super::CAPTURE_DIR_ENV, dir),
+                    None => std::env::remove_var(super::CAPTURE_DIR_ENV),
+                }
+
+                match &self.label {
+                    Some(label) => std::env::set_var(super::CAPTURE_LABEL_ENV, label),
+                    None => std::env::remove_var(super::CAPTURE_LABEL_ENV),
+                }
+            }
+        }
+    }
+
+    fn lock_env() -> MutexGuard<'static, ()> {
+        ENV_LOCK
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+    }
+
+    #[test]
+    fn capture_config_is_disabled_when_capture_dir_is_absent() {
+        let _env_lock = lock_env();
+        let _env = CaptureEnvGuard::set(None, Some("search-audit"));
+
+        assert!(CaptureConfig::from_env().is_none());
+    }
+
+    #[test]
+    fn capture_config_is_enabled_when_capture_dir_and_label_are_present() {
+        let _env_lock = lock_env();
+        let dir = tempdir().unwrap();
+        let _env = CaptureEnvGuard::set(Some(dir.path()), Some("search-audit"));
+
+        let config = CaptureConfig::from_env().expect("capture config should be enabled");
+
+        assert_eq!(config.label, "search-audit");
+        assert_eq!(
+            config.path_for_endpoint("search"),
+            dir.path().join("search-audit").join("search.json")
+        );
+    }
+
+    #[test]
+    fn capture_config_normalizes_parent_directory_labels_safely() {
+        let _env_lock = lock_env();
+        let dir = tempdir().unwrap();
+        let _env = CaptureEnvGuard::set(Some(dir.path()), Some(".."));
+
+        let config = CaptureConfig::from_env().expect("capture config should be enabled");
+
+        assert_eq!(config.label, "capture");
+        assert_eq!(
+            config.path_for_endpoint("search"),
+            dir.path().join("capture").join("search.json")
+        );
+    }
 }
