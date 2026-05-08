@@ -1,9 +1,11 @@
 use std::env;
 use std::error::Error;
-use std::fs;
+use std::fs::{self, File};
 use std::future::Future;
+use std::io::Write;
 use std::path::{Path, PathBuf};
 
+use serde_json::Value;
 use ytmusicapi::{SearchFilter, SearchQuery, WatchPlaylistQuery, YtMusic};
 
 // Temporary response-shape audit harness. Keep this narrow and remove it after
@@ -48,8 +50,8 @@ async fn capture_anonymous_search(
         client,
         scratch_dir,
         fixture_root,
-        "search/raw/default_mixed.json",
-        Some("search/raw/default_mixed_continuation.json"),
+        "audit/raw/search/default_mixed.json",
+        Some("audit/raw/search/default_mixed_continuation.json"),
         SearchQuery::new("abba"),
     )
     .await?;
@@ -57,8 +59,8 @@ async fn capture_anonymous_search(
         client,
         scratch_dir,
         fixture_root,
-        "search/raw/albums.json",
-        Some("search/raw/albums_continuation.json"),
+        "audit/raw/search/albums.json",
+        Some("audit/raw/search/albums_continuation.json"),
         SearchQuery::new("abba").with_filter(SearchFilter::Albums),
     )
     .await?;
@@ -66,8 +68,8 @@ async fn capture_anonymous_search(
         client,
         scratch_dir,
         fixture_root,
-        "search/raw/artists.json",
-        Some("search/raw/artists_continuation.json"),
+        "audit/raw/search/artists.json",
+        Some("audit/raw/search/artists_continuation.json"),
         SearchQuery::new("abba").with_filter(SearchFilter::Artists),
     )
     .await?;
@@ -75,8 +77,8 @@ async fn capture_anonymous_search(
         client,
         scratch_dir,
         fixture_root,
-        "search/raw/playlists.json",
-        Some("search/raw/playlists_continuation.json"),
+        "audit/raw/search/playlists.json",
+        Some("audit/raw/search/playlists_continuation.json"),
         SearchQuery::new("abba").with_filter(SearchFilter::Playlists),
     )
     .await?;
@@ -84,8 +86,8 @@ async fn capture_anonymous_search(
         client,
         scratch_dir,
         fixture_root,
-        "search/raw/songs.json",
-        Some("search/raw/songs_continuation.json"),
+        "audit/raw/search/songs.json",
+        Some("audit/raw/search/songs_continuation.json"),
         SearchQuery::new("abba").with_filter(SearchFilter::Songs),
     )
     .await?;
@@ -93,8 +95,8 @@ async fn capture_anonymous_search(
         client,
         scratch_dir,
         fixture_root,
-        "search/raw/videos.json",
-        Some("search/raw/videos_continuation.json"),
+        "audit/raw/search/videos.json",
+        Some("audit/raw/search/videos_continuation.json"),
         SearchQuery::new("abba").with_filter(SearchFilter::Videos),
     )
     .await
@@ -109,8 +111,8 @@ async fn capture_authenticated_search(
         client,
         scratch_dir,
         fixture_root,
-        "search/raw/songs_authenticated.json",
-        Some("search/raw/songs_authenticated_continuation.json"),
+        "audit/raw/search/songs_authenticated.json",
+        Some("audit/raw/search/songs_authenticated_continuation.json"),
         SearchQuery::new("abba").with_filter(SearchFilter::Songs),
     )
     .await?;
@@ -118,8 +120,8 @@ async fn capture_authenticated_search(
         client,
         scratch_dir,
         fixture_root,
-        "search/raw/videos_authenticated.json",
-        Some("search/raw/videos_authenticated_continuation.json"),
+        "audit/raw/search/videos_authenticated.json",
+        Some("audit/raw/search/videos_authenticated_continuation.json"),
         SearchQuery::new("abba").with_filter(SearchFilter::Videos),
     )
     .await
@@ -172,7 +174,7 @@ async fn capture_watch(
     let first_page = capture(
         scratch_dir,
         fixture_root,
-        "watch/raw/first_page.json",
+        "audit/raw/watch/first_page.json",
         "next",
         client.get_watch_playlist(WatchPlaylistQuery::new().with_video_id("4y33h81phKU")),
     )
@@ -182,20 +184,20 @@ async fn capture_watch(
             capture(
                 scratch_dir,
                 fixture_root,
-                "watch/raw/continuation.json",
+                "audit/raw/watch/continuation.json",
                 "next",
                 client.get_watch_playlist_continuation(token),
             )
             .await?;
         } else {
-            eprintln!("watch/raw/first_page.json returned no continuation token");
+            eprintln!("audit/raw/watch/first_page.json returned no continuation token");
         }
     }
 
     capture(
         scratch_dir,
         fixture_root,
-        "watch/raw/radio_first_page.json",
+        "audit/raw/watch/radio_first_page.json",
         "next",
         client.get_watch_playlist(
             WatchPlaylistQuery::new()
@@ -207,7 +209,7 @@ async fn capture_watch(
     capture(
         scratch_dir,
         fixture_root,
-        "watch/raw/shuffle_first_page.json",
+        "audit/raw/watch/shuffle_first_page.json",
         "next",
         client.get_watch_playlist(
             WatchPlaylistQuery::new()
@@ -226,9 +228,9 @@ async fn capture_songs(
     fixture_root: &Path,
 ) -> Result<(), Box<dyn Error>> {
     for (fixture, video_id) in [
-        ("song/raw/response1.json", "4y33h81phKU"),
-        ("song/raw/response2.json", "LhiRts68_bk"),
-        ("song/raw/response3.json", "Zi_XLOBDo_Y"),
+        ("audit/raw/song/response1.json", "4y33h81phKU"),
+        ("audit/raw/song/response2.json", "LhiRts68_bk"),
+        ("audit/raw/song/response3.json", "Zi_XLOBDo_Y"),
     ] {
         capture(
             scratch_dir,
@@ -251,7 +253,7 @@ async fn capture_library_and_account(
     capture(
         scratch_dir,
         fixture_root,
-        "account/raw/account_info.json",
+        "audit/raw/account/account_info.json",
         "account_account_menu",
         client.get_account_info(),
     )
@@ -260,7 +262,7 @@ async fn capture_library_and_account(
     let playlists = capture(
         scratch_dir,
         fixture_root,
-        "library/playlists/raw/first_page.json",
+        "audit/raw/library/playlists/first_page.json",
         "browse",
         client.get_library_playlists(),
     )
@@ -270,20 +272,20 @@ async fn capture_library_and_account(
             capture(
                 scratch_dir,
                 fixture_root,
-                "library/playlists/raw/continuation.json",
+                "audit/raw/library/playlists/continuation.json",
                 "browse",
                 client.get_library_playlists_continuation(token),
             )
             .await?;
         } else {
-            eprintln!("library/playlists/raw/first_page.json returned no continuation token");
+            eprintln!("audit/raw/library/playlists/first_page.json returned no continuation token");
         }
     }
 
     let artists = capture(
         scratch_dir,
         fixture_root,
-        "library/artists/raw/first_page.json",
+        "audit/raw/library/artists/first_page.json",
         "browse",
         client.get_library_artists(),
     )
@@ -293,20 +295,20 @@ async fn capture_library_and_account(
             capture(
                 scratch_dir,
                 fixture_root,
-                "library/artists/raw/continuation.json",
+                "audit/raw/library/artists/continuation.json",
                 "browse",
                 client.get_library_artists_continuation(token),
             )
             .await?;
         } else {
-            eprintln!("library/artists/raw/first_page.json returned no continuation token");
+            eprintln!("audit/raw/library/artists/first_page.json returned no continuation token");
         }
     }
 
     let albums = capture(
         scratch_dir,
         fixture_root,
-        "library/albums/raw/first_page.json",
+        "audit/raw/library/albums/first_page.json",
         "browse",
         client.get_library_albums(),
     )
@@ -316,20 +318,20 @@ async fn capture_library_and_account(
             capture(
                 scratch_dir,
                 fixture_root,
-                "library/albums/raw/continuation.json",
+                "audit/raw/library/albums/continuation.json",
                 "browse",
                 client.get_library_albums_continuation(token),
             )
             .await?;
         } else {
-            eprintln!("library/albums/raw/first_page.json returned no continuation token");
+            eprintln!("audit/raw/library/albums/first_page.json returned no continuation token");
         }
     }
 
     let subscriptions = capture(
         scratch_dir,
         fixture_root,
-        "library/subscriptions/raw/first_page.json",
+        "audit/raw/library/subscriptions/first_page.json",
         "browse",
         client.get_library_subscriptions(),
     )
@@ -339,20 +341,22 @@ async fn capture_library_and_account(
             capture(
                 scratch_dir,
                 fixture_root,
-                "library/subscriptions/raw/continuation.json",
+                "audit/raw/library/subscriptions/continuation.json",
                 "browse",
                 client.get_library_subscriptions_continuation(token),
             )
             .await?;
         } else {
-            eprintln!("library/subscriptions/raw/first_page.json returned no continuation token");
+            eprintln!(
+                "audit/raw/library/subscriptions/first_page.json returned no continuation token"
+            );
         }
     }
 
     let channels = capture(
         scratch_dir,
         fixture_root,
-        "library/channels/raw/first_page.json",
+        "audit/raw/library/channels/first_page.json",
         "browse",
         client.get_library_channels(),
     )
@@ -362,20 +366,20 @@ async fn capture_library_and_account(
             capture(
                 scratch_dir,
                 fixture_root,
-                "library/channels/raw/continuation.json",
+                "audit/raw/library/channels/continuation.json",
                 "browse",
                 client.get_library_channels_continuation(token),
             )
             .await?;
         } else {
-            eprintln!("library/channels/raw/first_page.json returned no continuation token");
+            eprintln!("audit/raw/library/channels/first_page.json returned no continuation token");
         }
     }
 
     let podcasts = capture(
         scratch_dir,
         fixture_root,
-        "library/podcasts/raw/first_page.json",
+        "audit/raw/library/podcasts/first_page.json",
         "browse",
         client.get_library_podcasts(),
     )
@@ -385,20 +389,20 @@ async fn capture_library_and_account(
             capture(
                 scratch_dir,
                 fixture_root,
-                "library/podcasts/raw/continuation.json",
+                "audit/raw/library/podcasts/continuation.json",
                 "browse",
                 client.get_library_podcasts_continuation(token),
             )
             .await?;
         } else {
-            eprintln!("library/podcasts/raw/first_page.json returned no continuation token");
+            eprintln!("audit/raw/library/podcasts/first_page.json returned no continuation token");
         }
     }
 
     let songs = capture(
         scratch_dir,
         fixture_root,
-        "library/songs/raw/first_page.json",
+        "audit/raw/library/songs/first_page.json",
         "browse",
         client.get_library_songs(),
     )
@@ -408,20 +412,20 @@ async fn capture_library_and_account(
             capture(
                 scratch_dir,
                 fixture_root,
-                "library/songs/raw/continuation.json",
+                "audit/raw/library/songs/continuation.json",
                 "browse",
                 client.get_library_songs_continuation(token),
             )
             .await?;
         } else {
-            eprintln!("library/songs/raw/first_page.json returned no continuation token");
+            eprintln!("audit/raw/library/songs/first_page.json returned no continuation token");
         }
     }
 
     let liked_songs = capture(
         scratch_dir,
         fixture_root,
-        "library/liked_songs/raw/first_page.json",
+        "audit/raw/library/liked_songs/first_page.json",
         "browse",
         client.get_liked_songs(),
     )
@@ -431,20 +435,22 @@ async fn capture_library_and_account(
             capture(
                 scratch_dir,
                 fixture_root,
-                "library/liked_songs/raw/continuation.json",
+                "audit/raw/library/liked_songs/continuation.json",
                 "browse",
                 client.get_liked_songs_continuation(token),
             )
             .await?;
         } else {
-            eprintln!("library/liked_songs/raw/first_page.json returned no continuation token");
+            eprintln!(
+                "audit/raw/library/liked_songs/first_page.json returned no continuation token"
+            );
         }
     }
 
     let saved_episodes = capture(
         scratch_dir,
         fixture_root,
-        "library/saved_episodes/raw/first_page.json",
+        "audit/raw/library/saved_episodes/first_page.json",
         "browse",
         client.get_saved_episodes(),
     )
@@ -454,13 +460,15 @@ async fn capture_library_and_account(
             capture(
                 scratch_dir,
                 fixture_root,
-                "library/saved_episodes/raw/continuation.json",
+                "audit/raw/library/saved_episodes/continuation.json",
                 "browse",
                 client.get_saved_episodes_continuation(token),
             )
             .await?;
         } else {
-            eprintln!("library/saved_episodes/raw/first_page.json returned no continuation token");
+            eprintln!(
+                "audit/raw/library/saved_episodes/first_page.json returned no continuation token"
+            );
         }
     }
 
@@ -493,7 +501,7 @@ where
         if let Some(parent) = target.parent() {
             fs::create_dir_all(parent)?;
         }
-        fs::copy(&captured, &target)?;
+        write_captured_fixture(&captured, &target, fixture)?;
         println!("captured {fixture}");
         true
     } else {
@@ -539,6 +547,100 @@ fn capture_label(fixture: &str) -> String {
         .collect()
 }
 
+fn write_captured_fixture(
+    captured: &Path,
+    target: &Path,
+    fixture: &str,
+) -> Result<(), Box<dyn Error>> {
+    let mut value: Value = serde_json::from_reader(File::open(captured)?)?;
+    redact_for_fixture(fixture, &mut value);
+
+    let mut file = File::create(target)?;
+    serde_json::to_writer_pretty(&mut file, &value)?;
+    file.write_all(b"\n")?;
+    Ok(())
+}
+
+fn redact_for_fixture(fixture: &str, value: &mut Value) {
+    match redaction_mode(fixture) {
+        RedactionMode::None => {}
+        mode => redact_value(value, mode, None),
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum RedactionMode {
+    None,
+    SensitiveFields,
+    AllStrings,
+}
+
+fn redaction_mode(fixture: &str) -> RedactionMode {
+    if fixture.starts_with("audit/raw/account/") || fixture.starts_with("audit/raw/library/") {
+        RedactionMode::AllStrings
+    } else if fixture.contains("_authenticated") {
+        RedactionMode::SensitiveFields
+    } else {
+        RedactionMode::None
+    }
+}
+
+fn redact_value(value: &mut Value, mode: RedactionMode, parent_key: Option<&str>) {
+    match value {
+        Value::Object(map) => {
+            for (key, child) in map {
+                redact_value(child, mode, Some(key));
+            }
+        }
+        Value::Array(items) => {
+            for item in items {
+                redact_value(item, mode, parent_key);
+            }
+        }
+        Value::String(text) if should_redact_string(mode, parent_key) => {
+            *text = redacted_string(parent_key.unwrap_or("value"));
+        }
+        _ => {}
+    }
+}
+
+fn should_redact_string(mode: RedactionMode, key: Option<&str>) -> bool {
+    match mode {
+        RedactionMode::None => false,
+        RedactionMode::AllStrings => true,
+        RedactionMode::SensitiveFields => key.is_some_and(is_sensitive_key),
+    }
+}
+
+fn is_sensitive_key(key: &str) -> bool {
+    let key = key.to_ascii_lowercase();
+    key.contains("url")
+        || key.contains("uri")
+        || key.contains("continuation")
+        || key.contains("token")
+        || key.contains("tracking")
+        || key.contains("params")
+        || key.contains("visitor")
+        || key.contains("account")
+        || key.contains("credential")
+        || key.contains("auth")
+        || key.contains("cookie")
+        || key.contains("serializedshareentity")
+}
+
+fn redacted_string(key: &str) -> String {
+    let key = key.to_ascii_lowercase();
+    if key.contains("url") || key.contains("uri") {
+        "https://example.invalid/redacted".to_owned()
+    } else if key.contains("continuation") || key.contains("token") || key.contains("params") {
+        "REDACTED_TOKEN".to_owned()
+    } else if key.contains("id") {
+        "REDACTED_ID".to_owned()
+    } else {
+        "REDACTED_TEXT".to_owned()
+    }
+}
+
 fn browser_json_path() -> PathBuf {
     repo_root().join("browser.json")
 }
@@ -564,4 +666,57 @@ fn workspace_root() -> PathBuf {
 
 fn io_error(message: String) -> Box<dyn Error> {
     Box::new(std::io::Error::other(message))
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+
+    use super::redact_for_fixture;
+
+    #[test]
+    fn library_audit_fixtures_redact_personal_display_content_and_urls() {
+        let mut value = json!({
+            "title": "My private playlist",
+            "videoId": "saved-video-id",
+            "thumbnail": {
+                "url": "https://yt3.googleusercontent.com/private"
+            },
+            "runs": [
+                { "text": "Private Artist" }
+            ]
+        });
+
+        redact_for_fixture("audit/raw/library/songs/first_page.json", &mut value);
+
+        assert_eq!(value["title"], "REDACTED_TEXT");
+        assert_eq!(value["videoId"], "REDACTED_ID");
+        assert_eq!(
+            value["thumbnail"]["url"],
+            "https://example.invalid/redacted"
+        );
+        assert_eq!(value["runs"][0]["text"], "REDACTED_TEXT");
+    }
+
+    #[test]
+    fn authenticated_search_redacts_tokens_but_keeps_public_result_text() {
+        let mut value = json!({
+            "title": "Dancing Queen",
+            "continuation": "session-token",
+            "clickTrackingParams": "tracking-token",
+            "thumbnail": {
+                "url": "https://yt3.googleusercontent.com/public"
+            }
+        });
+
+        redact_for_fixture("audit/raw/search/songs_authenticated.json", &mut value);
+
+        assert_eq!(value["title"], "Dancing Queen");
+        assert_eq!(value["continuation"], "REDACTED_TOKEN");
+        assert_eq!(value["clickTrackingParams"], "REDACTED_TOKEN");
+        assert_eq!(
+            value["thumbnail"]["url"],
+            "https://example.invalid/redacted"
+        );
+    }
 }

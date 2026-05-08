@@ -1,0 +1,3337 @@
+{
+  "contents": {
+    "singleColumnBrowseResultsRenderer": {
+      "tabs": [
+        {
+          "tabRenderer": {
+            "content": {
+              "sectionListRenderer": {
+                "contents": [
+                  {
+                    "musicShelfRenderer": {
+                      "autoReloadWhenEmpty": false,
+                      "contents": [
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "watchPlaylistEndpoint": {
+                                          "params": "REDACTED_TOKEN",
+                                          "playlistId": "REDACTED_ID"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  },
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "watchPlaylistEndpoint": {
+                                          "params": "REDACTED_TOKEN",
+                                          "playlistId": "REDACTED_ID"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  },
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        },
+                        {
+                          "musicResponsiveListItemRenderer": {
+                            "flexColumnDisplayStyle": "REDACTED_TEXT",
+                            "flexColumns": [
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "musicResponsiveListItemFlexColumnRenderer": {
+                                  "displayPriority": "REDACTED_TEXT",
+                                  "text": {
+                                    "accessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ],
+                            "itemHeight": "REDACTED_TEXT",
+                            "menu": {
+                              "menuRenderer": {
+                                "accessibility": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "items": [
+                                  {
+                                    "menuNavigationItemRenderer": {
+                                      "icon": {
+                                        "iconType": "REDACTED_TEXT"
+                                      },
+                                      "navigationEndpoint": {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "shareEntityEndpoint": {
+                                          "serializedShareEntity": "REDACTED_TEXT",
+                                          "sharePanelType": "REDACTED_TEXT"
+                                        }
+                                      },
+                                      "text": {
+                                        "runs": [
+                                          {
+                                            "text": "REDACTED_TEXT"
+                                          }
+                                        ]
+                                      },
+                                      "trackingParams": "REDACTED_TOKEN"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "REDACTED_TEXT"
+                                  }
+                                },
+                                "browseId": "REDACTED_ID"
+                              },
+                              "clickTrackingParams": "REDACTED_TOKEN"
+                            },
+                            "thumbnail": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "height": 60,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 60
+                                    },
+                                    {
+                                      "height": 120,
+                                      "url": "https://example.invalid/redacted",
+                                      "width": 120
+                                    }
+                                  ]
+                                },
+                                "thumbnailCrop": "REDACTED_TEXT",
+                                "thumbnailScale": "REDACTED_TEXT",
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            "trackingParams": "REDACTED_TOKEN"
+                          }
+                        }
+                      ],
+                      "continuations": [
+                        {
+                          "nextContinuationData": {
+                            "autoloadEnabled": true,
+                            "autoloadImmediately": true,
+                            "clickTrackingParams": "REDACTED_TOKEN",
+                            "continuation": "REDACTED_TOKEN"
+                          }
+                        }
+                      ],
+                      "shelfDivider": {
+                        "musicShelfDividerRenderer": {
+                          "hidden": true
+                        }
+                      },
+                      "trackingParams": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "header": {
+                  "musicSideAlignedItemRenderer": {
+                    "endItems": [
+                      {
+                        "musicSortFilterButtonRenderer": {
+                          "accessibility": {
+                            "accessibilityData": {
+                              "label": "REDACTED_TEXT"
+                            }
+                          },
+                          "icon": {
+                            "iconType": "REDACTED_TEXT"
+                          },
+                          "menu": {
+                            "musicMultiSelectMenuRenderer": {
+                              "formEntityKey": "REDACTED_TEXT",
+                              "options": [
+                                {
+                                  "musicMultiSelectMenuItemRenderer": {
+                                    "deselectedAccessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "formItemEntityKey": "REDACTED_TEXT",
+                                    "selectedAccessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "selectedCommand": {
+                                      "clickTrackingParams": "REDACTED_TOKEN",
+                                      "commandExecutorCommand": {
+                                        "commands": [
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": false
+                                            }
+                                          },
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": false
+                                            }
+                                          },
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": true
+                                            }
+                                          },
+                                          {
+                                            "browseSectionListReloadEndpoint": {
+                                              "continuation": {
+                                                "reloadContinuationData": {
+                                                  "clickTrackingParams": "REDACTED_TOKEN",
+                                                  "continuation": "REDACTED_TOKEN",
+                                                  "showSpinnerOverlay": true
+                                                }
+                                              }
+                                            },
+                                            "clickTrackingParams": "REDACTED_TOKEN"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "selectedIcon": {
+                                      "iconType": "REDACTED_TEXT"
+                                    },
+                                    "title": {
+                                      "runs": [
+                                        {
+                                          "text": "REDACTED_TEXT"
+                                        }
+                                      ]
+                                    },
+                                    "trackingParams": "REDACTED_TOKEN"
+                                  }
+                                },
+                                {
+                                  "musicMultiSelectMenuItemRenderer": {
+                                    "deselectedAccessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "formItemEntityKey": "REDACTED_TEXT",
+                                    "selectedAccessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "selectedCommand": {
+                                      "clickTrackingParams": "REDACTED_TOKEN",
+                                      "commandExecutorCommand": {
+                                        "commands": [
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": false
+                                            }
+                                          },
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": false
+                                            }
+                                          },
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": true
+                                            }
+                                          },
+                                          {
+                                            "browseSectionListReloadEndpoint": {
+                                              "continuation": {
+                                                "reloadContinuationData": {
+                                                  "clickTrackingParams": "REDACTED_TOKEN",
+                                                  "continuation": "REDACTED_TOKEN",
+                                                  "showSpinnerOverlay": true
+                                                }
+                                              }
+                                            },
+                                            "clickTrackingParams": "REDACTED_TOKEN"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "selectedIcon": {
+                                      "iconType": "REDACTED_TEXT"
+                                    },
+                                    "title": {
+                                      "runs": [
+                                        {
+                                          "text": "REDACTED_TEXT"
+                                        }
+                                      ]
+                                    },
+                                    "trackingParams": "REDACTED_TOKEN"
+                                  }
+                                },
+                                {
+                                  "musicMultiSelectMenuItemRenderer": {
+                                    "deselectedAccessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "formItemEntityKey": "REDACTED_TEXT",
+                                    "selectedAccessibility": {
+                                      "accessibilityData": {
+                                        "label": "REDACTED_TEXT"
+                                      }
+                                    },
+                                    "selectedCommand": {
+                                      "clickTrackingParams": "REDACTED_TOKEN",
+                                      "commandExecutorCommand": {
+                                        "commands": [
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": false
+                                            }
+                                          },
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": true
+                                            }
+                                          },
+                                          {
+                                            "clickTrackingParams": "REDACTED_TOKEN",
+                                            "musicCheckboxFormItemMutatedCommand": {
+                                              "formItemEntityKey": "REDACTED_TEXT",
+                                              "newCheckedState": false
+                                            }
+                                          },
+                                          {
+                                            "browseSectionListReloadEndpoint": {
+                                              "continuation": {
+                                                "reloadContinuationData": {
+                                                  "clickTrackingParams": "REDACTED_TOKEN",
+                                                  "continuation": "REDACTED_TOKEN",
+                                                  "showSpinnerOverlay": true
+                                                }
+                                              }
+                                            },
+                                            "clickTrackingParams": "REDACTED_TOKEN"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "selectedIcon": {
+                                      "iconType": "REDACTED_TEXT"
+                                    },
+                                    "title": {
+                                      "runs": [
+                                        {
+                                          "text": "REDACTED_TEXT"
+                                        }
+                                      ]
+                                    },
+                                    "trackingParams": "REDACTED_TOKEN"
+                                  }
+                                }
+                              ],
+                              "title": {
+                                "musicMenuTitleRenderer": {
+                                  "primaryText": {
+                                    "runs": [
+                                      {
+                                        "text": "REDACTED_TEXT"
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              "trackingParams": "REDACTED_TOKEN"
+                            }
+                          },
+                          "title": {
+                            "runs": [
+                              {
+                                "text": "REDACTED_TEXT"
+                              }
+                            ]
+                          },
+                          "trackingParams": "REDACTED_TOKEN"
+                        }
+                      }
+                    ],
+                    "startItems": [
+                      {
+                        "chipCloudRenderer": {
+                          "chips": [
+                            {
+                              "chipCloudChipRenderer": {
+                                "accessibilityData": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "icon": {
+                                  "iconType": "REDACTED_TEXT"
+                                },
+                                "isSelected": true,
+                                "navigationEndpoint": {
+                                  "clickTrackingParams": "REDACTED_TOKEN",
+                                  "commandExecutorCommand": {
+                                    "commands": [
+                                      {
+                                        "browseEndpoint": {
+                                          "browseId": "REDACTED_ID"
+                                        },
+                                        "clickTrackingParams": "REDACTED_TOKEN"
+                                      },
+                                      {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "musicLibraryPersistLaunchNavigationCommand": {
+                                          "command": {
+                                            "browseEndpoint": {
+                                              "browseId": "REDACTED_ID"
+                                            },
+                                            "clickTrackingParams": "REDACTED_TOKEN"
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "onDeselectedCommand": {
+                                  "clickTrackingParams": "REDACTED_TOKEN",
+                                  "commandExecutorCommand": {
+                                    "commands": [
+                                      {
+                                        "browseEndpoint": {
+                                          "browseId": "REDACTED_ID"
+                                        },
+                                        "clickTrackingParams": "REDACTED_TOKEN"
+                                      },
+                                      {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "musicLibraryPersistLaunchNavigationCommand": {
+                                          "command": {
+                                            "browseEndpoint": {
+                                              "browseId": "REDACTED_ID"
+                                            },
+                                            "clickTrackingParams": "REDACTED_TOKEN"
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "trackingParams": "REDACTED_TOKEN"
+                              }
+                            },
+                            {
+                              "chipCloudChipRenderer": {
+                                "accessibilityData": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "isSelected": true,
+                                "navigationEndpoint": {
+                                  "clickTrackingParams": "REDACTED_TOKEN",
+                                  "commandExecutorCommand": {
+                                    "commands": [
+                                      {
+                                        "browseEndpoint": {
+                                          "browseId": "REDACTED_ID"
+                                        },
+                                        "clickTrackingParams": "REDACTED_TOKEN"
+                                      },
+                                      {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "musicLibraryPersistLaunchNavigationCommand": {
+                                          "command": {
+                                            "browseEndpoint": {
+                                              "browseId": "REDACTED_ID"
+                                            },
+                                            "clickTrackingParams": "REDACTED_TOKEN"
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "onDeselectedCommand": {
+                                  "clickTrackingParams": "REDACTED_TOKEN",
+                                  "commandExecutorCommand": {
+                                    "commands": [
+                                      {
+                                        "browseEndpoint": {
+                                          "browseId": "REDACTED_ID"
+                                        },
+                                        "clickTrackingParams": "REDACTED_TOKEN"
+                                      },
+                                      {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "musicLibraryPersistLaunchNavigationCommand": {
+                                          "command": {
+                                            "browseEndpoint": {
+                                              "browseId": "REDACTED_ID"
+                                            },
+                                            "clickTrackingParams": "REDACTED_TOKEN"
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "text": {
+                                  "runs": [
+                                    {
+                                      "text": "REDACTED_TEXT"
+                                    }
+                                  ]
+                                },
+                                "trackingParams": "REDACTED_TOKEN",
+                                "uniqueId": "REDACTED_ID"
+                              }
+                            },
+                            {
+                              "chipCloudChipRenderer": {
+                                "accessibilityData": {
+                                  "accessibilityData": {
+                                    "label": "REDACTED_TEXT"
+                                  }
+                                },
+                                "isSelected": true,
+                                "navigationEndpoint": {
+                                  "clickTrackingParams": "REDACTED_TOKEN",
+                                  "commandExecutorCommand": {
+                                    "commands": [
+                                      {
+                                        "browseEndpoint": {
+                                          "browseId": "REDACTED_ID",
+                                          "params": "REDACTED_TOKEN"
+                                        },
+                                        "clickTrackingParams": "REDACTED_TOKEN"
+                                      },
+                                      {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "musicLibraryPersistLaunchNavigationCommand": {
+                                          "command": {
+                                            "browseEndpoint": {
+                                              "browseId": "REDACTED_ID",
+                                              "params": "REDACTED_TOKEN"
+                                            },
+                                            "clickTrackingParams": "REDACTED_TOKEN"
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "onDeselectedCommand": {
+                                  "clickTrackingParams": "REDACTED_TOKEN",
+                                  "commandExecutorCommand": {
+                                    "commands": [
+                                      {
+                                        "browseEndpoint": {
+                                          "browseId": "REDACTED_ID"
+                                        },
+                                        "clickTrackingParams": "REDACTED_TOKEN"
+                                      },
+                                      {
+                                        "clickTrackingParams": "REDACTED_TOKEN",
+                                        "musicLibraryPersistLaunchNavigationCommand": {
+                                          "command": {
+                                            "browseEndpoint": {
+                                              "browseId": "REDACTED_ID"
+                                            },
+                                            "clickTrackingParams": "REDACTED_TOKEN"
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "text": {
+                                  "runs": [
+                                    {
+                                      "text": "REDACTED_TEXT"
+                                    }
+                                  ]
+                                },
+                                "trackingParams": "REDACTED_TOKEN",
+                                "uniqueId": "REDACTED_ID"
+                              }
+                            }
+                          ],
+                          "trackingParams": "REDACTED_TOKEN"
+                        }
+                      }
+                    ],
+                    "trackingParams": "REDACTED_TOKEN"
+                  }
+                },
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "endpoint": {
+              "clickTrackingParams": "REDACTED_TOKEN",
+              "commandExecutorCommand": {
+                "commands": [
+                  {
+                    "clickTrackingParams": "REDACTED_TOKEN",
+                    "musicLibraryPersistLaunchNavigationCommand": {
+                      "command": {
+                        "browseEndpoint": {
+                          "browseId": "REDACTED_ID"
+                        },
+                        "clickTrackingParams": "REDACTED_TOKEN"
+                      }
+                    }
+                  },
+                  {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  }
+                ]
+              }
+            },
+            "selected": true,
+            "tabIdentifier": "REDACTED_ID",
+            "title": "REDACTED_TEXT",
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        },
+        {
+          "tabRenderer": {
+            "content": {
+              "sectionListRenderer": {
+                "continuations": [
+                  {
+                    "reloadContinuationData": {
+                      "clickTrackingParams": "REDACTED_TOKEN",
+                      "continuation": "REDACTED_TOKEN"
+                    }
+                  }
+                ],
+                "trackingParams": "REDACTED_TOKEN"
+              }
+            },
+            "endpoint": {
+              "clickTrackingParams": "REDACTED_TOKEN",
+              "commandExecutorCommand": {
+                "commands": [
+                  {
+                    "clickTrackingParams": "REDACTED_TOKEN",
+                    "musicLibraryPersistLaunchNavigationCommand": {
+                      "command": {
+                        "browseEndpoint": {
+                          "browseId": "REDACTED_ID"
+                        },
+                        "clickTrackingParams": "REDACTED_TOKEN"
+                      }
+                    }
+                  },
+                  {
+                    "browseEndpoint": {
+                      "browseEndpointContextSupportedConfigs": {
+                        "browseEndpointContextMusicConfig": {
+                          "pageType": "REDACTED_TEXT"
+                        }
+                      },
+                      "browseId": "REDACTED_ID"
+                    },
+                    "clickTrackingParams": "REDACTED_TOKEN"
+                  }
+                ]
+              }
+            },
+            "selected": false,
+            "tabIdentifier": "REDACTED_ID",
+            "title": "REDACTED_TEXT",
+            "trackingParams": "REDACTED_TOKEN"
+          }
+        }
+      ]
+    }
+  },
+  "frameworkUpdates": {
+    "entityBatchUpdate": {
+      "mutations": [
+        {
+          "entityKey": "REDACTED_TEXT",
+          "payload": {
+            "musicForm": {
+              "booleanChoiceEntityKeys": [
+                "REDACTED_TEXT",
+                "REDACTED_TEXT",
+                "REDACTED_TEXT"
+              ],
+              "id": "REDACTED_ID"
+            }
+          },
+          "type": "REDACTED_TEXT"
+        },
+        {
+          "entityKey": "REDACTED_TEXT",
+          "payload": {
+            "musicFormBooleanChoice": {
+              "id": "REDACTED_ID",
+              "opaqueToken": "REDACTED_TOKEN",
+              "parentFormEntityKey": "REDACTED_TEXT",
+              "selected": true
+            }
+          },
+          "type": "REDACTED_TEXT"
+        },
+        {
+          "entityKey": "REDACTED_TEXT",
+          "payload": {
+            "musicFormBooleanChoice": {
+              "id": "REDACTED_ID",
+              "opaqueToken": "REDACTED_TOKEN",
+              "parentFormEntityKey": "REDACTED_TEXT",
+              "selected": false
+            }
+          },
+          "type": "REDACTED_TEXT"
+        },
+        {
+          "entityKey": "REDACTED_TEXT",
+          "payload": {
+            "musicFormBooleanChoice": {
+              "id": "REDACTED_ID",
+              "opaqueToken": "REDACTED_TOKEN",
+              "parentFormEntityKey": "REDACTED_TEXT",
+              "selected": false
+            }
+          },
+          "type": "REDACTED_TEXT"
+        }
+      ],
+      "timestamp": {
+        "nanos": 180722874,
+        "seconds": "REDACTED_TEXT"
+      }
+    }
+  },
+  "responseContext": {
+    "responseId": "REDACTED_ID",
+    "serviceTrackingParams": [
+      {
+        "params": [
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          }
+        ],
+        "service": "REDACTED_TEXT"
+      },
+      {
+        "params": [
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          }
+        ],
+        "service": "REDACTED_TEXT"
+      },
+      {
+        "params": [
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          },
+          {
+            "key": "REDACTED_TEXT",
+            "value": "REDACTED_TEXT"
+          }
+        ],
+        "service": "REDACTED_TEXT"
+      }
+    ]
+  },
+  "trackingParams": "REDACTED_TOKEN"
+}

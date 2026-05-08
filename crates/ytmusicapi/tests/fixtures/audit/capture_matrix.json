@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "harness": "crates/ytmusicapi/examples/capture_raw_fixtures.rs",
   "fixtureRoot": "crates/ytmusicapi/tests/fixtures",
+  "auditRawRoot": "crates/ytmusicapi/tests/fixtures/audit/raw",
   "notes": [
     "Temporary Rust-first live capture matrix for response-shape audit work.",
     "Authenticated captures use repo-root browser.json when present.",
@@ -17,23 +18,23 @@
           "name": "default_mixed_first_page",
           "required": true,
           "query": "abba",
-          "fixture": "search/raw/default_mixed.json",
+          "fixture": "audit/raw/search/default_mixed.json",
           "captured": true
         },
         {
           "name": "default_mixed_continuation",
           "required": false,
           "query": "abba",
-          "fixture": "search/raw/default_mixed_continuation.json",
+          "fixture": null,
           "captured": false,
-          "notes": "The current live first page returned no continuation token; this is an existing historical fixture and was not refreshed by the harness run."
+          "notes": "The current live first page returned no continuation token, so no audit continuation fixture was written."
         },
         {
           "name": "albums_first_page",
           "required": true,
           "query": "abba",
           "filter": "Albums",
-          "fixture": "search/raw/albums.json",
+          "fixture": "audit/raw/search/albums.json",
           "captured": true,
           "parseStatus": "captured_then_parse_error",
           "notes": "Current parser rejected at least one live album item shape before a typed continuation token could be used."
@@ -52,7 +53,7 @@
           "required": true,
           "query": "abba",
           "filter": "Artists",
-          "fixture": "search/raw/artists.json",
+          "fixture": "audit/raw/search/artists.json",
           "captured": true
         },
         {
@@ -60,7 +61,7 @@
           "required": false,
           "query": "abba",
           "filter": "Artists",
-          "fixture": "search/raw/artists_continuation.json",
+          "fixture": "audit/raw/search/artists_continuation.json",
           "captured": true
         },
         {
@@ -68,7 +69,7 @@
           "required": true,
           "query": "abba",
           "filter": "Playlists",
-          "fixture": "search/raw/playlists.json",
+          "fixture": "audit/raw/search/playlists.json",
           "captured": true
         },
         {
@@ -76,7 +77,7 @@
           "required": false,
           "query": "abba",
           "filter": "Playlists",
-          "fixture": "search/raw/playlists_continuation.json",
+          "fixture": "audit/raw/search/playlists_continuation.json",
           "captured": true
         },
         {
@@ -84,7 +85,7 @@
           "required": true,
           "query": "abba",
           "filter": "Songs",
-          "fixture": "search/raw/songs.json",
+          "fixture": "audit/raw/search/songs.json",
           "captured": true
         },
         {
@@ -101,7 +102,7 @@
           "required": true,
           "query": "abba",
           "filter": "Videos",
-          "fixture": "search/raw/videos.json",
+          "fixture": "audit/raw/search/videos.json",
           "captured": true
         },
         {
@@ -124,7 +125,7 @@
           "required": true,
           "query": "abba",
           "filter": "Songs",
-          "fixture": "search/raw/songs_authenticated.json",
+          "fixture": "audit/raw/search/songs_authenticated.json",
           "captured": true
         },
         {
@@ -132,7 +133,7 @@
           "required": false,
           "query": "abba",
           "filter": "Songs",
-          "fixture": "search/raw/songs_authenticated_continuation.json",
+          "fixture": "audit/raw/search/songs_authenticated_continuation.json",
           "captured": true
         },
         {
@@ -140,7 +141,7 @@
           "required": true,
           "query": "abba",
           "filter": "Videos",
-          "fixture": "search/raw/videos_authenticated.json",
+          "fixture": "audit/raw/search/videos_authenticated.json",
           "captured": true
         },
         {
@@ -148,7 +149,7 @@
           "required": false,
           "query": "abba",
           "filter": "Videos",
-          "fixture": "search/raw/videos_authenticated_continuation.json",
+          "fixture": "audit/raw/search/videos_authenticated_continuation.json",
           "captured": true
         }
       ]
@@ -160,13 +161,13 @@
         {
           "name": "watch_first_page",
           "required": true,
-          "fixture": "watch/raw/first_page.json",
+          "fixture": "audit/raw/watch/first_page.json",
           "captured": true
         },
         {
           "name": "watch_continuation",
           "required": false,
-          "fixture": "watch/raw/continuation.json",
+          "fixture": "audit/raw/watch/continuation.json",
           "captured": true,
           "parseStatus": "captured_then_parse_error",
           "notes": "The first page returned a typed token; the continuation raw response was saved, then the current parser rejected its live shape."
@@ -174,13 +175,13 @@
         {
           "name": "watch_radio_first_page",
           "required": true,
-          "fixture": "watch/raw/radio_first_page.json",
+          "fixture": "audit/raw/watch/radio_first_page.json",
           "captured": true
         },
         {
           "name": "watch_shuffle_first_page",
           "required": true,
-          "fixture": "watch/raw/shuffle_first_page.json",
+          "fixture": "audit/raw/watch/shuffle_first_page.json",
           "captured": true
         }
       ]
@@ -193,7 +194,7 @@
         {
           "name": "song_response1",
           "required": true,
-          "fixture": "song/raw/response1.json",
+          "fixture": "audit/raw/song/response1.json",
           "captured": true,
           "parseStatus": "captured_then_parse_error",
           "notes": "Live player response did not include the streamingData shape currently required by the parser."
@@ -201,7 +202,7 @@
         {
           "name": "song_response2",
           "required": true,
-          "fixture": "song/raw/response2.json",
+          "fixture": "audit/raw/song/response2.json",
           "captured": true,
           "parseStatus": "captured_then_parse_error",
           "notes": "Live player response did not include the streamingData shape currently required by the parser."
@@ -209,7 +210,7 @@
         {
           "name": "song_response3",
           "required": true,
-          "fixture": "song/raw/response3.json",
+          "fixture": "audit/raw/song/response3.json",
           "captured": true,
           "parseStatus": "captured_then_parse_error",
           "notes": "Live player response did not include the streamingData shape currently required by the parser."
@@ -223,7 +224,7 @@
         {
           "name": "account_info",
           "required": true,
-          "fixture": "account/raw/account_info.json",
+          "fixture": "audit/raw/account/account_info.json",
           "captured": true
         }
       ]
@@ -235,91 +236,91 @@
         {
           "name": "playlists_first_page",
           "required": true,
-          "fixture": "library/playlists/raw/first_page.json",
+          "fixture": "audit/raw/library/playlists/first_page.json",
           "captured": true
         },
         {
           "name": "playlists_continuation",
           "required": false,
-          "fixture": "library/playlists/raw/continuation.json",
+          "fixture": "audit/raw/library/playlists/continuation.json",
           "captured": true
         },
         {
           "name": "artists_first_page",
           "required": true,
-          "fixture": "library/artists/raw/first_page.json",
+          "fixture": "audit/raw/library/artists/first_page.json",
           "captured": true
         },
         {
           "name": "artists_continuation",
           "required": false,
-          "fixture": "library/artists/raw/continuation.json",
+          "fixture": "audit/raw/library/artists/continuation.json",
           "captured": true
         },
         {
           "name": "albums_first_page",
           "required": true,
-          "fixture": "library/albums/raw/first_page.json",
+          "fixture": "audit/raw/library/albums/first_page.json",
           "captured": true
         },
         {
           "name": "albums_continuation",
           "required": false,
-          "fixture": "library/albums/raw/continuation.json",
+          "fixture": "audit/raw/library/albums/continuation.json",
           "captured": true
         },
         {
           "name": "subscriptions_first_page",
           "required": true,
-          "fixture": "library/subscriptions/raw/first_page.json",
+          "fixture": "audit/raw/library/subscriptions/first_page.json",
           "captured": true
         },
         {
           "name": "subscriptions_continuation",
           "required": false,
-          "fixture": "library/subscriptions/raw/continuation.json",
+          "fixture": "audit/raw/library/subscriptions/continuation.json",
           "captured": true
         },
         {
           "name": "channels_first_page",
           "required": true,
-          "fixture": "library/channels/raw/first_page.json",
+          "fixture": "audit/raw/library/channels/first_page.json",
           "captured": true
         },
         {
           "name": "channels_continuation",
           "required": false,
-          "fixture": "library/channels/raw/continuation.json",
+          "fixture": "audit/raw/library/channels/continuation.json",
           "captured": true
         },
         {
           "name": "podcasts_first_page",
           "required": true,
-          "fixture": "library/podcasts/raw/first_page.json",
+          "fixture": "audit/raw/library/podcasts/first_page.json",
           "captured": true
         },
         {
           "name": "podcasts_continuation",
           "required": false,
-          "fixture": "library/podcasts/raw/continuation.json",
+          "fixture": "audit/raw/library/podcasts/continuation.json",
           "captured": true
         },
         {
           "name": "songs_first_page",
           "required": true,
-          "fixture": "library/songs/raw/first_page.json",
+          "fixture": "audit/raw/library/songs/first_page.json",
           "captured": true
         },
         {
           "name": "songs_continuation",
           "required": false,
-          "fixture": "library/songs/raw/continuation.json",
+          "fixture": "audit/raw/library/songs/continuation.json",
           "captured": true
         },
         {
           "name": "liked_songs_first_page",
           "required": true,
-          "fixture": "library/liked_songs/raw/first_page.json",
+          "fixture": "audit/raw/library/liked_songs/first_page.json",
           "captured": true
         },
         {
@@ -332,7 +333,7 @@
         {
           "name": "saved_episodes_first_page",
           "required": true,
-          "fixture": "library/saved_episodes/raw/first_page.json",
+          "fixture": "audit/raw/library/saved_episodes/first_page.json",
           "captured": true
         },
         {

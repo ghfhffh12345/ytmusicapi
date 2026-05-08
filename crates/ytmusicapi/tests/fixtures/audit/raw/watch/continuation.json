@@ -1,0 +1,113 @@
+{
+  "contents": {
+    "singleColumnMusicWatchNextResultsRenderer": {
+      "tabbedRenderer": {
+        "watchNextTabbedResultsRenderer": {
+          "tabs": [
+            {
+              "tabRenderer": {
+                "content": {
+                  "musicQueueRenderer": {
+                    "hack": true
+                  }
+                },
+                "title": "Up next",
+                "trackingParams": "CAMQn7QFGAAiEwi0r-m74KmUAxV-QDgFHdnJKvU="
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "continuationContents": {
+    "playlistPanelContinuation": {
+      "continuations": [
+        {
+          "nextRadioContinuationData": {
+            "clickTrackingParams": "CAEQxyAiEwi0r-m74KmUAxV-QDgFHdnJKvXKAQRkDqRe",
+            "continuation": "CAESIxILNHkzM2g4MXBoS1UiEVJEQU1WTTR5MzNoODFwaEtV0AEBGAo%3D"
+          }
+        }
+      ],
+      "isInfinite": true,
+      "playlistId": "RDAMVM4y33h81phKU",
+      "shuffleToggleButton": {
+        "toggleButtonRenderer": {
+          "defaultIcon": {
+            "iconType": "MUSIC_SHUFFLE"
+          },
+          "defaultServiceEndpoint": {
+            "clickTrackingParams": "CAIQmE0iEwi0r-m74KmUAxV-QDgFHdnJKvXKAQRkDqRe",
+            "watchPlaylistEndpoint": {
+              "params": "wAEB8gECGAE%3D",
+              "playlistId": "RDAMVM4y33h81phKU"
+            }
+          },
+          "toggledIcon": {
+            "iconType": "MUSIC_SHUFFLE"
+          },
+          "toggledServiceEndpoint": {
+            "clickTrackingParams": "CAIQmE0iEwi0r-m74KmUAxV-QDgFHdnJKvXKAQRkDqRe",
+            "watchPlaylistEndpoint": {
+              "params": "wAEB",
+              "playlistId": "RDAMVM4y33h81phKU"
+            }
+          },
+          "trackingParams": "CAIQmE0iEwi0r-m74KmUAxV-QDgFHdnJKvU="
+        }
+      },
+      "trackingParams": "CAEQxyAiEwi0r-m74KmUAxV-QDgFHdnJKvU="
+    }
+  },
+  "queueContextParams": "CAAaEVJEQU1WTTR5MzNoODFwaEtVIABQAVoECAAQAGIAcAF4AQ==",
+  "responseContext": {
+    "responseId": "IhMItK_pu-CplAMVfkA4BR3ZySr1",
+    "serviceTrackingParams": [
+      {
+        "params": [
+          {
+            "key": "c",
+            "value": "WEB_REMIX"
+          },
+          {
+            "key": "cver",
+            "value": "1.20260505.09.00"
+          },
+          {
+            "key": "yt_li",
+            "value": "0"
+          },
+          {
+            "key": "GetWatchNext_rid",
+            "value": "0x451d6c513e12d7e1"
+          }
+        ],
+        "service": "CSI"
+      },
+      {
+        "params": [
+          {
+            "key": "logged_in",
+            "value": "0"
+          }
+        ],
+        "service": "GFEEDBACK"
+      },
+      {
+        "params": [
+          {
+            "key": "client.version",
+            "value": "1.20000101"
+          },
+          {
+            "key": "client.name",
+            "value": "WEB_REMIX"
+          }
+        ],
+        "service": "ECATCHER"
+      }
+    ]
+  },
+  "trackingParams": "CAAQg2ciEwi0r-m74KmUAxV-QDgFHdnJKvXKAQRkDqRe"
+}

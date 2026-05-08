@@ -1,0 +1,320 @@
+{
+  "adBreakHeartbeatParams": "Q0FBJTNE",
+  "microformat": {
+    "microformatDataRenderer": {
+      "androidPackage": "com.google.android.apps.youtube.music",
+      "appName": "YouTube Music",
+      "availableCountries": [
+        "AE",
+        "AR",
+        "AS",
+        "AT",
+        "AU",
+        "AW",
+        "AZ",
+        "BA",
+        "BD",
+        "BE",
+        "BG",
+        "BH",
+        "BM",
+        "BO",
+        "BR",
+        "BY",
+        "CA",
+        "CH",
+        "CL",
+        "CO",
+        "CR",
+        "CY",
+        "CZ",
+        "DE",
+        "DK",
+        "DO",
+        "DZ",
+        "EC",
+        "EE",
+        "EG",
+        "ES",
+        "FI",
+        "FR",
+        "GB",
+        "GE",
+        "GF",
+        "GH",
+        "GP",
+        "GR",
+        "GT",
+        "GU",
+        "HK",
+        "HN",
+        "HR",
+        "HU",
+        "ID",
+        "IE",
+        "IL",
+        "IN",
+        "IQ",
+        "IS",
+        "IT",
+        "JM",
+        "JO",
+        "JP",
+        "KE",
+        "KH",
+        "KR",
+        "KW",
+        "KY",
+        "KZ",
+        "LA",
+        "LB",
+        "LI",
+        "LK",
+        "LT",
+        "LU",
+        "LV",
+        "LY",
+        "MA",
+        "MK",
+        "MP",
+        "MQ",
+        "MT",
+        "MX",
+        "MY",
+        "NC",
+        "NG",
+        "NI",
+        "NL",
+        "NO",
+        "NP",
+        "NZ",
+        "OM",
+        "PA",
+        "PE",
+        "PF",
+        "PG",
+        "PH",
+        "PK",
+        "PL",
+        "PR",
+        "PT",
+        "PY",
+        "QA",
+        "RE",
+        "RO",
+        "RS",
+        "RU",
+        "SA",
+        "SE",
+        "SG",
+        "SI",
+        "SK",
+        "SN",
+        "SV",
+        "TC",
+        "TH",
+        "TN",
+        "TR",
+        "TW",
+        "TZ",
+        "UA",
+        "UG",
+        "US",
+        "UY",
+        "VE",
+        "VI",
+        "VN",
+        "YE",
+        "YT",
+        "ZA",
+        "ZW"
+      ],
+      "category": "Music",
+      "description": "regallily",
+      "familySafe": true,
+      "iosAppArguments": "https://music.youtube.com/watch?v=LhiRts68_bk",
+      "iosAppStoreId": "1017492454",
+      "linkAlternates": [
+        {
+          "hrefUrl": "android-app://com.google.android.youtube/http/youtube.com/watch?v=LhiRts68_bk"
+        },
+        {
+          "hrefUrl": "ios-app://544007664/http/youtube.com/watch?v=LhiRts68_bk"
+        },
+        {
+          "alternateType": "application/json+oembed",
+          "hrefUrl": "https://www.youtube.com/oembed?format=json&url=https%3A%2F%2Fmusic.youtube.com%2Fwatch%3Fv%3DLhiRts68_bk",
+          "title": "Branko"
+        },
+        {
+          "alternateType": "text/xml+oembed",
+          "hrefUrl": "https://www.youtube.com/oembed?format=xml&url=https%3A%2F%2Fmusic.youtube.com%2Fwatch%3Fv%3DLhiRts68_bk",
+          "title": "Branko"
+        }
+      ],
+      "noindex": false,
+      "ogType": "video.other",
+      "pageOwnerDetails": {
+        "externalChannelId": "UCecid4K4MlVnhlaiQ_96QJg",
+        "name": "Regal Lily - Topic",
+        "youtubeProfileUrl": "http://www.youtube.com/channel/UCecid4K4MlVnhlaiQ_96QJg"
+      },
+      "paid": false,
+      "publishDate": "2019-12-31T02:00:46-08:00",
+      "schemaDotOrgType": "http://schema.org/VideoObject",
+      "siteName": "YouTube Music",
+      "tags": [
+        "regallily",
+        "リーガルリリー",
+        "The Post",
+        "Branko",
+        "ブランコ",
+        "ぶらんこ"
+      ],
+      "thumbnail": {
+        "thumbnails": [
+          {
+            "height": 720,
+            "url": "https://i.ytimg.com/vi/LhiRts68_bk/maxresdefault.jpg",
+            "width": 1280
+          }
+        ]
+      },
+      "title": "Branko",
+      "twitterCardType": "summary",
+      "twitterSiteHandle": "@YouTubeMusic",
+      "unlisted": false,
+      "uploadDate": "2019-12-31T02:00:46-08:00",
+      "urlApplinksAndroid": "vnd.youtube.music://music.youtube.com/watch?v=LhiRts68_bk&feature=applinks",
+      "urlApplinksIos": "vnd.youtube.music://music.youtube.com/watch?v=LhiRts68_bk&feature=applinks",
+      "urlCanonical": "https://music.youtube.com/watch?v=LhiRts68_bk",
+      "urlTwitterAndroid": "vnd.youtube.music://music.youtube.com/watch?v=LhiRts68_bk&feature=twitter-deep-link",
+      "urlTwitterIos": "vnd.youtube.music://music.youtube.com/watch?v=LhiRts68_bk&feature=twitter-deep-link",
+      "videoDetails": {
+        "durationIso8601": "PT5M59S",
+        "durationSeconds": "359",
+        "externalVideoId": "LhiRts68_bk"
+      },
+      "viewCount": "50300"
+    }
+  },
+  "playabilityStatus": {
+    "contextParams": "Q0FFU0FnZ0I=",
+    "errorScreen": {
+      "playerErrorMessageRenderer": {
+        "icon": {
+          "iconType": "ERROR_OUTLINE"
+        }
+      }
+    },
+    "playableInEmbed": true,
+    "reason": "This video is only available to Music Premium members",
+    "status": "UNPLAYABLE"
+  },
+  "responseContext": {
+    "maxAgeSeconds": 0,
+    "responseId": "IhMIv_7yvOCplAMVnkwPAh20fBcv",
+    "serviceTrackingParams": [
+      {
+        "params": [
+          {
+            "key": "is_viewed_live",
+            "value": "False"
+          },
+          {
+            "key": "is_alc_surface",
+            "value": "false"
+          },
+          {
+            "key": "ipcc",
+            "value": "0"
+          },
+          {
+            "key": "wh_paused",
+            "value": "0"
+          },
+          {
+            "key": "logged_in",
+            "value": "0"
+          }
+        ],
+        "service": "GFEEDBACK"
+      },
+      {
+        "params": [
+          {
+            "key": "c",
+            "value": "WEB_REMIX"
+          },
+          {
+            "key": "cver",
+            "value": "1.20260505.09.00"
+          },
+          {
+            "key": "yt_li",
+            "value": "0"
+          },
+          {
+            "key": "GetPlayer_rid",
+            "value": "0xb939f9e6aca79f63"
+          }
+        ],
+        "service": "CSI"
+      },
+      {
+        "params": [
+          {
+            "key": "client.version",
+            "value": "1.20000101"
+          },
+          {
+            "key": "client.name",
+            "value": "WEB_REMIX"
+          }
+        ],
+        "service": "ECATCHER"
+      }
+    ]
+  },
+  "trackingParams": "CAAQu2kiEwi__vK84KmUAxWeTA8CHbR8Fy_KAQRkDqRe",
+  "videoDetails": {
+    "allowRatings": true,
+    "author": "regallily",
+    "channelId": "UCecid4K4MlVnhlaiQ_96QJg",
+    "isCrawlable": true,
+    "isLiveContent": false,
+    "isOwnerViewing": false,
+    "isPrivate": false,
+    "isTvfilmVideo": false,
+    "isUnpluggedCorpus": false,
+    "lengthSeconds": "359",
+    "musicVideoType": "MUSIC_VIDEO_TYPE_ATV",
+    "thumbnail": {
+      "thumbnails": [
+        {
+          "height": 60,
+          "url": "https://yt3.googleusercontent.com/xB2zV_nkmu6bDF7BHFTqt6XSfTS1vAvdeKXx9jrC372BVLPx6R5lT3qHXhjR18edypI31JcK0A6ngYy_=w60-h60-l90-rj",
+          "width": 60
+        },
+        {
+          "height": 120,
+          "url": "https://yt3.googleusercontent.com/xB2zV_nkmu6bDF7BHFTqt6XSfTS1vAvdeKXx9jrC372BVLPx6R5lT3qHXhjR18edypI31JcK0A6ngYy_=w120-h120-l90-rj",
+          "width": 120
+        },
+        {
+          "height": 226,
+          "url": "https://yt3.googleusercontent.com/xB2zV_nkmu6bDF7BHFTqt6XSfTS1vAvdeKXx9jrC372BVLPx6R5lT3qHXhjR18edypI31JcK0A6ngYy_=w226-h226-l90-rj",
+          "width": 226
+        },
+        {
+          "height": 544,
+          "url": "https://yt3.googleusercontent.com/xB2zV_nkmu6bDF7BHFTqt6XSfTS1vAvdeKXx9jrC372BVLPx6R5lT3qHXhjR18edypI31JcK0A6ngYy_=w544-h544-l90-rj",
+          "width": 544
+        }
+      ]
+    },
+    "title": "Branko",
+    "videoId": "LhiRts68_bk",
+    "viewCount": "50300"
+  }
+}
