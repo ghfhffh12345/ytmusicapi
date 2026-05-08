@@ -14,6 +14,12 @@ use ytmusicapi::{SearchQuery, YtMusic};
 
 static ENV_LOCK: Mutex<()> = Mutex::new(());
 
+fn lock_env() -> std::sync::MutexGuard<'static, ()> {
+    ENV_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+}
+
 struct CaptureEnvGuard {
     dir: Option<OsString>,
     label: Option<OsString>,
@@ -60,7 +66,7 @@ impl Drop for CaptureEnvGuard {
 
 #[test]
 fn capture_is_disabled_when_capture_dir_is_absent() {
-    let _env_lock = ENV_LOCK.lock().unwrap();
+    let _env_lock = lock_env();
     let _env = CaptureEnvGuard::set(None, Some("search-audit"));
 
     assert!(CaptureConfig::from_env().is_none());
@@ -68,7 +74,7 @@ fn capture_is_disabled_when_capture_dir_is_absent() {
 
 #[test]
 fn capture_is_enabled_when_capture_dir_and_label_are_present() {
-    let _env_lock = ENV_LOCK.lock().unwrap();
+    let _env_lock = lock_env();
     let dir = tempdir().unwrap();
     let _env = CaptureEnvGuard::set(Some(dir.path()), Some("search-audit"));
 
@@ -82,8 +88,23 @@ fn capture_is_enabled_when_capture_dir_and_label_are_present() {
 }
 
 #[test]
+fn capture_normalizes_parent_directory_labels_safely() {
+    let _env_lock = lock_env();
+    let dir = tempdir().unwrap();
+    let _env = CaptureEnvGuard::set(Some(dir.path()), Some(".."));
+
+    let config = CaptureConfig::from_env().expect("capture config should be enabled");
+
+    assert_eq!(config.label(), "capture");
+    assert_eq!(
+        config.path_for_endpoint("search"),
+        dir.path().join("capture").join("search.json")
+    );
+}
+
+#[test]
 fn search_transport_writes_raw_fixture_when_capture_is_enabled() {
-    let _env_lock = ENV_LOCK.lock().unwrap();
+    let _env_lock = lock_env();
     let dir = tempdir().unwrap();
     let _env = CaptureEnvGuard::set(Some(dir.path()), Some("search-audit"));
 

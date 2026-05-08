@@ -71,7 +71,7 @@ fn sanitize_component(input: &str, fallback: &str) -> String {
         .trim_matches('_')
         .to_owned();
 
-    if sanitized.is_empty() {
+    if sanitized.is_empty() || matches!(sanitized.as_str(), "." | "..") {
         fallback.to_owned()
     } else {
         sanitized
