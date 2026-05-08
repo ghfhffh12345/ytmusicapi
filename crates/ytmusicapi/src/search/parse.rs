@@ -121,7 +121,7 @@ fn parse_filtered_search_continuation_item(
     let has_artist_browse_id = browse_id.is_some_and(|browse_id| browse_id.starts_with("UC"));
     let has_views = metadata_parts.iter().any(|part| {
         required_text(part, "/text")
-            .map(|text| text.to_ascii_lowercase().contains("views"))
+            .map(|text| looks_like_views(&text))
             .unwrap_or(false)
     });
     let has_subscribers_or_audience = metadata_parts.iter().any(|part| {
@@ -682,7 +682,7 @@ fn parse_media_metadata(metadata_parts: &[&Value]) -> ParsedMediaMetadata {
 
         if parsed.duration.is_none() && looks_like_duration(text) {
             parsed.duration = Some(text.to_owned());
-        } else if parsed.views.is_none() && text.to_ascii_lowercase().contains("view") {
+        } else if parsed.views.is_none() && looks_like_views(text) {
             parsed.views = Some(text.to_owned());
         } else if parsed.date.is_none() && looks_like_publish_date(text) {
             parsed.date = Some(text.to_owned());
@@ -798,6 +798,19 @@ fn looks_like_duration(value: &str) -> bool {
     }
 
     count >= 2
+}
+
+fn looks_like_views(value: &str) -> bool {
+    let value = value.trim().to_ascii_lowercase();
+    let Some(count) = value
+        .strip_suffix(" views")
+        .or_else(|| value.strip_suffix(" view"))
+    else {
+        return false;
+    };
+
+    let count = count.trim();
+    !count.is_empty() && (count == "no" || count.chars().any(|ch| ch.is_ascii_digit()))
 }
 
 fn looks_like_year(value: &str) -> bool {
@@ -1310,6 +1323,71 @@ mod tests {
                     == vec!["Structural Artist"]
                     && result.album.as_ref().map(|album| (album.id.as_str(), album.name.as_str()))
                         == Some(("BROWSEstructuralalbum", "Structural Album"))
+        ));
+    }
+
+    #[test]
+    fn filtered_video_continuation_infers_singular_view_count_as_video() {
+        let response = json!({
+            "continuationContents": {
+                "musicShelfContinuation": {
+                    "contents": [{
+                        "musicResponsiveListItemRenderer": {
+                            "flexColumns": [
+                                {
+                                    "musicResponsiveListItemFlexColumnRenderer": {
+                                        "text": { "runs": [{ "text": "Structural Video" }] }
+                                    }
+                                },
+                                {
+                                    "musicResponsiveListItemFlexColumnRenderer": {
+                                        "text": {
+                                            "runs": [
+                                                {
+                                                    "text": "Structural Artist",
+                                                    "navigationEndpoint": { "browseEndpoint": { "browseId": "UCstructuralartist" } }
+                                                },
+                                                { "text": " • " },
+                                                { "text": "1 view" },
+                                                { "text": " • " },
+                                                { "text": "1:23" }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            "overlay": {
+                                "musicItemThumbnailOverlayRenderer": {
+                                    "content": {
+                                        "musicPlayButtonRenderer": {
+                                            "playNavigationEndpoint": {
+                                                "watchEndpoint": { "videoId": "structural-video" }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "thumbnail": {
+                                "musicThumbnailRenderer": {
+                                    "thumbnail": {
+                                        "thumbnails": [{ "url": "https://example.com/structural-video.jpg", "width": 60, "height": 60 }]
+                                    }
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        let parsed = parse_search_continuation_response(&response).unwrap();
+
+        assert!(matches!(
+            &parsed.items[0],
+            SearchResult::Video(result)
+                if result.video_id == "structural-video"
+                    && result.views.as_deref() == Some("1 view")
+                    && result.duration.as_deref() == Some("1:23")
         ));
     }
 
