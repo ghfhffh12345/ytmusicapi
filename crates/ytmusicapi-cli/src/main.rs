@@ -31,7 +31,7 @@ fn main() -> ExitCode {
 #[cfg(unix)]
 fn write_browser_json(path: &Path, json: &str) -> io::Result<()> {
     use std::fs::OpenOptions;
-    use std::os::unix::fs::OpenOptionsExt;
+    use std::os::unix::fs::{OpenOptionsExt, PermissionsExt};
 
     let parent = path.parent().unwrap_or_else(|| Path::new("."));
     let file_name = path.file_name().ok_or_else(|| {
@@ -59,7 +59,8 @@ fn write_browser_json(path: &Path, json: &str) -> io::Result<()> {
                     file.write_all(json.as_bytes())?;
                     file.sync_all()?;
                     drop(file);
-                    fs::rename(&temp_path, path)
+                    fs::rename(&temp_path, path)?;
+                    fs::set_permissions(path, fs::Permissions::from_mode(0o644))
                 })();
 
                 if result.is_err() {

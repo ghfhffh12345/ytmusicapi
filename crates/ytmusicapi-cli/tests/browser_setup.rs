@@ -36,7 +36,7 @@ fn writes_browser_json_in_current_directory() {
 
 #[cfg(unix)]
 #[test]
-fn writes_browser_json_with_owner_only_permissions_on_unix() {
+fn writes_browser_json_with_world_readable_permissions_on_unix() {
     let dir = tempdir().unwrap();
 
     Command::cargo_bin("ytmusicapi-cli")
@@ -47,7 +47,7 @@ fn writes_browser_json_with_owner_only_permissions_on_unix() {
         .success();
 
     let metadata = fs::metadata(dir.path().join("browser.json")).unwrap();
-    assert_eq!(metadata.permissions().mode() & 0o777, 0o600);
+    assert_eq!(metadata.permissions().mode() & 0o777, 0o644);
 }
 
 #[cfg(unix)]
@@ -70,7 +70,7 @@ fn replaces_symlinked_browser_json_without_touching_the_target_on_unix() {
 
     let metadata = fs::symlink_metadata(&browser_json).unwrap();
     assert!(!metadata.file_type().is_symlink());
-    assert_eq!(metadata.permissions().mode() & 0o777, 0o600);
+    assert_eq!(metadata.permissions().mode() & 0o777, 0o644);
 
     let output = fs::read_to_string(&browser_json).unwrap();
     let value: serde_json::Value = serde_json::from_str(&output).unwrap();
