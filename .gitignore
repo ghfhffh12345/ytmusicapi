@@ -1,8 +1,7 @@
 /.serena
-/docs
+/docs/superpowers
 /.worktrees
 /.superpowers
-AGENTS.md
 /target
 browser.json
 browser.txt

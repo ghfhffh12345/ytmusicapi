@@ -188,6 +188,10 @@ fn parse_default_mixed_sections(sections: &[Value]) -> Result<Vec<SearchResult>,
             for item in required_array_at(shelf, "/contents")? {
                 results.push(parse_shelf_item(item, category.clone())?);
             }
+        } else if let Some(contents) = item_section_contents(section)? {
+            for item in contents {
+                results.push(parse_shelf_item(item, None)?);
+            }
         }
     }
 
@@ -205,10 +209,30 @@ fn parse_filtered_sections(
             for item in required_array_at(shelf, "/contents")? {
                 results.push(parse_filtered_shelf_item(item, category.clone(), filter)?);
             }
+        } else if let Some(contents) = item_section_contents(section)? {
+            for item in contents {
+                results.push(parse_filtered_shelf_item(item, None, filter)?);
+            }
         }
     }
 
     Ok(results)
+}
+
+fn item_section_contents(section: &Value) -> Result<Option<&[Value]>, Error> {
+    let Some(item_section) = section.get("itemSectionRenderer") else {
+        return Ok(None);
+    };
+    let contents = required_array_at(item_section, "/contents")?;
+    if contents
+        .first()
+        .and_then(|item| item.get("musicResponsiveListItemRenderer"))
+        .is_none()
+    {
+        return Ok(None);
+    }
+
+    Ok(Some(contents))
 }
 
 fn extract_search_continuation(
@@ -546,14 +570,10 @@ fn parse_playlist_result(
         .map(|run| required_text(run, "/text"))
         .transpose()?
         .and_then(|value| {
-            let lower = value.to_ascii_lowercase();
-            if lower.contains("view") {
-                return None;
-            }
-            if has_type_label {
-                value.contains("song").then(|| first_token(value)).flatten()
-            } else {
-                first_token(value)
+            let mut tokens = value.split_whitespace();
+            match (tokens.next(), tokens.next()) {
+                (Some(count), Some("songs")) => Some(count.to_owned()),
+                _ => None,
             }
         });
 
@@ -722,10 +742,6 @@ fn has_explicit_badge(value: &Value) -> bool {
                     == Some("MUSIC_EXPLICIT_BADGE")
             })
         })
-}
-
-fn first_token(value: String) -> Option<String> {
-    value.split_whitespace().next().map(str::to_owned)
 }
 
 fn non_separator_runs(runs: &[Value]) -> Vec<&Value> {
@@ -1194,6 +1210,130 @@ mod tests {
                 if result.title == "best 100 classical music"
                     && result.author.as_deref() == Some("Adam")
                     && result.item_count.is_none()
+        ));
+    }
+
+    #[test]
+    fn default_mixed_item_section_renderer_parses_results() {
+        let response: Value = serde_json::from_str(include_str!(
+            "../../tests/fixtures/search/raw/default_mixed.json"
+        ))
+        .unwrap();
+        let contents = response["contents"]["tabbedSearchResultsRenderer"]["tabs"][0]
+            ["tabRenderer"]["content"]["sectionListRenderer"]["contents"][1]
+            ["musicShelfRenderer"]["contents"]
+            .clone();
+
+        let parsed = parse_inline_default_mixed(vec![json!({
+            "itemSectionRenderer": {
+                "contents": contents
+            }
+        })]);
+
+        assert!(matches!(
+            &parsed[0],
+            SearchResult::Album(result) if result.title == "Random Access Memories"
+        ));
+    }
+
+    #[test]
+    fn filtered_item_section_renderer_parses_results() {
+        let response: Value = serde_json::from_str(include_str!(
+            "../../tests/fixtures/search/raw/songs_authenticated.json"
+        ))
+        .unwrap();
+        let contents = response["contents"]["tabbedSearchResultsRenderer"]["tabs"][0]
+            ["tabRenderer"]["content"]["sectionListRenderer"]["contents"][0]
+            ["musicShelfRenderer"]["contents"]
+            .clone();
+
+        let parsed = parse_inline_page(
+            vec![json!({
+                "itemSectionRenderer": {
+                    "contents": contents
+                }
+            })],
+            Some(SearchFilter::Songs),
+        );
+
+        assert!(!parsed.items.is_empty());
+        assert!(
+            parsed
+                .items
+                .iter()
+                .all(|result| matches!(result, SearchResult::Song(_)))
+        );
+    }
+
+    #[test]
+    fn filtered_playlist_item_count_requires_songs_label() {
+        fn playlist_item(title: &str, author: &str, item_info: &str, browse_id: &str) -> Value {
+            json!({
+                "musicResponsiveListItemRenderer": {
+                    "flexColumns": [
+                        {
+                            "musicResponsiveListItemFlexColumnRenderer": {
+                                "text": { "runs": [{ "text": title }] }
+                            }
+                        },
+                        {
+                            "musicResponsiveListItemFlexColumnRenderer": {
+                                "text": {
+                                    "runs": [
+                                        { "text": author },
+                                        { "text": " • " },
+                                        { "text": item_info }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    "navigationEndpoint": {
+                        "browseEndpoint": { "browseId": browse_id }
+                    },
+                    "thumbnail": {
+                        "musicThumbnailRenderer": {
+                            "thumbnail": {
+                                "thumbnails": [{
+                                    "url": "https://example.com/playlist.jpg",
+                                    "width": 60,
+                                    "height": 60
+                                }]
+                            }
+                        }
+                    }
+                }
+            })
+        }
+
+        let parsed = parse_inline_page(
+            vec![json!({
+                "musicShelfRenderer": {
+                    "contents": [
+                        playlist_item(
+                            "Best Phonk Mix",
+                            "Curator",
+                            "Best Phonk music",
+                            "VLPLphonk"
+                        ),
+                        playlist_item("Featured Mix", "YouTube Music", "12 songs", "VLPLfeatured")
+                    ]
+                }
+            })],
+            Some(SearchFilter::Playlists),
+        );
+
+        assert!(matches!(
+            &parsed.items[0],
+            SearchResult::Playlist(result)
+                if result.item_count.is_none()
+                    && result.author.as_deref() == Some("Curator")
+        ));
+        assert!(matches!(
+            &parsed.items[1],
+            SearchResult::Playlist(result)
+                if result.item_count.as_deref() == Some("12")
+                    && result.author.as_deref() == Some("YouTube Music")
         ));
     }
 
