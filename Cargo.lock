@@ -1957,7 +1957,7 @@ dependencies = [
 
 [[package]]
 name = "ytmusicapi"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "reqwest",
  "serde",
@@ -1972,7 +1972,7 @@ dependencies = [
 
 [[package]]
 name = "ytmusicapi-cli"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "assert_cmd",
  "serde_json",
